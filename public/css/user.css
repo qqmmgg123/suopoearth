@@ -1,0 +1,61 @@
+.mydream-area .mydream-nav {
+  padding: 10px;
+  overflow: hidden;
+}
+.mydream-area .mydream-nav .nav-list {
+  float: left;
+}
+.mydream-area .mydream-nav .nav-list ul {
+  height: 26px;
+  border-bottom: 1px solid #eaeaea;
+}
+.mydream-area .mydream-nav .nav-list li {
+  height: 26px;
+  float: left;
+}
+.mydream-area .mydream-nav .nav-list li a {
+  background-color: #fff;
+  margin: 0 5px;
+  display: block;
+  padding: 0 15px;
+  height: 26px;
+  line-height: 26px;
+}
+.mydream-area .mydream-nav .nav-list li a.cur {
+  border: 1px solid #eaeaea;
+  border-bottom-color: #fff;
+}
+.mydream-area .mydream-nav .nav-ctrl {
+  float: right;
+}
+.mydream-area .mydream-list {
+  padding: 10px;
+}
+.mydream-area .mydream-list ul > li {
+  overflow: hidden;
+}
+.mydream-area .mydream-list ul > li a.dream-title {
+  float: left;
+}
+.mydream-area .mydream-list ul > li a.follow-count {
+  float: right;
+}
+.user-area {
+  padding: 10px 0;
+  overflow: hidden;
+}
+.user-area .avatar {
+  float: left;
+}
+.user-area .info {
+  margin-left: 10px;
+  width: 150px;
+  float: left;
+}
+.user-area .info h1 {
+  font-size: 25px;
+  text-align: left;
+}
+.user-area .info a {
+  margin-right: 10px;
+}

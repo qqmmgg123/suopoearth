@@ -1,0 +1,1408 @@
+@font-face {
+  font-family: Microsoft YaHei Font;
+  src: url('/font/msyh/msyh.eot');
+  src: url('/font/msyh/msyh.eot?#iefix') format('embedded-opentype'), url('/font/msyh/msyh.woff') format('woff'), url('/font/msyh/msyh.ttf') format('truetype'), url('/font/msyh/msyh.svg#msyh') format('svg');
+}
+body {
+  font: 14px/1.8 Microsoft YaHei, Microsoft YaHei Font, Helvetica, Arial, sans-serif;
+  width: 100%;
+  text-align: center;
+}
+body,
+ol,
+ul,
+li,
+h1,
+p,
+form,
+button {
+  margin: 0;
+  padding: 0;
+}
+li {
+  list-style: none;
+}
+button {
+  outline: none;
+}
+input,
+textarea {
+  font: 12px/1.5 Microsoft YaHei;
+  padding: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  background: #fff;
+  outline: none;
+}
+input.search-in {
+  float: left;
+  padding-left: 10px;
+  font-size: 14px;
+  width: 250px;
+  height: 36px;
+}
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset;
+  border: 1px solid #CCC!important;
+}
+a {
+  text-decoration: none;
+}
+.t-fixed {
+  position: fixed;
+  top: 0px;
+}
+.btn {
+  cursor: pointer;
+  outline: none;
+  padding: 5px 20px;
+  background: #fff;
+  color: #333;
+  background-color: #fff;
+  border: 1px #ccc solid;
+  border-radius: 4px;
+  text-align: center;
+  font: 12px/1.5 Microsoft YaHei;
+}
+.btn:hover {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+.btn-big {
+  padding: 10px;
+}
+.btn-primary {
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+.btn-primary:hover {
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;
+}
+.none {
+  display: none;
+}
+.validate-error {
+  text-align: left;
+  color: #ff335e;
+}
+.validate-error:before {
+  content: '•';
+  margin-right: 3px;
+  padding: 0 3px;
+  font-family: Arial;
+}
+.validate-error:after {
+  content: '!';
+  margin-right: 3px;
+  padding: 0 3px;
+  font-family: Arial;
+}
+.friend .tips {
+  z-index: 1;
+  position: absolute;
+  background-color: white;
+  padding: 10px;
+  border: 2px solid #ddd;
+}
+.reference {
+  height: 24px;
+  line-height: 24px;
+  overflow: hidden;
+  font-size: 12px;
+  text-align: left;
+  margin-top: 10px;
+}
+.reference li {
+  line-height: 24px;
+  height: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.reference a {
+  color: #a8a8a8;
+  text-decoration: underline;
+}
+.header {
+  /*overflow: hidden;*/
+  z-index: 1;
+  padding: 5px;
+  width: 100%;
+  border-bottom: 1px solid #eaeaea;
+  background-color: white;
+}
+.header ul {
+  padding: 10px;
+}
+.header .head-con {
+  width: 1026px;
+  margin: 0 auto;
+}
+.header .create-area {
+  overflow: hidden;
+}
+.header .create-area #search_dream_btn {
+  float: left;
+  height: 36px;
+  width: 66px;
+  margin-left: 5px;
+}
+.header .create-area #create_dream_btn {
+  float: left;
+  margin-left: 5px;
+  padding: 8px 20px;
+  display: block;
+  color: #fff;
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+  box-sizing: border-box;
+  height: 36px;
+}
+.header .create-area #create_dream_btn:hover {
+  color: #fff;
+  background-color: #449d44;
+  border-color: #398439;
+}
+.header ul.h-left {
+  float: left;
+}
+.header ul.h-left .logo {
+  background: url(/images/logo.png) no-repeat;
+  background-size: auto;
+  width: 144px;
+  outline: none;
+  height: 36px;
+  display: block;
+  margin-right: 10px;
+}
+.header ul.h-right {
+  float: right;
+}
+.header ul.h-right > li {
+  padding: 8px 10px;
+  margin-left: 10px;
+  box-sizing: border-box;
+  height: 36px;
+}
+.header ul.h-right > li > a,
+.header ul.h-right > li > a:hover {
+  color: #333;
+}
+.header ul.h-right > li > a:hover {
+  text-decoration: underline;
+}
+.header ul.h-right > li .user-nav {
+  overflow: hidden;
+}
+.header ul.h-right > li .user-nav a {
+  float: left;
+}
+.header ul.h-right > li .user-nav a.user-name {
+  margin-left: 10px;
+}
+.header ul.h-right > li .message-opt {
+  position: relative;
+}
+.header ul.h-right > li .message-new {
+  position: absolute;
+  bottom: 18px;
+  left: 27px;
+  display: block;
+  padding: 2px;
+  color: #fff;
+  font-size: 10px;
+  background-color: #ff4d73;
+}
+.header ul.h-right > li .config-list {
+  width: 120px;
+  border: 2px solid #ddd;
+  background-color: #fff;
+  padding: 10px 0;
+  z-index: 1;
+  position: absolute;
+}
+.header ul.h-right > li .config-list a {
+  display: block;
+  height: 26px;
+  line-height: 26px;
+  font-size: 12px;
+  text-align: center;
+}
+.header ul.h-right > li .config-list a:hover {
+  background-color: #eaeaea;
+}
+.header ul.h-lef,
+.header ul.h-right {
+  padding: 10px;
+}
+.header ul.h-left > li,
+.header ul.h-right > li {
+  float: left;
+}
+.for-signin {
+  height: 420px !important;
+}
+.for-signin .banner-bg {
+  margin-top: 60px !important;
+}
+.banner {
+  height: 300px;
+  background-color: wight;
+  position: relative;
+  top: 67px;
+}
+.banner .banner-bg {
+  text-align: left;
+  margin: 0 auto;
+  width: 1026px;
+  height: 300px;
+  background: url(/images/banner_bg.png) no-repeat;
+}
+.banner .signin-area {
+  margin-top: 20px;
+  padding: 10px;
+  width: 320px;
+  background: #fff;
+  float: right;
+  height: 250px;
+}
+.banner .signin-area .slogan {
+  color: #666;
+  margin-top: 20px;
+  font-weight: bold;
+}
+.banner .signin-area .btn {
+  width: 100%;
+}
+.banner .signin-area p.field input {
+  width: 220px;
+}
+.banner .signin-area .other-ctrl {
+  overflow: hidden;
+}
+.banner .signin-area .other-ctrl a.forget-pwd {
+  float: left;
+}
+.banner .signin-area .other-ctrl a.sign-up {
+  float: right;
+}
+.construction {
+  width: 1026px;
+  height: 600px;
+  background: url(/images/building.png) no-repeat center;
+  text-align: left;
+  margin: 0 auto;
+}
+.construction p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: 10px;
+  margin-left: 80px;
+}
+.signup-area div,
+.signin-area div,
+.dream-area div {
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.signup-area p.label,
+.signin-area p.label,
+.dream-area p.label {
+  width: 100px;
+  float: left;
+}
+.signup-area p.field,
+.signin-area p.field,
+.dream-area p.field {
+  float: left;
+}
+.signup-area p.field input,
+.signin-area p.field input,
+.dream-area p.field input {
+  font-size: 14px;
+  height: 36px;
+  padding-left: 5px;
+  width: 218px;
+}
+.signup-area p.field textarea,
+.signin-area p.field textarea,
+.dream-area p.field textarea {
+  overflow: auto;
+  padding: 10px 0 0 5px;
+}
+.note-area {
+  top: 67px;
+  position: relative;
+  background-color: #f6f7f8;
+  border-bottom: 1px solid #eaeaea;
+  vertical-align: middle;
+}
+.note-area .note {
+  font-size: 12px;
+  padding: 3px;
+  text-align: center;
+  color: #999;
+}
+i.approval-icon,
+i.favrioute-icon,
+i.opposition-icon,
+i.comment-icon,
+i.support-icon,
+i.config-icon,
+i.arrow-icon {
+  display: inline-block;
+  background: url(/images/sprite_icon_2.png) no-repeat;
+  width: 16px;
+  height: 16px;
+  vertical-align: sub;
+  margin-right: 3px;
+}
+i.approval-icon {
+  background-position: -98px -70px;
+}
+i.favrioute-icon {
+  background-position: -82px -70px;
+}
+i.opposition-icon {
+  background-position: -114px -70px;
+}
+i.comment-icon {
+  background-position: -50px -87px;
+}
+i.support-icon {
+  background-position: -50px -70px;
+}
+i.config-icon {
+  background-position: -66px -86px;
+}
+i.arrow-icon {
+  background-position: -82px -86px;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+.container {
+  top: 67px;
+  position: relative;
+}
+.container h1 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 100;
+}
+.container .content {
+  padding: 10px;
+  text-indent: 2em;
+}
+.container .store-area,
+.container .team-area,
+.container .note,
+.container .search-area,
+.container .settings-area {
+  text-align: left;
+  width: 1026px;
+  margin: 0 auto;
+}
+.container .settings-area {
+  margin-top: 20px;
+  overflow: hidden;
+}
+.container .settings-area .settings-nav {
+  width: 25%;
+  float: left;
+}
+.container .settings-area .settings-nav .nav-list {
+  border: 1px solid #e8e8e8;
+  margin: 0 10px;
+}
+.container .settings-area .settings-nav .nav-list a {
+  padding: 10px;
+  display: block;
+  border-bottom: 1px solid #eaeaea;
+  text-align: center;
+}
+.container .settings-area .settings-nav .nav-list a.last {
+  border-bottom: none;
+}
+.container .settings-area .settings-content {
+  width: 75%;
+  float: right;
+}
+.container .settings-area .settings-content .content-area {
+  margin: 0 10px;
+}
+.container .search-area {
+  margin-top: 60px;
+  min-height: 420px;
+}
+.container .store-area h2 {
+  font-size: 16px;
+  font-weight: 100;
+}
+.container .store-area ul {
+  overflow: hidden;
+}
+.container .store-area li {
+  float: left;
+  overflow: hidden;
+  margin: 0 5px;
+}
+.container .store-area .app-pic {
+  float: left;
+}
+.container .store-area .app-info {
+  font-size: 12px;
+  width: 130px;
+  float: left;
+}
+.container .store-area .app-info p {
+  margin-bottom: 10px;
+}
+.container .store-area .app-info p.app-summary {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #999;
+}
+.container .signup-area {
+  width: 800px;
+  height: 420px;
+  padding: 20px;
+  margin: 50px auto 0;
+}
+.container .team-area {
+  padding: 10px;
+}
+.container .team-area .team-nav ul {
+  height: 26px;
+  border-bottom: 1px solid #eaeaea;
+}
+.container .team-area .team-nav li {
+  height: 26px;
+  float: left;
+}
+.container .team-area .team-nav li a {
+  background-color: #fff;
+  margin: 0 5px;
+  display: block;
+  padding: 0 15px;
+  height: 26px;
+  line-height: 26px;
+}
+.container .team-area .team-nav li a.cur {
+  border: 1px solid #eaeaea;
+  border-bottom-color: #fff;
+}
+.container .team-area p {
+  text-indent: 2em;
+}
+.container .team-area h2 {
+  font-size: 16px;
+}
+.container .dream-banner {
+  width: 1026px;
+  margin: 0 auto;
+}
+.container .dream-banner h1 {
+  text-align: center;
+}
+.container .search-area .no-result {
+  width: 300px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 20px 10px 10px;
+  text-align: center;
+}
+.container .search-area .no-result i.dismay {
+  background: url(/images/dismay.png) no-repeat;
+  display: block;
+  width: 64px;
+  height: 64px;
+  float: left;
+}
+.container .search-area .no-result p.dismay-text {
+  line-height: 64px;
+  height: 64px;
+  float: right;
+}
+.container .dream-con {
+  overflow: hidden;
+  width: 1026px;
+  margin: 0 auto;
+  text-align: left;
+}
+.container .dream-con .no-dream-content {
+  width: 300px;
+  margin: 0 auto;
+}
+.container .dream-con .no-dream-content .no-dream-tips {
+  text-align: center;
+  padding: 10px;
+  margin-top: 10px;
+}
+.container .dream-con .no-dream-content .btn-group {
+  overflow: hidden;
+}
+.container .dream-con .no-dream-content .btn {
+  float: left;
+  display: block;
+  width: 100px;
+  margin: 10px;
+}
+.container .dream-con .tag-area {
+  padding: 10px;
+}
+.container .dream-con .tag-area a {
+  padding: 2px 5px;
+  background: #eee;
+  display: inline-block;
+  overflow: hidden;
+  letter-spacing: 1px;
+  font-size: 12px;
+  color: #666;
+}
+.container .dream-con .tag-area a em {
+  font-style: normal;
+  float: left;
+}
+.container .dream-con .tag-area a i.tag-del {
+  display: block;
+  float: left;
+}
+.container .dream-con .tag-area a.tag-add {
+  padding: 0;
+  background: url(/images/sprite_icon_2.png) no-repeat;
+  width: 16px;
+  height: 16px;
+  background-position: -50px -70px;
+  vertical-align: super;
+}
+.container .dream-con h1.dream-title {
+  font-size: 1.5em;
+  font-weight: 100;
+  text-align: center;
+}
+.container .dream-con .dream-ctrl {
+  color: #999;
+  padding: 10px;
+  overflow: hidden;
+}
+.container .dream-con .dream-ctrl div.ctrl-nav {
+  overflow: hidden;
+}
+.container .dream-con .dream-ctrl ul.ctrl-list {
+  overflow: hidden;
+  float: right;
+}
+.container .dream-con .dream-ctrl ul.ctrl-list > li {
+  float: left;
+  margin-left: 10px;
+}
+.container .dream-con .dream-ctrl ul.ctrl-list > li a {
+  font-size: 12px;
+  color: #a8a8a8;
+}
+.container .dream-con .dream-ctrl ul.ctrl-list > li a:hover {
+  color: #698ebf;
+  text-decoration: underline;
+}
+.container .dream-con .dream-ctrl ul.ctrl-list .support-list {
+  width: 120px;
+  border: #eaeaea solid 1px;
+  background-color: #fff;
+  padding: 10px 0;
+  z-index: 1;
+  position: absolute;
+}
+.container .dream-con .dream-ctrl ul.ctrl-list .support-list a {
+  display: block;
+  height: 26px;
+  line-height: 26px;
+  font-size: 12px;
+  text-align: center;
+}
+.container .dream-con .dream-ctrl ul.ctrl-list .support-list a:hover {
+  background-color: #eaeaea;
+}
+.container .dream-con .dream-ctrl .comment-area {
+  padding: 10px 0;
+  overflow: hidden;
+}
+.container .dream-con .dream-ctrl .comment-area .user-info {
+  font-size: 12px;
+  overflow: hidden;
+}
+.container .dream-con .dream-ctrl .comment-area .user-info em {
+  font-style: normal;
+}
+.container .dream-con .dream-ctrl .comment-area .user-info .avatar {
+  margin-right: 10px;
+  float: left;
+}
+.container .dream-con .dream-ctrl .comment-area .user-info .username {
+  float: left;
+}
+.container .dream-con .dream-ctrl .comment-area .user-info .reply {
+  float: right;
+}
+.container .dream-con .dream-ctrl .comment-area .text {
+  padding: 10px 0;
+}
+.container .dream-con .dream-ctrl .comment-area .btn-area {
+  overflow: hidden;
+}
+.container .dream-con .dream-ctrl .comment-area button.btn {
+  margin-top: 10px;
+  float: right;
+}
+.container .dream-con .dream-ctrl .comment-area textarea {
+  overflow: auto;
+  resize: none;
+}
+.container .dream-con a.share-btn {
+  float: left;
+  display: block;
+}
+.container .dream-con .share-ctrl {
+  float: left;
+  overflow: hidden;
+}
+.container .dream-con .share-ctrl li {
+  float: left;
+}
+.container .dream-con a.sina-icon,
+.container .dream-con a.qq-icon,
+.container .dream-con a.dou-icon,
+.container .dream-con a.ren-icon,
+.container .dream-con a.wei-icon {
+  background: url(/images/sprite_icon_2.png) no-repeat;
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+  margin-left: 5px;
+  text-indent: -999999px;
+}
+.container .dream-con a.sina-icon {
+  background-position: 0 0;
+}
+.container .dream-con a.sina-icon:hover {
+  background-position: 0 -22px;
+}
+.container .dream-con a.qq-icon {
+  background-position: -23px 0;
+}
+.container .dream-con a.qq-icon:hover {
+  background-position: -23px -22px;
+}
+.container .dream-con a.dou-icon {
+  background-position: -45px 0;
+}
+.container .dream-con a.dou-icon:hover {
+  background-position: -45px -22px;
+}
+.container .dream-con a.ren-icon {
+  background-position: -67px 0;
+}
+.container .dream-con a.ren-icon:hover {
+  background-position: -67px -22px;
+}
+.container .dream-con a.wei-icon {
+  background-position: -90px 0;
+}
+.container .dream-con a.wei-icon:hover {
+  background-position: -90px -22px;
+}
+.container .dream-con .process-area {
+  margin-top: 10px;
+  overflow: hidden;
+}
+.container .dream-con .process-area .process-nav {
+  width: 650px;
+  height: 48px;
+  box-sizing: border-box;
+  /*overflow: hidden;*/
+  border-bottom: 1px solid #e8e8e8;
+}
+.container .dream-con .process-area .process-nav div.nav-left {
+  vertical-align: middle;
+  height: 48px;
+  /*overflow: hidden;*/
+  float: left;
+}
+.container .dream-con .process-area .process-nav li {
+  float: left;
+}
+.container .dream-con .process-area .process-nav li a {
+  display: block;
+  height: 48px;
+  width: 67px;
+  box-sizing: border-box;
+  padding: 10px 5px;
+  text-align: center;
+  color: #ff335e;
+}
+.container .dream-con .process-area .process-nav li a.cur {
+  border-bottom: 2px solid #ff4d73;
+}
+.container .dream-con .process-area .process-nav div.nav-right {
+  float: right;
+}
+.container .dream-con .process-area .process-nav div.nav-right a {
+  display: inline-block;
+  width: 67px;
+  padding: 10px 5px;
+  font-size: 12px;
+  color: #a8a8a8;
+}
+.container .dream-con .process-area .process-nav div.nav-right a:hover {
+  color: #698ebf;
+  text-decoration: underline;
+}
+.container .dream-con .process-area .edit-area {
+  margin-top: 10px;
+  padding: 10px;
+  position: relative;
+  border-radius: 4px;
+}
+.container .dream-con .process-area .edit-area ul {
+  border: 1px solid #eaeaea;
+  overflow: hidden;
+}
+.container .dream-con .process-area .edit-area li {
+  float: left;
+}
+.container .dream-con .process-area .edit-area li a {
+  width: 70px;
+  height: 60px;
+  text-align: center;
+  padding: 10px;
+  display: block;
+  font-size: 12px;
+  color: #a8a8a8;
+  border-right: 1px solid #eaeaea;
+  box-sizing: border-box;
+}
+.container .dream-con .process-area .edit-area li a:hover {
+  color: #698ebf;
+}
+.container .dream-con .process-area .edit-area li i.pic-icon,
+.container .dream-con .process-area .edit-area li i.video-icon,
+.container .dream-con .process-area .edit-area li i.more-icon {
+  margin: 0 auto;
+  width: 24px;
+  height: 24px;
+  display: block;
+  background: url(/images/sprite_icon_2.png) no-repeat;
+}
+.container .dream-con .process-area .edit-area li i.pic-icon {
+  background-position: -74px -44px;
+}
+.container .dream-con .process-area .edit-area li i.video-icon {
+  background-position: -50px -44px;
+}
+.container .dream-con .process-area .edit-area li i.more-icon {
+  background-position: -98px -44px;
+}
+.container .dream-con .process-area .edit-area li textarea {
+  padding: 5px;
+  box-sizing: border-box;
+  width: 418px;
+  height: 60px;
+  resize: none;
+  border: none;
+  overflow: auto;
+}
+.container .dream-con .process-area .edit-area .edit-ctrl {
+  margin-top: 5px;
+  overflow: hidden;
+}
+.container .dream-con .process-area .edit-area .edit-ctrl i.face {
+  font-style: normal;
+}
+.container .dream-con .process-area .edit-area .edit-ctrl button {
+  float: right;
+}
+.container .dream-con .process-area .process-node {
+  padding: 10px;
+}
+.container .dream-con .process-area .process-node p.user-info {
+  overflow: hidden;
+}
+.container .dream-con .process-area .process-node a.avatar {
+  float: right;
+}
+.container .dream-con .process-area .process-node em.username {
+  padding-top: 3px;
+  font-size: 12px;
+  font-style: normal;
+  float: left;
+  color: #a8a8a8;
+}
+.container .dream-con .process-area .process-node .node-content {
+  overflow: hidden;
+  margin-top: 10px;
+}
+.container .dream-con .process-area .process-node .node-content div.goods-l {
+  margin-right: 10px;
+  float: left;
+}
+.container .dream-con .process-area .process-node .node-content div.goods-r {
+  float: left;
+}
+.container .dream-con .process-area .process-node .node-content div.goods-r p.goods-ctrl {
+  margin-top: 10px;
+  overflow: hidden;
+}
+.container .dream-con .process-area .process-node .node-content div.goods-r a {
+  width: 100px;
+  margin-right: 10px;
+  display: inline-block;
+}
+.container .dream-con .process-area .process-node .node-ctrl {
+  overflow: hidden;
+  padding: 5px 0;
+  color: #999;
+}
+.container .dream-con .process-area .process-node .node-ctrl a {
+  font-size: 12px;
+  color: #a8a8a8;
+}
+.container .dream-con .process-area .process-node .node-ctrl a:hover {
+  color: #698ebf;
+  text-decoration: underline;
+}
+.container .dream-con .process-area .process-node div.ctrl-nav {
+  overflow: hidden;
+}
+.container .dream-con .process-area .process-node ul.ctrl-list {
+  overflow: hidden;
+  float: right;
+}
+.container .dream-con .process-area .process-node ul.ctrl-list > li {
+  margin-left: 10px;
+  float: left;
+}
+.container .dream-con .process-area .process-node ul.ctrl-list .support-list {
+  width: 120px;
+  border: #eaeaea solid 1px;
+  background-color: #fff;
+  padding: 10px 0;
+  z-index: 1;
+  position: absolute;
+}
+.container .dream-con .process-area .process-node ul.ctrl-list .support-list a {
+  display: block;
+  height: 26px;
+  line-height: 26px;
+  font-size: 12px;
+  text-align: center;
+}
+.container .dream-con .process-area .process-node ul.ctrl-list .support-list a:hover {
+  background-color: #eaeaea;
+}
+.container .dream-con .process-area .process-node .comment-area {
+  padding: 10px 0;
+  overflow: hidden;
+}
+.container .dream-con .process-area .process-node .comment-area .user-info {
+  font-size: 12px;
+  overflow: hidden;
+}
+.container .dream-con .process-area .process-node .comment-area .user-info em {
+  font-style: normal;
+}
+.container .dream-con .process-area .process-node .comment-area .user-info .avatar {
+  margin-right: 10px;
+  float: left;
+}
+.container .dream-con .process-area .process-node .comment-area .user-info .username {
+  float: left;
+}
+.container .dream-con .process-area .process-node .comment-area .user-info .reply {
+  float: right;
+}
+.container .dream-con .process-area .process-node .comment-area .text {
+  padding: 10px 0;
+}
+.container .dream-con .process-area .process-node .comment-area .btn-area {
+  overflow: hidden;
+}
+.container .dream-con .process-area .process-node .comment-area button.btn {
+  margin-top: 10px;
+  float: right;
+}
+.container .dream-con .process-area .process-node .comment-area textarea {
+  overflow: auto;
+  resize: none;
+}
+.container .dream-con .process-area .process-node .more,
+.container .dream-con .process-area .process-node .result {
+  text-align: center;
+}
+.container .dream-con .process-area .process-node .more a.btn,
+.container .dream-con .process-area .process-node .result a.btn {
+  display: block;
+  margin: 0 auto;
+}
+.container .dream-con .dream-left {
+  float: left;
+  width: 650px;
+}
+.container .dream-con .dream-right {
+  float: right;
+  width: 350px;
+}
+.container .dream-con .dream-right h2 {
+  font-size: 16px;
+  font-weight: 100;
+}
+.container .dream-con .dream-right .num-more {
+  font-size: 12px;
+  color: #ccc;
+  float: right;
+  font-weight: 100;
+}
+.container .dream-con .dream-right .change-btn {
+  float: right;
+}
+.container .dream-con .dream-right .author .author-top {
+  overflow: hidden;
+}
+.container .dream-con .dream-right .author .avatar {
+  margin-right: 10px;
+  float: left;
+}
+.container .dream-con .dream-right .author .admonition {
+  font-size: 12px;
+  color: #a8a8a8;
+}
+.container .dream-con .dream-right .author .author-ctrl,
+.container .dream-con .dream-right .author .achievem {
+  margin-top: 10px;
+}
+.container .dream-con .dream-right .author .achievem a {
+  margin-right: 10px;
+}
+a.prev-btn,
+a.next-btn {
+  top: 240px;
+  position: fixed;
+  display: block;
+  width: 50px;
+  height: 50px;
+  text-indent: -999999px;
+  background: url(/images/sprite_icon_2.png) no-repeat;
+}
+a.prev-btn {
+  background-position: 0 -44px;
+  margin-right: 530px;
+  right: 50%;
+}
+a.next-btn {
+  background-position: 0 -94px;
+  margin-left: 530px;
+  left: 50%;
+}
+.author p.achievem a {
+  color: #ccc;
+  font-size: 12px;
+}
+.member ul {
+  overflow: hidden;
+}
+.member li {
+  margin-left: 5px;
+  float: left;
+}
+.member a.member-add {
+  color: #a8a8a8;
+  width: 48px;
+  height: 48px;
+  display: block;
+}
+.member a.member-add i.icon-add {
+  margin: 0 auto;
+  background: url(/images/sprite_icon.png) no-repeat;
+  background-size: auto;
+  width: 27px;
+  outline: none;
+  height: 25px;
+  display: block;
+}
+.member a.member-add p {
+  text-align: center;
+}
+.demand ul {
+  overflow: hidden;
+}
+.demand li {
+  margin-left: 5px;
+  float: left;
+  position: relative;
+}
+.demand li .demand-modal {
+  text-align: center;
+  color: #fff;
+  width: 80px;
+  height: 80px;
+  background: #000;
+  background: rgba(0, 0, 0, 0.5) !important;
+  position: absolute;
+}
+.demand li .demand-modal p {
+  position: relative;
+  margin-top: 10px;
+}
+.demand a.result-add {
+  color: #a8a8a8;
+  width: 80px;
+  height: 80px;
+  display: block;
+  padding-top: 15px;
+  box-sizing: border-box;
+}
+.demand a.result-add i.icon-add {
+  margin: 0 auto;
+  background: url(/images/sprite_icon.png) no-repeat;
+  background-size: auto;
+  width: 27px;
+  outline: none;
+  height: 25px;
+  display: block;
+}
+.demand a.result-add p {
+  text-align: center;
+}
+.demand-money,
+.result-money {
+  width: 80px;
+  height: 80px;
+  border: 1px solid #eaeaea;
+}
+.demand-money p,
+.result-money p {
+  text-align: center;
+  color: #666;
+}
+.demand-money p.money,
+.result-money p.money {
+  font-size: 12px;
+  font-weight: bold;
+}
+.demand-money p.money em,
+.result-money p.money em {
+  font-style: normal;
+  font-size: 25px;
+}
+.result ul {
+  overflow: hidden;
+}
+.result li {
+  margin-left: 5px;
+  float: left;
+  position: relative;
+}
+.result li .result-modal {
+  text-align: center;
+  color: #fff;
+  width: 80px;
+  height: 80px;
+  background: #000;
+  background: rgba(0, 0, 0, 0.5) !important;
+  position: absolute;
+}
+.result li .result-modal p {
+  position: relative;
+  margin-top: 10px;
+}
+.result a.demand-add {
+  color: #a8a8a8;
+  width: 80px;
+  height: 80px;
+  display: block;
+  padding-top: 15px;
+  box-sizing: border-box;
+}
+.result a.demand-add i.icon-add {
+  margin: 0 auto;
+  background: url(/images/sprite_icon.png) no-repeat;
+  background-size: auto;
+  width: 27px;
+  outline: none;
+  height: 25px;
+  display: block;
+}
+.result a.demand-add p {
+  text-align: center;
+}
+.r-footer {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #ccc;
+}
+.footer {
+  margin-top: 10px;
+  border-top: 1px solid #eaeaea;
+  position: relative;
+  top: 67px;
+  font-size: 12px;
+  color: #bbb;
+}
+.footer .company-area {
+  overflow: hidden;
+  padding: 20px;
+  width: 1026px;
+  margin: 0 auto;
+}
+.footer .company-area .company-ver {
+  float: left;
+}
+.footer .company-area .company-nav {
+  float: right;
+}
+.footer .company-area .company-nav a {
+  display: line-block;
+  color: #bbb;
+}
+.footer .company-area .company-nav a:hover {
+  text-decoration: underline;
+}
+.footer .company-area .company-nav a.contact:before {
+  content: '•';
+  margin-right: 3px;
+  padding: 0 3px;
+  font-family: Arial;
+  color: #bbb;
+}
+.r-footer {
+  margin-top: 20px;
+}
+.r-footer .company-nav a {
+  display: line-block;
+  color: #bbb;
+}
+.r-footer .company-nav a:hover {
+  text-decoration: underline;
+}
+.r-footer .company-nav a.contact:before {
+  content: '•';
+  margin-right: 3px;
+  padding: 0 3px;
+  font-family: Arial;
+  color: #bbb;
+}
+.global-ctrl {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  margin-left: 530px;
+}
+.global-ctrl ul {
+  overflow: hidden;
+}
+.global-ctrl li {
+  margin-left: 10px;
+  float: left;
+}
+.global-ctrl .back-top {
+  background: url(/images/sprite_icon_2.png) no-repeat;
+  background-position: -50px -102px;
+  text-indent: -999999px;
+}
+.global-ctrl .back-top,
+.global-ctrl .feed-back {
+  padding-top: 5px;
+  width: 36px;
+  height: 36px;
+  display: block;
+  text-align: center;
+  color: #666;
+}
+.demand-form h3,
+.result-form h3,
+.message-form h3 {
+  font-size: 14px;
+}
+.demand-form .photo-area a,
+.result-form .photo-area a,
+.message-form .photo-area a {
+  display: block;
+}
+.demand-form p,
+.result-form p,
+.message-form p {
+  margin-bottom: 10px;
+}
+.demand-form p input,
+.result-form p input,
+.message-form p input {
+  height: 36px;
+  padding-left: 5px;
+}
+.demand-form p textarea,
+.result-form p textarea,
+.message-form p textarea {
+  height: 50px;
+  padding-left: 5px;
+  resize: none;
+  overflow: auto;
+}
+.message-list {
+  width: 300px;
+  overflow: hidden;
+}
+.message-list li a {
+  display: block;
+  border-top: 1px solid #eaeaea;
+}
+.message-list li a:hover {
+  color: #333;
+  background-color: #e6e6e6;
+}
+.message-list li a.last {
+  border-bottom: 1px solid #eaeaea;
+}
+.team-way {
+  overflow: hidden;
+}
+.team-way li {
+  float: left;
+}
+.team-way li a {
+  display: block;
+  border-radius: 0;
+  border-width: 1px 0 1px 1px;
+}
+.team-way li a.cur {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+.team-way li a.first {
+  border-radius: 4px 0 0 4px;
+}
+.team-way li a.last {
+  border-radius: 0 4px 4px 0;
+  border-right-width: 1px;
+}
+.dialog {
+  position: fixed;
+  z-index: 2;
+  border: 2px solid #ddd;
+  padding: 8px;
+  background: #fff;
+}
+.dialog .hd {
+  text-align: left;
+  height: 30px;
+  border-bottom: 1px solid #eaeaea;
+}
+.dialog .hd .title {
+  color: #999;
+  font-size: 16px;
+}
+.dialog .hd a.close {
+  background: url(/images/sprite_icon_2.png) no-repeat;
+  background-position: -66px -70px;
+  width: 16px;
+  height: 16px;
+  display: block;
+  float: right;
+}
+.dialog .bd {
+  padding: 10px;
+}
+.dialog#create-pop {
+  width: 600px;
+}
+.dialog#create-pop .dream-step {
+  padding: 10px 0;
+}
+.dialog#create-pop .dream-step ul {
+  overflow: hidden;
+}
+.dialog#create-pop .dream-step li {
+  margin-right: 10px;
+  float: left;
+}
+.dialog#create-pop .dream-area {
+  margin-top: 10px;
+}
+.dialog#create-pop input {
+  width: 360px;
+}
+.dialog#create-pop textarea {
+  width: 360px;
+  height: 100px;
+  overflow: auto;
+}
+.dialog .arrow-border {
+  border-style: solid;
+  border-width: 20px;
+  height: 0;
+  width: 0;
+  position: absolute;
+}
+.dialog .arrow {
+  border-style: solid;
+  border-width: 20px;
+  height: 0;
+  width: 0;
+  position: absolute;
+}
+.dialog.right .arrow-border {
+  border-color: transparent #ddd transparent transparent;
+  top: 20%;
+  left: -40px;
+}
+.dialog.right .arrow {
+  border-color: transparent #fff transparent transparent;
+  top: 20%;
+  left: -37px;
+}
+.dialog.top .arrow-border {
+  border-color: #ddd transparent transparent transparent;
+  bottom: -40px;
+  left: 20%;
+}
+.dialog.top .arrow {
+  border-color: #fff transparent transparent transparent;
+  bottom: -37px;
+  left: 20%;
+}
+.modal {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #f3f4f5;
+  position: fixed;
+  z-index: 1;
+}
+.modal.fade-in {
+  opacity: 0.6;
+}
+.modal.fade-out {
+  opacity: 0;
+  -webkit-transition: opacity 5s ease-in-out;
+  transition: opacity 5s ease-in-out;
+}
+.face-tips {
+  z-index: 1;
+  position: absolute;
+  width: 250px;
+  border: 2px solid #ddd;
+  background-color: white;
+}
+.face-tips ul {
+  overflow: hidden;
+}
+.face-tips ul li {
+  float: left;
+  padding: 10px;
+}

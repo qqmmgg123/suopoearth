@@ -1,0 +1,283 @@
+<!DCOTYPE html>
+<html lang="zh-cms-Hans">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title><%= title %></title>
+    <link rel="shortcut icon" href="/favicon.ico" /> 
+    <!-- 通用样式 -->
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 9]>
+    <link href="/css/compatible.css" rel="stylesheet" type="text/css" />
+    <![endif]-->
+</head>
+<body>
+    <% include header.html %>
+    <div class="container">
+        <div class="dream-con">
+            <div class="dream-left">
+                <!--<div class="tag-area">-->
+                    <!--<a href="/result?query='梦想'"><em>希望</em><i class="tag-del">×</i></a>-->
+                    <!--<a href="/result?query='想法'"><em>想法</em><i class="tag-del">×</i></a>-->
+                    <!--<a href="/result?query='天空'"><em>天空</em><i class="tag-del">×</i></a>-->
+                    <!--<a href="javascript:;" class="tag-add"></a>-->
+                <!--</div>-->
+                <div class="content-area">
+                    <h1 ><%= data.current.title %></h1>
+                    <p class="content"><%= data.current.description %></p>
+                </div>
+                <div data-did="<%= data.current.id %>" data-blid="<%= data.current.id %>" data-bl="0" class="dream-ctrl ctrl-area">
+                    <div class="ctrl-nav">
+                        <ul class="ctrl-list">
+                            <!--<li><a class="fav" href="javascript:;"><i class="favrioute-icon"></i>添加</a></li>-->
+                            <!--<li><a class="good" href="javascript:;"><i class="approval-icon"></i>支持</a></li>-->
+                            <!--<li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>-->
+                            <li>
+                            <a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 <%= data.current.comments.length %></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="comment-area" style="display: none;">
+                        <% if (user) { %>
+                        <textarea></textarea>
+                        <div class="btn-area"><button class="btn btn-comment">发表</button></div>
+                        <% } %>
+                        <ul>
+                        </ul>
+                    </div>
+                </div>
+                <div class="blue-print">
+                    <h2>蓝图</h2>
+                    <div>
+                        <% include blueprint.html %>
+                    </div>
+                </div>
+                <div class="process-area">
+                    <div class="process-nav clearfix">
+                        <div class="nav-left clearfix">
+                            <ul class="tab-nav">
+                                <li>
+                                    <a class="cur" href="javascript:;">心路故事</a>
+                                </li>
+                                <!--<li>-->
+                                    <!--<a href="javascript:;">甘特图</a>-->
+                                <!--</li>-->
+                            </ul>
+                        </div>
+                        <!--<div class="nav-right">-->
+                            <!--<a id="node-add" href="javascript:;">-->
+                                <!--设置-->
+                                <!--<i class="config-icon"></i>-->
+                            <!--</a>-->
+                        <!--</div>-->
+                    </div>
+                    <div class="tab-content">
+                        <% if (user && data.current._belong_u == user.id) { %>
+                        <div class="edit-area">
+                            <div class="add-area">
+                                <form action="/node/new" id="node_create_form" method="post">
+                                <ul>
+                                    <!--<li><a href="javascript:;" class="pic-add"><i class="pic-icon"></i>添加图片</a></li>-->
+                                    <!--<li><a href="javascript:;" class="video-add"><i class="video-icon"></i>添加视频</a></li>-->
+                                    <!--<li><a href="/store" class="more-add"><i class="more-icon"></i>更多资源</a></li>-->
+                                    <li><textarea placeholder="分享一下你的心路故事..." name="content"></textarea></li>
+                                    <li style="display: none;"><input name="did" type="hidden" value="<%= data.current.id %>" /></li>
+                                </ul>
+                                <div class="edit-ctrl">
+                                    <a href="javascript:;" title="表情" alt="表情" class="face">(∩＿∩)</a>
+                                    <button type="submit" id="node_create_btn" class="btn">分享</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                        <% } else { %>
+                        <div class="">
+                            和我的想法一样 <button class="btn">参与</button>
+                        </div>
+                        <% } %>
+                        <% if (data.nodes.length > 0) { %>
+                        <% data.nodes.forEach(function(node) { %>
+                        <div class="process-node">
+                            <div>
+                                <p class="user-info">
+                                <a class="avatar" href="/user/<%= node._belong_u? node._belong_u.id:node._belong_u %>"><img src="/images/user_mini.png" /></a>
+                                    <em class="username">
+                                        <% if (node._belong_u) { %>
+                                            <a href="/user/<%= node._belong_u.id %>">
+                                            <%= node._belong_u.nickname %>
+                                        <% } else { %>
+                                            <a href="/user/<%= node._belong_u %>">
+                                            <%= node.author %>
+                                        <% } %>
+                                        </a> <%= timeFormat(node.date) %> 更新了历程
+                                    </em>
+                                </p>
+                                <p class="node-content"><%= node.content %></p>
+                            </div>
+                            <div data-did="<%= data.current.id %>" data-blid="<%= node.id %>" data-bl="1" class="node-ctrl ctrl-area">
+                                <div class="ctrl-nav">
+                                    <ul class="ctrl-list">
+                                        <!--<li><a class="good" href="javascript:;"><i class="approval-icon"></i>支持</a></li>-->
+                                        <!--<li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>-->
+                                        <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 <%= node.comments.length %></a></li>
+                                    <ul>
+                                </div>
+                                <div class="comment-area" style="display: none;">
+                                    <% if (user) { %>
+                                    <textarea></textarea>
+                                    <div class="btn-area"><button class="btn btn-comment">发表</button></div>
+                                    <% } %>
+                                    <ul>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                        <!--<div class="process-node">-->
+                            <!--<div class="more"><a class="btn">查看更多 ></a></div>-->
+                        <!--</div>-->
+                        <% } else { %>
+                        <div class="process-node">
+                            <div class="result">
+                                    没有想法的践行历程
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                    <div class="tab-content" style="display: none;">
+                    </div>
+                </div>
+            </div>
+            <div class="dream-right">
+                <div>
+                    <button class="btn">关注该想法</button>
+                </div>
+                <div class="member">
+                    <h2><%= data.membercount %>人有同样的想法</h2>
+                        <ul>
+                            <% if (data.members.length > 0) { %>
+                            <% data.members.forEach(function(member) { %>
+                            <li>
+                                <div class="friend">
+                                    <a href="/user/<%= member.id %>"><img src="/images/user.png" /></a>
+                                    <div class="tips" style="display: none;">
+                                        <div><%= member.nickname %></div>
+                                        <p>
+                                            <% if (member.isfollow) { %>
+                                            <button data-isfollow="<%= member.isfollow %>" data-fid="<%= member.id %>" class="follow btn">
+                                                取消关注
+                                            </button>
+                                            <% } else { %>
+                                            <button data-isfollow="<%= member.isfollow %>" data-fid="<%= member.id %>" class="follow btn">
+                                                关注
+                                            </button>
+                                            <% } %>
+                                            <button class="message-add btn">打招呼</button>
+                                        </p>
+                                    </div>
+                                </div>
+                            </li>
+                            <% }); %>
+                            <% } %>
+                            <!--<li>-->
+                                <!--<a class="member-add" href="javascript:;">-->
+                                    <!--<i class="icon-add"></i>-->
+                                    <!--<p>参与</p>-->
+                                <!--</a>-->
+                            <!--</li>-->
+                        </ul>
+                </div>
+                <div class="r-footer">
+                    <div class="company-area">
+                        <p class="company-ver">© 2016 深圳娑婆诃科技有限公司　suopoearth.com 版权所有</p>
+                        <div class="company-nav">
+                            <a href="/intro">关于我们</a>
+                            <a class="contact" href="/contact">联系我们</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="global-ctrl">
+            <ul>
+                <li>
+                    <a href="javascript:;" class="back-top">回到顶部</a>
+                </li>
+                <!--<li>-->
+                    <!--<a href="javascript:;" class="feed-back">反馈</a>-->
+                <!--</li>-->
+            </ul>
+        </div>
+    </div>
+    <% if (data.prev && data.prev.id) {%>
+    <a href="/dream/<%= data.prev.id %>" class="prev-btn">上一个想法</a>
+    <% } %>
+    <% if (data.next && data.next.id) {%>
+    <a href="/dream/<%= data.next.id %>" class="next-btn">下一个想法</a>
+    <% } %>
+    <% include signinpop.html %>
+    <% include create.html %>
+    <div id="demand-pop" class="dialog" style="display: none;">
+        <div class="hd">
+            <span>添加需求</span>
+            <a href="javascript:;" class="close"></a>
+        </div>
+        <div class="bd">
+            <div class="demand-form">
+                <div class="photo-area">
+                    <p><img src="/images/demand_2.png"/></p>
+                    <p><a class="btn">添加图片</a></p>
+                </div>
+                <p class="field"><input type="text" placeholder="名字" /></p>
+                <p class="field"><input type="number" placeholder="数量" /></p>
+                <p class="field"><input type="text" placeholder="单位" /></p>
+                <p class="field"><textarea>介绍</textarea></p>
+                <h3>选择合作方式</h3>
+                <ul class="team-way">
+                    <li><a class="btn first cur">捐助</a><li>
+                    <li><a class="btn">奖励</a><li>
+                    <li><a class="btn">租用</a><li>
+                    <li><a class="btn">分期</a><li>
+                    <li><a class="btn">实价</a><li>
+                    <li><a class="btn">实物互换</a><li>
+                    <li><a class="btn">债券</a></li>
+                    <li><a class="btn last">股权</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="result-pop" class="dialog" style="display: none;">
+        <div class="hd">
+            <span>添加成果</span>
+            <a href="javascript:;" class="close"></a>
+        </div>
+        <div class="bd">
+            <div class="result-form">
+                <div class="photo-area">
+                    <p><img src="/images/result_2.png"/></p>
+                    <p><a class="btn">添加图片</a></p>
+                </div>
+                <p class="field"><input type="text" placeholder="名字" /></p>
+                <p class="field"><input type="number" placeholder="数量" /></p>
+                <p class="field"><input type="text" placeholder="单位" /></p>
+                <p class="field"><textarea>介绍</textarea></p>
+                <h3>选择合作方式</h3>
+                <ul class="team-way">
+                    <li><a class="btn first cur">捐助</a><li>
+                    <li><a class="btn">奖励</a><li>
+                    <li><a class="btn">租用</a><li>
+                    <li><a class="btn">分期</a><li>
+                    <li><a class="btn">实价</a><li>
+                    <li><a class="btn">实物互换</a><li>
+                    <li><a class="btn">债券</a></li>
+                    <li><a class="btn last">股权</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <% include messagepop.html %>
+    <% include face.html %>
+</body>
+<script src="/js/jquery.min.js" type="text/javascript"></script>
+<script src="/js/common.js" type="text/javascript"></script>
+<script src="/js/dream.js" type="text/javascript"></script>
+</html>
