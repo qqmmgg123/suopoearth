@@ -15,6 +15,7 @@
     <div class="container">
         <div class="dream-con">
             <div class="dream-left">
+                <div class="dream-left-inner">
                 <!--<div class="tag-area">-->
                     <!--<a href="/result?query='梦想'"><em>希望</em><i class="tag-del">×</i></a>-->
                     <!--<a href="/result?query='想法'"><em>想法</em><i class="tag-del">×</i></a>-->
@@ -45,12 +46,12 @@
                         </ul>
                     </div>
                 </div>
-                <div class="blue-print">
-                    <h2>蓝图</h2>
-                    <div>
-                        <% include blueprint.html %>
-                    </div>
-                </div>
+                <!--<div class="blue-print">-->
+                    <!--<h2>蓝图</h2>-->
+                    <!--<div>-->
+                        <!--<% include blueprint.html %>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <div class="process-area">
                     <div class="process-nav clearfix">
                         <div class="nav-left clearfix">
@@ -79,7 +80,7 @@
                                     <!--<li><a href="javascript:;" class="pic-add"><i class="pic-icon"></i>添加图片</a></li>-->
                                     <!--<li><a href="javascript:;" class="video-add"><i class="video-icon"></i>添加视频</a></li>-->
                                     <!--<li><a href="/store" class="more-add"><i class="more-icon"></i>更多资源</a></li>-->
-                                    <li><textarea placeholder="分享一下你的心路故事..." name="content"></textarea></li>
+                                    <li class="textarea-field"><textarea placeholder="分享一下你的心路故事..." name="content"></textarea></li>
                                     <li style="display: none;"><input name="did" type="hidden" value="<%= data.current.id %>" /></li>
                                 </ul>
                                 <div class="edit-ctrl">
@@ -146,10 +147,12 @@
                     <div class="tab-content" style="display: none;">
                     </div>
                 </div>
+                </div>
             </div>
             <div class="dream-right">
+                <div class="dream-right-inner">
                 <div>
-                    <button class="btn">关注该想法</button>
+                    <button data-isfollow="false" data-did="<%= data.current.id %>" ref="dream-follow" class="btn">关注该想法</button>
                 </div>
                 <div class="member">
                     <h2><%= data.membercount %>人有同样的想法</h2>
@@ -171,7 +174,7 @@
                                                 关注
                                             </button>
                                             <% } %>
-                                            <button class="message-add btn">打招呼</button>
+                                            <!--<button class="message-add btn">打招呼</button>-->
                                         </p>
                                     </div>
                                 </div>
@@ -194,6 +197,7 @@
                             <a class="contact" href="/contact">联系我们</a>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>

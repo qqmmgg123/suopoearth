@@ -164,19 +164,11 @@ a {
         }
         #create_dream_btn {
             float: left;
-            margin-left: 5px;
-            padding: 8px 20px;
-            display: block;
-            color: #fff;
-            background-color: #5cb85c;
-            border-color: #4cae4c;
-            box-sizing: border-box;
             height: 36px;
-            &:hover {
-                color: #fff;
-                background-color: #449d44;
-                border-color: #398439
-            }
+            padding: 8px 20px;
+            margin-left: 5px;
+            display: block;
+            box-sizing: border-box;
         }
     }
     ul.h-left {
@@ -407,7 +399,6 @@ i.arrow-icon {
     }
     .content {
         padding: 10px;
-        text-indent: 2em;
     }
     .store-area, .team-area, .note, .search-area, .settings-area {
         text-align: left;
@@ -810,14 +801,17 @@ i.arrow-icon {
                         background-position: -98px -44px;
                     }
                     float: left;
-                    textarea {
-                        padding: 5px;
-                        box-sizing: border-box;
-                        width: 418px;
-                        height: 60px;
-                        resize: none;
-                        border: none;
-                        overflow: auto;
+                    &.textarea-field {
+                        width: 100%;
+                        textarea {
+                            padding: 5px;
+                            box-sizing: border-box;
+                            width: 100%;
+                            height: 60px;
+                            resize: none;
+                            border: none;
+                            overflow: auto;
+                        }
                     }
                 }
                 .edit-ctrl {
@@ -957,10 +951,17 @@ i.arrow-icon {
         .dream-left {
             float: left;
             width: 650px;
+            .dream-left-inner {
+                padding: 10px;
+            }
         }
         .dream-right {
             float: right;
             width: 350px;
+            .dream-right-inner {
+                padding: 10px;
+            }
+
             h2 {
                 font-size: 16px;
                 font-weight: 100;

@@ -102,19 +102,29 @@ router.get('/dream/:id', function(req, res, next) {
                 cb(null, msgs);
             });
         }, function(cb) {
-            Dream.findOne({
-                _id: curId
-            })
-            .populate([{
+            var populate = [{
                     path: 'accounts',
                     options: { limit: 6 },
                 }, {
                     path: 'nodes',
                     options: { 
-                    limit: 20,
-                    sort: '-date'
-                },
-            }])
+                        limit: 20,
+                        sort: '-date'
+                    }
+                }
+            ];
+
+            if (req.user) {
+                populate.push({
+                    path: '_followers_u',
+                    select: req.user.id
+                });
+            }
+
+            Dream.findOne({
+                _id: curId
+            })
+            .populate(populate)
             .exec(function(err, dream) {
                 if (err) {
                     return cb(err, null);
@@ -135,8 +145,10 @@ router.get('/dream/:id', function(req, res, next) {
                 dream = results[1];
 
             if (msgs && dream) {
-                var accounts = dream.accounts;
-                var nodes = dream.nodes;
+                var accounts  = dream.accounts;
+                var nodes     = dream.nodes;
+                var followers = dream._followers_u;
+                //console.log(dream._followers_u);
 
                 Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
                     if (err) {
@@ -208,19 +220,24 @@ router.get('/dream/:id', function(req, res, next) {
                                 });
                             }
 
+                            Dream.find({_followers_u: req.user.id }, function(err, data) {
+                                console.log(data);
+                            });
+                            var resData = {
+                                membercount: results[0],
+                                members    : accounts,
+                                messages   : msgs,
+                                prev       : results[1][0],
+                                nodes      : rnodes,
+                                current    : results[2][0],
+                                next       : results[2][1]
+                            };
+
                             res.render('dream', {
-                                user : req.user,
-                                title: settings.APP_NAME,
+                                user  : req.user,
+                                title : settings.APP_NAME,
                                 notice: getFlash(req, 'notice'),
-                                data: {
-                                    membercount: results[0],
-                                    members    : accounts,
-                                    messages   : msgs,
-                                    prev       : results[1][0],
-                                    nodes      : rnodes,
-                                    current    : results[2][0],
-                                    next       : results[2][1]
-                                },
+                                data  : resData,
                                 success: 1
                             });
                         }

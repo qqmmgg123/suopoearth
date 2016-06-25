@@ -154,19 +154,11 @@ a {
 }
 .header .create-area #create_dream_btn {
   float: left;
-  margin-left: 5px;
-  padding: 8px 20px;
-  display: block;
-  color: #fff;
-  background-color: #5cb85c;
-  border-color: #4cae4c;
-  box-sizing: border-box;
   height: 36px;
-}
-.header .create-area #create_dream_btn:hover {
-  color: #fff;
-  background-color: #449d44;
-  border-color: #398439;
+  padding: 8px 20px;
+  margin-left: 5px;
+  display: block;
+  box-sizing: border-box;
 }
 .header ul.h-left {
   float: left;
@@ -397,7 +389,6 @@ i.arrow-icon {
 }
 .container .content {
   padding: 10px;
-  text-indent: 2em;
 }
 .container .store-area,
 .container .team-area,
@@ -808,10 +799,13 @@ i.arrow-icon {
 .container .dream-con .process-area .edit-area li i.more-icon {
   background-position: -98px -44px;
 }
-.container .dream-con .process-area .edit-area li textarea {
+.container .dream-con .process-area .edit-area li.textarea-field {
+  width: 100%;
+}
+.container .dream-con .process-area .edit-area li.textarea-field textarea {
   padding: 5px;
   box-sizing: border-box;
-  width: 418px;
+  width: 100%;
   height: 60px;
   resize: none;
   border: none;
@@ -953,9 +947,15 @@ i.arrow-icon {
   float: left;
   width: 650px;
 }
+.container .dream-con .dream-left .dream-left-inner {
+  padding: 10px;
+}
 .container .dream-con .dream-right {
   float: right;
   width: 350px;
+}
+.container .dream-con .dream-right .dream-right-inner {
+  padding: 10px;
 }
 .container .dream-con .dream-right h2 {
   font-size: 16px;

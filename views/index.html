@@ -15,6 +15,7 @@
     <div class="container">
         <div class="dream-con">
             <div class="dream-left">
+            <div class="dream-left-inner">
             <% if (data.dreams.length > 0) { %>
                 <ul>
                 <% data.dreams.forEach(function(dream) { %>
@@ -31,14 +32,17 @@
                 </div>
             <% } %>
             </div>
+            </div>
             <div class="dream-right">
+                <div class="dream-right-inner">
                 <ul>
                     <li><a href="/dream/all">全部想法</a></li>
                     <li><a href="/dream/mine">发起的想法</a></li>
-                    <li><a href="/dream/joined">参与的想法</a></li>
+                    <!--<li><a href="/dream/joined">参与的想法</a></li>-->
                     <li><a href="/dream/following">关注的想法</a></li>
                     <!--<li><a href="/dream/following">关注的人的想法</a></li>-->
                 </ul>
+                </div>
             </div>
         </div>
     </div>

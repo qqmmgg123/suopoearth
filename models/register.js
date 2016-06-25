@@ -34,7 +34,7 @@ module.exports = function(schema, options) {
             pass: 'Suopoearth123'
         },
         //proxy: 'http://dev-proxy.oa.com:8080/'
-        proxy: 'http://127.0.0.1:8087'
+        proxy: 'http://127.0.0.1:8085'
     };
     options.verifyMailOptions = options.verifyMailOptions || {
         from: 'Do Not Reply <qqmmgg123@gmail.com>',

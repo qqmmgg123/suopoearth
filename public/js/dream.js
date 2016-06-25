@@ -2,13 +2,6 @@ $(function() {
     // 绑定用户操作
     common.bindUserCtrl();
 
-    $('.tab-nav').on('click', 'a', function() {
-        $('.tab-nav').find('a').removeClass('cur');
-        $(this).addClass('cur');
-        var i = $('.tab-nav').find('a').index(this);
-        $('.process-area').find('.tab-content').hide().eq(i).show();
-    });
-
     // 创建历程
     $('#node_create_btn').click(function() {
         var cval = $('#node_create_form').find("textarea").val();
@@ -57,46 +50,6 @@ $(function() {
             $(this).find('.tips').hide();
         }
     );
-
-    $('.demand-add').click(function() {
-        var pagesize = common.getPageSize();
-        var $demand_pop = $('#demand-pop');
-        $('.modal').show();
-        $demand_pop.css({
-            top: (pagesize[3] - $demand_pop.height()) / 2,
-            left: (pagesize[2] - $demand_pop.width()) / 2
-        }).show();
-        $(document).unbind('keypress').on('keydown', function(event) {
-            if (event.keyCode === 27) {
-                $('.modal').hide();
-                $demand_pop.hide();
-            }
-        });
-        $demand_pop.find('a.close').unbind('click').on('click', function() {
-            $('.modal').hide();
-            $demand_pop.hide();
-        });
-    });
-
-    $('.result-add').click(function() {
-        var pagesize = common.getPageSize();
-        var $result_pop = $('#result-pop');
-        $('.modal').show();
-        $result_pop.css({
-            top: (pagesize[3] - $result_pop.height()) / 2,
-            left: (pagesize[2] - $result_pop.width()) / 2
-        }).show();
-        $(document).unbind('keypress').on('keydown', function(event) {
-            if (event.keyCode === 27) {
-                $('.modal').hide();
-                $result_pop.hide();
-            }
-        });
-        $result_pop.find('a.close').unbind('click').on('click', function() {
-            $('.modal').hide();
-            $result_pop.hide();
-        });
-    });
 
     // 回到顶部按钮
     $('.back-top').click(function() {
@@ -149,6 +102,52 @@ $(function() {
         }
     });
 
+    // 关注想法操作
+    $('[ref="dream-follow"]').click(function() {
+        alert('ok');
+        var isFollow = $(this).data('isfollow');
+        var $self = $(this);
+        if (!isFollow) {
+            $.ajax({
+                url: "/dream/following",
+                data: {
+                    did: $(this).data('did')
+                },
+                method: "POST",
+                dataType: "json",
+                success: function(data) {
+                    alert(data.info);
+                    if (data.result === 0) {
+                        $self.text("取消关注");
+                        $self.data('isfollow', true);
+                    }
+                },
+                error: function() {
+
+                }
+            });
+        }else{
+            $.ajax({
+                url: "/user/cfollow",
+                data: {
+                    fid: $(this).data('fid')
+                },
+                method: "POST",
+                dataType: "json",
+                success: function(data) {
+                    alert(data.info);
+                    if (data.result === 0) {
+                        $self.text("关注");
+                        $self.data('isfollow', false);
+                    }
+                },
+                error: function() {
+                }
+            });
+        }
+    });
+
+
     // 添加提议
     $('.comment').data('editShow', false).click(function() {
         var $this = $(this);
@@ -169,7 +168,6 @@ $(function() {
                 break;
             default:
                 return;
-                break;
         }
 
         if (!editShow) {
@@ -260,7 +258,7 @@ $(function() {
                                             }
                                         }
                                     });
-                                })
+                                });
                             }
                             $commentArea.show().find('textarea').focus();
                             $this.data('editShow', true);
@@ -309,7 +307,7 @@ $(function() {
             did     : did,
             bl      : bl,
             content : newcon
-        }
+        };
 
         $.ajax({
             url: "/comment/new",
@@ -328,7 +326,7 @@ $(function() {
                     '<p class="text">' + data.comment.content + '</p>' +
                     '</li>';
 
-                $commentArea.find('ul').prepend(tpl)
+                $commentArea.find('ul').prepend(tpl);
                     $belong.find('.comment')[0].lastChild.nodeValue = "提议 " + data.total;
             },
             error: function() {
@@ -349,6 +347,6 @@ $(function() {
 
     $('.team-way').on('click', 'a', function() {
         $('.team-way').find('a').removeClass('cur');
-        $(this).addClass('cur')
-    })
+        $(this).addClass('cur');
+    });
 });
