@@ -97,7 +97,7 @@ router.get('/dream/:id', function(req, res, next) {
                 '_belong_u': uid
             }).exec(function(err, msgs) {
                 if (err) {
-                    return cb(err, []);
+                    return cb(null, []);
                 }
                 cb(null, msgs);
             });
@@ -131,24 +131,35 @@ router.get('/dream/:id', function(req, res, next) {
                 }
                 cb(null, dream);
             });
+        }, function(cb) {
+            if (!req.user) {
+                return cb(null,[]);
+            }
+            var uid   = req.user.id;
+
+            Dream.find({_followers_u: uid }, function(err, followers) {
+                if (err) {
+                    return cb(null, []);
+                }
+                cb(null, followers);
+            });
         }], function(err, results) {
             if (err) {
                 var err = new Error("找不到该想法...");
                 return next(err);
             }
 
-            if (!results || results.length < 2) {
+            if (!results || results.length < 3) {
                 return next(new Error("找不到该想法..."));
             }
 
-            var msgs  = results[0];
-                dream = results[1];
+            var msgs      = results[0],
+                dream     = results[1],
+                followers = results[2];
 
             if (msgs && dream) {
                 var accounts  = dream.accounts;
                 var nodes     = dream.nodes;
-                var followers = dream._followers_u;
-                //console.log(dream._followers_u);
 
                 Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
                     if (err) {
@@ -220,9 +231,6 @@ router.get('/dream/:id', function(req, res, next) {
                                 });
                             }
 
-                            Dream.find({_followers_u: req.user.id }, function(err, data) {
-                                console.log(data);
-                            });
                             var resData = {
                                 membercount: results[0],
                                 members    : accounts,
@@ -232,6 +240,10 @@ router.get('/dream/:id', function(req, res, next) {
                                 current    : results[2][0],
                                 next       : results[2][1]
                             };
+
+                            if (followers) {
+                                resData.isFollow = (followers.length > 0);
+                            }
 
                             res.render('dream', {
                                 user  : req.user,

@@ -152,7 +152,11 @@
             <div class="dream-right">
                 <div class="dream-right-inner">
                 <div>
-                    <button data-isfollow="false" data-did="<%= data.current.id %>" ref="dream-follow" class="btn">关注该想法</button>
+                    <% if (data.isFollow) { %>
+                    <button data-isfollow="data.isFollow" data-did="<%= data.current.id %>" ref="dream-follow" class="btn">关注该想法</button>
+                    <% } else { %>
+                    <button data-isfollow="data.isFollow" data-did="<%= data.current.id %>" ref="dream-follow" class="btn">取消关注想法</button>
+                    <% } %>
                 </div>
                 <div class="member">
                     <h2><%= data.membercount %>人有同样的想法</h2>
