@@ -242,6 +242,7 @@ router.get('/dream/:id', function(req, res, next) {
                             };
 
                             if (followers) {
+                                console.log(followers);
                                 resData.isFollow = (followers.length > 0);
                             }
 

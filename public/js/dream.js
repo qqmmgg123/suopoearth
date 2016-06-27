@@ -104,7 +104,6 @@ $(function() {
 
     // 关注想法操作
     $('[ref="dream-follow"]').click(function() {
-        alert('ok');
         var isFollow = $(this).data('isfollow');
         var $self = $(this);
         if (!isFollow) {
@@ -118,7 +117,7 @@ $(function() {
                 success: function(data) {
                     alert(data.info);
                     if (data.result === 0) {
-                        $self.text("取消关注");
+                        $self.text("取消关注该想法");
                         $self.data('isfollow', true);
                     }
                 },
@@ -128,16 +127,16 @@ $(function() {
             });
         }else{
             $.ajax({
-                url: "/user/cfollow",
+                url: "/dream/cfollowing",
                 data: {
-                    fid: $(this).data('fid')
+                    did: $(this).data('did')
                 },
                 method: "POST",
                 dataType: "json",
                 success: function(data) {
                     alert(data.info);
                     if (data.result === 0) {
-                        $self.text("关注");
+                        $self.text("关注该想法");
                         $self.data('isfollow', false);
                     }
                 },
