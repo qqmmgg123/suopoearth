@@ -34,9 +34,14 @@ router.get('/', function(req, res, next) {
         return res.redirect('/found');
     }
 
-    Account.findOne({
-        _id: req.user.id
-    })
+    Account.find(
+        { 
+            $or: [
+                { 'fans': req.user.id }, 
+                { '_id': req.user.id }
+            ]
+        }
+    )
     .populate({
          path: 'dreams'
     })
@@ -45,16 +50,17 @@ router.get('/', function(req, res, next) {
             return next(err);
         }
 
-        var dreams = user.dreams;
+        var dreams  = user.dreams;
+        console.log(user);
 
         Node.populate(dreams, { path: 'nodes' }, function(err, rdreams) {
             if (err) {
                 return next(err);
             }
             
-            rdreams.forEach(function(dream) {
+            //rdreams.forEach(function(dream) {
                 //console.log(dream.nodes);
-            });
+            //});
 
             res.render('index', {
                 user: req.user,
