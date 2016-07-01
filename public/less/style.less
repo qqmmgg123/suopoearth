@@ -1,5 +1,12 @@
 @arrow-left: 20%;
 @top: 67px;
+.disable-selection() {
+    -moz-user-select:none; /* Firefox */
+    -ms-user-select:none; /* Internet Explorer */
+    -ktml-user-select:none; /* KHTML浏览器（比如：Konqueror） */
+    -webkit-user-select:none; /* Chrome,Safari,and Opera */
+    -webkit-touch-callout:none; /* Disable Android and IOS callout */
+}
 
 @font-face {
     font-family: Microsoft YaHei Font;
@@ -73,6 +80,7 @@ a {
     border-radius: 4px;
     text-align: center;
     font:12px/1.5 Microsoft YaHei;
+    .disable-selection();
     &:hover {
         color: #333;
         background-color: #e6e6e6;

@@ -119,8 +119,7 @@ module.exports = function(schema, options) {
         // create a TTL
         schemaFields.createdAt = {
             type: Date,
-            expires: options.expirationTime.toString() + 's',
-            default: Date.now
+            expires: options.expirationTime.toString() + 's'
         };
     }
 
@@ -425,6 +424,7 @@ module.exports = function(schema, options) {
                 }
 
                 user[options.URLFieldName] = randtoken.generate(options.URLLength);
+                user.createdAt = Date.now
                 user.isAuthenticated = false;
                 user.save(function(saveErr) {
                     if (saveErr) {

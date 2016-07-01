@@ -64,6 +64,16 @@ a {
   border-radius: 4px;
   text-align: center;
   font: 12px/1.5 Microsoft YaHei;
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer */
+  -ktml-user-select: none;
+  /* KHTML浏览器（比如：Konqueror） */
+  -webkit-user-select: none;
+  /* Chrome,Safari,and Opera */
+  -webkit-touch-callout: none;
+  /* Disable Android and IOS callout */
 }
 .btn:hover {
   color: #333;

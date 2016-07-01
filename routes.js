@@ -242,7 +242,6 @@ router.get('/dream/:id', function(req, res, next) {
                             };
 
                             if (followers) {
-                                console.log(followers);
                                 resData.isFollow = (followers.length > 0);
                             }
 
@@ -376,12 +375,12 @@ router.post('/settings/profile/update', function(req, res, next) {
 
     var uid = req.user.id;
 
-    if (!req.body || !req.body.nickname || !req.body.bio) {
+    if (!req.body || !req.body.nickname) {
         var err = new Error("修改内容为空，个人信息更新失败！");
         return next(err);
     }
-    var nickname = req.body.nickname;
-    var bio = req.body.bio;
+    var nickname = req.body.nickname,
+        bio = req.body.bio? req.body.bio:'';
 
     Account.findById(uid, function(err, user) {
         if (err) {
@@ -393,9 +392,10 @@ router.post('/settings/profile/update', function(req, res, next) {
             return next(err);
         }
 
-        user.nickname = nickname;
-        user.bio = bio;
-        user.save(function(err) {
+        user.update({
+            nickname : nickname,
+            bio      : bio
+        }, function(err, course) {
             if (err) {
                 req.flash('error', err.message);
                 return res.redirect('/settings/profile');
@@ -1317,7 +1317,7 @@ router.post('/dream/cfollowing', function(req, res, next) {
 
     var isdream, isuser;
     async.parallel([
-        function() {
+        function(cb) {
             Account.findById(uid, function(err, user) {
                 if (err) return next(err);
 
@@ -1333,7 +1333,7 @@ router.post('/dream/cfollowing', function(req, res, next) {
                 cb(null, user);
             })
         },
-        function() {
+        function(cb) {
             Dream.findById(dreamID, function(err, dream) {
                 if (err) return cb(err, null);
 
