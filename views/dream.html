@@ -151,7 +151,7 @@
             </div>
             <div class="dream-right">
                 <div class="dream-right-inner">
-                <% if (data.current && data.current._belong_u != user.id) { %>
+                <% if (data.current && data.current._belong_u != (user && user.id)) { %>
                 <div>
                     <% if (!data.isFollow) { %>
                     <button data-isfollow="<%= data.isFollow %>" data-did="<%= data.current.id %>" ref="dream-follow" class="btn">关注该想法</button>

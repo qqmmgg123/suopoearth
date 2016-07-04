@@ -37,7 +37,15 @@ router.get('/', function(req, res, next) {
 
     var uid = req.user.id;
 
-    Account.findById(uid, function(err, user) {
+    Account.findById(uid)
+    .populate([{
+            path: 'dreams',
+            select: 'title description'
+        }, {
+            path: '_following_d',
+            select: 'title description'
+        }])
+    .exec(function(err, user) {
         if (err) {
             return next(err);
         }
@@ -73,7 +81,9 @@ router.get('/', function(req, res, next) {
                 title: settings.APP_NAME,
                 notice: getFlash(req, 'notice'),
                 data: {
-                    activities: activities
+                    activities: activities,
+                    fdreams: user._following_d,
+                    mdreams: user.dreams
                 },
                 success: 1
             });
@@ -86,7 +96,8 @@ router.get('/', function(req, res, next) {
         title : settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         message: einfo,
-        user : req.user
+        user : req.user,
+        data : {}
     });
 });
 
@@ -342,11 +353,23 @@ router.get('/node/:id/comments', function(req, res, next) {
 // 用户
 router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
     var curId = req.params.id;
+    var populate = [{
+        path: 'dreams',
+        select: 'title description'
+    }];
+
+    if (req.user) {
+        var opt = {
+           path  : 'fans',
+           match : { _id: req.user.id},
+           select: "_id",
+           model : Account
+        };
+        populate.push(opt);
+    }
 
     Account.findOne({_id: curId})
-    .populate({
-         path: 'dreams'
-    })
+    .populate(populate)
     .exec(function(err, account) {
         var unexisterr = new Error(settings.USER_NOT_EXIST_TIPS);
         if (err) {
@@ -356,10 +379,16 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
         if (!account) {
             return next(unexisterr);
         }else{
+            var isfollow = false;
+            if (req.user) {
+                isfollow = (account.fans && account.fans.length > 0);
+            }
+
             var resData = {
                 id       : curId,
                 name     : account.nickname,
                 bio      : account.bio,
+                isfollow : isfollow,
                 following: account.followers? account.followers.length:0,
                 followers: account.fans? account.fans.length:0,
                 join_date: account.date.toISOString()

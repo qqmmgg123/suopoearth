@@ -33,8 +33,8 @@ module.exports = function(schema, options) {
             user: 'qqmmgg123@gmail.com',
             pass: 'Suopoearth123'
         },
-        //proxy: 'http://dev-proxy.oa.com:8080/'
-        proxy: 'http://127.0.0.1:8085'
+        proxy: 'http://dev-proxy.oa.com:8080/'
+        //proxy: 'http://127.0.0.1:8085'
     };
     options.verifyMailOptions = options.verifyMailOptions || {
         from: 'Do Not Reply <qqmmgg123@gmail.com>',
@@ -424,10 +424,11 @@ module.exports = function(schema, options) {
                 }
 
                 user[options.URLFieldName] = randtoken.generate(options.URLLength);
-                user.createdAt = Date.now
+                user.createdAt = new Date();
                 user.isAuthenticated = false;
                 user.save(function(saveErr) {
                     if (saveErr) {
+                        console.log(saveErr);
                         return cb(saveErr);
                     }
 

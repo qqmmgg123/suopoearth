@@ -978,6 +978,17 @@ i.arrow-icon {
 .container .dream-con .dream-right .dream-right-inner {
   padding: 10px;
 }
+.container .dream-con .dream-right .dream-right-inner .tab-nav ul {
+  overflow: hidden;
+}
+.container .dream-con .dream-right .dream-right-inner .tab-nav ul li {
+  float: left;
+}
+.container .dream-con .dream-right .dream-right-inner .tab-nav ul li a {
+  margin: 0 5px;
+  display: block;
+  padding: 10px;
+}
 .container .dream-con .dream-right h2 {
   font-size: 16px;
   font-weight: 100;

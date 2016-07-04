@@ -19,8 +19,8 @@
                 <div class="tab-nav">
                     <ul>
                         <li><a href="/dream/following">全部动态</a></li>
-                        <li><a href="/dream/following">关注的想法</a></li>
-                        <li><a href="/dream/following">关注的人</a></li>
+                        <li><a href="/dream/following">关注的想法的动态</a></li>
+                        <li><a href="/dream/following">关注的人的动态</a></li>
                     </ul>
                 </div>
                 <% if (data.activities && data.activities.length > 0) { %>
@@ -69,13 +69,15 @@
             </div>
             <div class="dream-right">
                 <div class="dream-right-inner">
+                <div class="tab-nav">
+                    <ul>
+                        <li><a href="/dream/following">我的想法</a></li>
+                        <li><a href="/dream/following">我关注的想法</a></li>
+                    </ul>
+                </div>
+                <% if (data.mdreams && data.mdreams.length > 0) { %>
                 <ul>
-                    <li><a href="/dream/following">我的想法</a></li>
-                    <li><a href="/dream/following">我关注的想法</a></li>
-                </ul>
-                <% if (data.dreams && data.dreams.length > 0) { %>
-                <ul>
-                <% data.dreams.forEach(function(dream) { %>
+                <% data.mdreams.forEach(function(dream) { %>
                 <li>
                     <h3><a href="/dream/<%= dream.id %>"><%= dream.title %></a></h3>
                     <p><%= dream.description %></p>

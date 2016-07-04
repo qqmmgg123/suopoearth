@@ -26,10 +26,17 @@
                         <div class="nav-ctrl">
                             <% if (user) { %>
                             <a href="/settings" class="edit-profile btn">编辑个人档</a>
-                            <% } else { %>
-                            <a class="follow btn">关注</a>
-                            <a class="message-add btn">打招呼</a>
                             <% } %>
+                            <% if (data.isfollow) { %>
+                            <button data-isfollow="<%= data.isfollow %>" data-fid="<%= data.id %>" class="follow btn">
+                                取消关注
+                            </button>
+                            <% } else { %>
+                            <button data-isfollow="<%= data.isfollow %>" data-fid="<%= data.id %>" class="follow btn">
+                                关注
+                            </button>
+                            <% } %>
+                            <!--<button class="message-add btn">打招呼</button>-->
                         </div>
                     </div>
                     <% if (data.tab == "dream") { %>
