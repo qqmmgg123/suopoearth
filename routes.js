@@ -5,7 +5,8 @@ var async = require("async")
     , Account = require('./models/account')
     , Dream = require("./models/dream")
     , Node = require("./models/node")
-    , Comment = require("./models/Comment")
+    , Activity = require("./models/activity")
+    , Comment = require("./models/comment")
     , Message = require("./models/Message")
     , log = require('util').log
     , router = require('express').Router();
@@ -34,40 +35,45 @@ router.get('/', function(req, res, next) {
         return res.redirect('/found');
     }
 
-    Account.find(
-        { 
-            $or: [
-                { 'fans': req.user.id }, 
-                { '_id': req.user.id }
-            ]
-        }
-    )
-    .populate({
-         path: 'dreams'
-    })
-    .exec(function(err, user) {
+    var uid = req.user.id;
+
+    Account.findById(uid, function(err, user) {
         if (err) {
             return next(err);
         }
 
-        var dreams  = user.dreams;
-        console.log(user);
-
-        Node.populate(dreams, { path: 'nodes' }, function(err, rdreams) {
+        Activity.find({
+            $or: [{
+                "_belong_u": { 
+                    "$in": user.follows
+                }
+            }, {
+                "_belong_d": {
+                    "$in": user._following_d
+                }
+            }]
+        })
+        .sort('-date')
+        .populate([{
+                path: '_create_d'
+            }, {
+                path: '_create_n'
+            }, {
+                path: '_belong_u'
+            }, {
+                path: '_belong_d'
+        }])
+        .exec(function(err, activities) {
             if (err) {
                 return next(err);
             }
-            
-            //rdreams.forEach(function(dream) {
-                //console.log(dream.nodes);
-            //});
 
             res.render('index', {
                 user: req.user,
                 title: settings.APP_NAME,
                 notice: getFlash(req, 'notice'),
                 data: {
-                    dreams: dreams
+                    activities: activities
                 },
                 success: 1
             });
@@ -336,7 +342,12 @@ router.get('/node/:id/comments', function(req, res, next) {
 // 用户
 router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
     var curId = req.params.id;
-    Account.findOne({_id: curId}, function(err, account) {
+
+    Account.findOne({_id: curId})
+    .populate({
+         path: 'dreams'
+    })
+    .exec(function(err, account) {
         var unexisterr = new Error(settings.USER_NOT_EXIST_TIPS);
         if (err) {
             return next(unexisterr);
@@ -345,18 +356,55 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
         if (!account) {
             return next(unexisterr);
         }else{
-            res.render('user', {
-                title: settings.APP_NAME,
-                notice: getFlash(req, 'notice'),
-                user : req.user,
-                data: {
-                    name     : account.nickname,
-                    bio      : account.bio,
-                    join_date: account.date.toISOString()
-                    .replace(/T/, ' ').replace(/\..+/, '')  
-                },
-                success: 1
-            });
+            var resData = {
+                id       : curId,
+                name     : account.nickname,
+                bio      : account.bio,
+                following: account.followers? account.followers.length:0,
+                followers: account.fans? account.fans.length:0,
+                join_date: account.date.toISOString()
+                    .replace(/T/, ' ').replace(/\..+/, '')
+            };
+
+            var resRender = function(data) {
+                res.render('user', {
+                    title: settings.APP_NAME,
+                    notice: getFlash(req, 'notice'),
+                    user : req.user,
+                    data: data,
+                    success: 1
+                });
+            }
+
+            if (req.query && req.query.tab == "activity") {
+                Activity.find({
+                    "_belong_u": account._id
+                })
+                .sort('-date')
+                .populate([{
+                        path: '_create_d'
+                    }, {
+                        path: '_create_n'
+                    }, {
+                        path: '_belong_u'
+                    }, {
+                        path: '_belong_d'
+                }])
+                .exec(function(err, activities) {
+                    if (err) {
+                        return next(err);
+                    }
+                    resData.tab = "activity";
+                    resData.activities = activities;
+                    resRender(resData);
+                });
+
+                return;
+            }
+
+            resData.tab = "dream";
+            resData.dreams  = account.dreams;
+            resRender(resData);
         }
     });
 });
@@ -978,6 +1026,13 @@ router.post('/dream/new', function(req, res, next) {
         dream.accounts.push(user);
         user.dreams.push(dream);
 
+        var newAc = new Activity({
+            _belong_u : uid,
+            _create_d : dream._id,
+            alias     : nickname,
+            type      : 0
+        });
+
         async.parallel([
             function(cb_2) {
                 dream.save(function(err) {
@@ -987,6 +1042,12 @@ router.post('/dream/new', function(req, res, next) {
             },
             function(cb_2) {
                 user.save(function(err) {
+                    if (err) return cb_2(err, null);
+                    cb_2(null, null);
+                });
+            },
+            function(cb_2) {
+                newAc.save(function(err) {
                     if (err) return cb_2(err, null);
                     cb_2(null, null);
                 });
@@ -1068,6 +1129,15 @@ router.post('/node/new', function(req, res, next) {
 
                 dream.nodes.push(node);
                 user.nodes.push(node);
+
+                var newAc = new Activity({
+                    _belong_u : user._id,
+                    _belong_d : dream._id,
+                    _create_n : node._id,
+                    alias     : user.nickname,
+                    type      : 1
+                });
+
                 async.parallel([
                         function(cb_2) {
                             dream.save(function(err) {
@@ -1077,6 +1147,12 @@ router.post('/node/new', function(req, res, next) {
                         },
                         function(cb_2) {
                             user.save(function(err) {
+                                if (err) return cb_2(err, null);
+                                cb_2(null, null);
+                            });
+                        },
+                        function(cb_2) {
+                            newAc.save(function(err) {
                                 if (err) return cb_2(err, null);
                                 cb_2(null, null);
                             });
@@ -1366,7 +1442,7 @@ router.post('/dream/cfollowing', function(req, res, next) {
         var user = results[0];
         var dream = results[1];
 
-        if (!isfollow && !isfans) {
+        if (!isuser && !isdream) {
             return next(new Error("你没有关注该想法..."));
         }
 
@@ -1467,14 +1543,15 @@ router.post('/dream/following', function(req, res, next) {
 
             var user = results[0];
             var dream = results[1];
+            
+            if (dream._belong_u.equals(user._id)) {
+                return next(new Error("你不能关注自己的想法。"));
+            }
 
             if (isdream || isuser) {
                 if (isdream && isuser) {
                     return next(new Error("你已经关注了该想法..."));
                 }
-
-                dream._followers_u.remove(user);
-                user._following_d.remove(dream);
             }
 
             user._following_d.push(dream);
@@ -1690,14 +1767,11 @@ router.post('/user/follow', function(req, res, next) {
 
             var fans = results[0];
             var follow = results[1];
-            
+
             if (isfollow || isfans) {
                 if (isfollow && isfans) {
                     return next(new Error("你已经关注了对方..."));
                 }
-
-                fans.follows.remove(follow);
-                follow.fans.remove(fans);
             }
             fans.follows.push(follow);
             follow.fans.push(fans);
@@ -1705,18 +1779,24 @@ router.post('/user/follow', function(req, res, next) {
             async.parallel([
                 function(cb_2) {
                     fans.save(function(err) {
-                        if (err) return cb_2(err, null);
+                        if (err) {
+                            return cb_2(err, null);
+                        }
                         cb_2(null, null);
                     });
                 },
                 function(cb_2) {
                     follow.save(function(err) {
-                        if (err) return cb_2(err, null);
+                        if (err) {
+                            return cb_2(err, null);
+                        }
                         cb_2(null, null);
                     });
                 }
                 ], function(err, results) {
-                    if (err) return next(err);
+                    if (err) {
+                        return next(err);
+                    }
 
                     return res.json({
                         info: "关注成功",

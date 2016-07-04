@@ -19,9 +19,8 @@
                     <div class="mydream-nav">
                         <div class="nav-list">
                             <ul>
-                                <li><a href="javascript:;" class="cur">全部想法</a></li>
-                                <li><a href="javascript:;">我分享的想法</a></li>
-                                <li><a href="javascript:;">我参与的想法</a></li>
+                                <li><a href="/user/<%= data.id %>" <%if (data.tab == "dream") {%>class="cur"<% } %>>我的想法</a></li>
+                                <li><a href="/user/<%= data.id %>?tab=activity" <%if (data.tab == "activity") {%>class="cur"<% } %>>我的动态</a></li>
                             </ul>
                         </div>
                         <div class="nav-ctrl">
@@ -33,469 +32,68 @@
                             <% } %>
                         </div>
                     </div>
+                    <% if (data.tab == "dream") { %>
                     <div class="mydream-list">
+                        <% if (data.dreams && data.dreams.length > 0) { %>
                         <ul>
-                            <li><a href="javascript:;" class="dream-title">我有一个想法，我希望找到那么一个地方。</a><a class="follow-count">100人参与</a></li>
-                            <li><a href="javascript:;" class="dream-title">我想把我的剃须刀改装成遥控汽车。</a><a class="follow-count">100人参与</a></li>
+                            <% data.dreams.forEach(function(dream) { %>
+                            <li>
+                                <h3><a href="/dream/<%= dream.id %>"><%= dream.title %></a></h3>
+                                <p><%= dream.description %></p>
+                            </li>
+                            <% }); %>
                         </ul>
+                        <% } else { %>
+                        <div class="no-dream-content">
+                            <div class="no-dream-tips">你目前没有分享任何想法</div>
+                            <div class="btn-group"><a href="/intro" class="btn btn-big">关于娑婆世界</a><a id="first_cdream_btn" class="btn btn-big">分享想法</a></div>
+                        </div>
+                        <% } %>
                     </div>
-                </div>
-                <div class="process-area">
-                    <div class="process-nav clearfix">
-                        <div class="nav-left clearfix">
-                            <ul class="tab-nav">
-                                <li>
-                                    <a class="cur" href="javascript:;">心路历程</a>
-                                </li>
-                                <!--<li>-->
-                                    <!--<a href="javascript:;">我的历程</a>-->
-                                <!--</li>-->
-                                <li>
-                                    <a style="width: 120px;" href="javascript:;">异议/看法/观点</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">需求</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">成果</a>
-                                </li>
-                                <li>
-                                    <a style="width: 120px;" href="javascript:;">合作记录</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">活动</a>
-                                </li>
-                                <!--<li>-->
-                                    <!--<a href="javascript:;">wiki</a>-->
-                                <!--</li>-->
-                            </ul>
-                        </div>
-                        <div class="nav-right">
-                            <a id="node-add" href="javascript:;">
-                                设置
-                                <i class="config-icon"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="tab-content">
-                        <div class="edit-area">
-                            <div class="add-area">
-                                <ul>
-                                    <li><a href="javascript:;" class="pic-add"><i class="pic-icon"></i>添加图片</a></li>
-                                    <li><a href="javascript:;" class="video-add"><i class="video-icon"></i>添加视频</a></li>
-                                    <li><a href="/store" class="more-add"><i class="more-icon"></i>更多资源</a></li>
-                                    <li><textarea>分享一下你的心路历程...</textarea></li>
-                                </ul>
-                            </div>
-                        </div>
+                    <% } else if (data.tab == "activity") { %>
+                        <% if (data.activities && data.activities.length > 0) { %>
+                        <% data.activities.forEach(function(ac) { %>
                         <div class="process-node">
                             <div>
                                 <p class="user-info">
-                                    <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                    <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 更新了<a href="javascript:;">历程</a> 于 <a href="javascript:;">深圳</a></em>
+                                <a class="avatar" href="/user/<%= ac._belong_u? ac._belong_u.id:ac._belong_u %>"><img src="/images/user_mini.png" /></a>
+                                <em class="username">
+                                    <% if (ac._belong_u) { %>
+                                    <a href="/user/<%= ac._belong_u.id %>">
+                                    <%= ac._belong_u.nickname %>
+                                    <% } else { %>
+                                    <a href="/user/<%= ac._belong_u %>">
+                                    <%= ac.alias %>
+                                    <% } %>
+                                    </a>
+                                    于<%= timeFormat(ac.date) %>
+                                    <% if (ac.type == 0 && ac._create_d) { %>
+                                    创建了想法<a href="/dream/<%= ac._create_d.id %>"><%= ac._create_d.title %></a>中
+                                    <% } else if (ac.type == 1 && ac._create_n) { %>
+                                    在想法<a href="/dream/<%= ac._belong_d.id %>"><%= ac._belong_d.title %></a>中
+                                    更新了历程
+                                    <% } %>
+                                </em>
                                 </p>
-                                <p class="node-content">I got no job, I got no car, No Driver's License, No cash
-    No savings, No heath care, No furniture, No place to live, No RIA, No retirement scheme, No winter coat, No Christmas tree, No family near me, No money for morning coffee, and No way to pay off my debt
-    But I am dreaming.<br></p>
-                            </div>
-                            <div class="node-ctrl">
-                                <div class="ctrl-nav">
-                                    <ul class="ctrl-list">
-                                        <li><a class="good" href="javascript:;"><i class="approval-icon"></i>获得鲜花×11</a></li>
-                                        <li><a class="good" href="javascript:;"><i class="approval-icon"></i>赞同</a></li>
-                                        <li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>
-                                        <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 1</a></li>
-                                        <li class="support-box">
-                                            <a class="support" href="javascript:;"><i class="support-icon"></i>支持</a>
-                                            <ul class="support-list" style="display: none;">
-                                                <li><a href="javascript:;">查看他的需求</a></li>
-                                                <li><a href="javascript:;">添加支持</a></li>
-                                            </ul>
-                                        </li>
-                                    <ul>
-                                </div>
-                                <div class="comment-area" style="display: none;">
-                                    <textarea></textarea>
-                                    <div class="btn-area"><button class="btn">发表</button></div>
-                                    <ul>
-                                        <li>
-                                            <div class="user-info">
-                                                <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                                <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>
-                                                <a class="reply" href="javascript:;">回复</a>
-                                            </div>
-                                            <p class="text">中华大地很多地方都可以去啊，比如终南山，你是想遁世隐居吗？</p>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <% if (ac.type == 0 && ac._create_d) { %>
+                                <p class="node-content"><%= ac._create_d.description %></p>
+                                <% } else if (ac.type == 1 && ac._create_n) { %>
+                                <p class="node-content"><%= ac._create_n.content %></p>
+                                <% } %>
                             </div>
                         </div>
+                        <% }); %>
+                        <!--<div class="process-node">-->
+                        <!--<div class="more"><a class="btn">查看更多 ></a></div>-->
+                        <!--</div>-->
+                        <% } else { %>
                         <div class="process-node">
-                            <div>
-                                <p class="user-info">
-                                    <a class="avatar"><img src="/images/user_2_mini.png" /></a>
-                                    <em class="username"><a href="javascript:;">西瓜妹子</a> 昨天20:08 更新了<a href="javascript:;">历程</a>  于 <a href="javascript:;">北京</a></em>
-                                </p>
-                                <p class="node-content">今天看到这样一段话 说的真好：活着就是胜利，挣钱只是游戏，健康才是目的，快乐才是真谛！百年之后，你睡你的，我睡我的，再美丽的语言也无法跟你沟通，因为我们要沉睡，睡很久，很久……所以，身边的人们要相互珍惜，因为每个世人的时间越來越少……不要争执，不要斗气，好好说话，相互理解！善待亲人，朋友，爱人！珍重亲情，友情，爱情！珍惜每一份真感情，没有心机，只有真心，这样，多好！<br></p>
-                            </div>
-                            <div class="node-ctrl">
-                                <div class="ctrl-nav">
-                                    <ul class="ctrl-list">
-                                        <li><a class="good" href="javascript:;"><i class="approval-icon"></i>赞同</a></li>
-                                        <li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>
-                                        <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 1</a></li>
-                                        <li class="support-box">
-                                            <a class="support" href="javascript:;"><i class="support-icon"></i>支持</a>
-                                            <ul class="support-list" style="display: none;">
-                                                <li><a href="javascript:;">查看他的需求</a></li>
-                                                <li><a href="javascript:;">添加支持</a></li>
-                                            </ul>
-                                        </li>
-                                    <ul>
-                                </div>
-                                <div class="comment-area" style="display: none;">
-                                    <textarea></textarea>
-                                    <div class="btn-area"><button class="btn">发表</button></div>
-                                    <ul>
-                                        <li>
-                                            <div class="user-info">
-                                                <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                                <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>
-                                                <a class="reply" href="javascript:;">回复</a>
-                                            </div>
-                                            <p class="text">中华大地很多地方都可以去啊，比如终南山，你是想遁世隐居吗？</p>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <div class="result">
+                                没有想法的践行历程
                             </div>
                         </div>
-                        <div class="process-node">
-                            <div>
-                                <p class="user-info">
-                                    <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                    <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 添加了<a href="javascript:;">需求</a> 于<a href="javascript:;">深圳</a></em>
-                                </p>
-                                <div class="node-content">
-                                    <div class="goods-l">
-                                        <p><img src="/images/demand_2.png" /></p>
-                                    </div>
-                                    <div class="goods-r">
-                                        <p>自行车</p>
-                                        <p>￥200-1000 </p>
-                                        <p>红色、铝合金</p>
-                                        <p>我决定出发了，我需要一辆自行车... <a href="javascript:;">详细 ></a></p>
-                                        <p class="goods-ctrl"><a class="btn">支持</a><a class="btn">收藏</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="node-ctrl">
-                                <div class="ctrl-nav">
-                                    <ul class="ctrl-list">
-                                        <li><a class="good" href="javascript:;"><i class="approval-icon"></i>赞同</a></li>
-                                        <li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>
-                                        <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 1</a></li>
-                                        <li class="support-box">
-                                            <a class="support" href="javascript:;"><i class="support-icon"></i>支持</a>
-                                            <ul class="support-list" style="display: none;">
-                                                <li><a href="javascript:;">查看他的需求</a></li>
-                                                <li><a href="javascript:;">添加支持</a></li>
-                                            </ul>
-                                        </li>
-                                    <ul>
-                                </div>
-                                <div class="comment-area" style="display: none;">
-                                    <textarea></textarea>
-                                    <div class="btn-area"><button class="btn">发表</button></div>
-                                    <ul>
-                                        <li>
-                                            <div class="user-info">
-                                                <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                                <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>
-                                                <a class="reply" href="javascript:;">回复</a>
-                                            </div>
-                                            <p class="text">中华大地很多地方都可以去啊，比如终南山，你是想遁世隐居吗？</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="process-node">
-                            <div>
-                                <p class="user-info">
-                                    <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                    <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 添加了<a href="javascript:;">成果</a> 于<a href="javascript:;">深圳</a></em>
-                                </p>
-                                <div class="node-content">
-                                    <div class="goods-l">
-                                        <p><img src="/images/result_2.png" /></p>
-                                    </div>
-                                    <div class="goods-r">
-                                        <p>洛神花</p>
-                                        <p>￥100 </p>
-                                        <p>可以物换物</p>
-                                        <p>骑车路过云南，找了点洛神花，有养颜效果，要的从速。... <a href="javascript:;">详细 ></a></p>
-                                        <p class="goods-ctrl"><a class="btn">支持</a><a class="btn">收藏</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="node-ctrl">
-                                <div class="ctrl-nav">
-                                    <ul class="ctrl-list">
-                                        <li><a class="good" href="javascript:;"><i class="approval-icon"></i>赞同</a></li>
-                                        <li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>
-                                        <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 1</a></li>
-                                        <li class="support-box">
-                                            <a class="support" href="javascript:;"><i class="support-icon"></i>支持</a>
-                                            <ul class="support-list" style="display: none;">
-                                                <li><a href="javascript:;">查看他的需求</a></li>
-                                                <li><a href="javascript:;">添加支持</a></li>
-                                            </ul>
-                                        </li>
-                                    <ul>
-                                </div>
-                                <div class="comment-area" style="display: none;">
-                                    <textarea></textarea>
-                                    <div class="btn-area"><button class="btn">发表</button></div>
-                                    <ul>
-                                        <li>
-                                            <div class="user-info">
-                                                <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                                <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>
-                                                <a class="reply" href="javascript:;">回复</a>
-                                            </div>
-                                            <p class="text">中华大地很多地方都可以去啊，比如终南山，你是想遁世隐居吗？</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="process-node">
-                            <div>
-                                <p class="user-info">
-                                    <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                    <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 添加了<a href="javascript:;">活动</a> 于<a href="javascript:;">深圳</a></em>
-                                </p>
-                                <div class="node-content">
-                                    <div class="goods-l">
-                                        <p><img src="/images/cup.png" /></p>
-                                    </div>
-                                    <div class="goods-r">
-                                        <p>支持获精美赠品</p>
-                                        <p>2016年5月6 ~ 2016年10月6</p>
-                                        <p>大家每支持10元，将获得一个小杯子作为回报... <a href="javascript:;">详细 ></a></p>
-                                        <p class="goods-ctrl"><a class="btn">报名</a><a class="btn">收藏</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="node-ctrl">
-                                <div class="ctrl-nav">
-                                    <ul class="ctrl-list">
-                                        <li><a class="good" href="javascript:;"><i class="approval-icon"></i>赞同</a></li>
-                                        <li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>
-                                        <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 1</a></li>
-                                        <li class="support-box">
-                                            <a class="support" href="javascript:;"><i class="support-icon"></i>支持</a>
-                                            <ul class="support-list" style="display: none;">
-                                                <li><a href="javascript:;">查看他的需求</a></li>
-                                                <li><a href="javascript:;">添加支持</a></li>
-                                            </ul>
-                                        </li>
-                                    <ul>
-                                </div>
-                                <div class="comment-area" style="display: none;">
-                                    <textarea></textarea>
-                                    <div class="btn-area"><button class="btn">发表</button></div>
-                                    <ul>
-                                        <li>
-                                            <div class="user-info">
-                                                <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                                <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>
-                                                <a class="reply" href="javascript:;">回复</a>
-                                            </div>
-                                            <p class="text">中华大地很多地方都可以去啊，比如终南山，你是想遁世隐居吗？</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="process-node">
-                            <div class="more"><a class="btn">查看更多 ></a></div>
-                        </div>
-                    </div>
-                    <div class="tab-content" style="display: none;">
-                        <div class="process-node">
-                            <div class="more">还没有人对你的想法发表任何看法 <a class="btn">发表</a></div>
-                        </div>
-                    </div>
-                    <div class="tab-content" style="display: none;">
-                        <div class="process-node">
-                            <div class="more">想法的践行过程中你可能需要点什么 <a class="btn demand-add">添加需求</a></div>
-                        </div>
-                        <div class="process-node">
-                            <div>
-                                <p class="user-info">
-                                    <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                    <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 添加了<a href="javascript:;">需求</a> 于<a href="javascript:;">深圳</a></em>
-                                </p>
-                                <div class="node-content">
-                                    <div class="goods-l">
-                                        <p><img src="/images/demand_2.png" /></p>
-                                    </div>
-                                    <div class="goods-r">
-                                        <p>自行车</p>
-                                        <p>￥200-1000 </p>
-                                        <p>红色、铝合金</p>
-                                        <p>我决定出发了，我需要一辆自行车... <a href="javascript:;">详细 ></a></p>
-                                        <p class="goods-ctrl"><a class="btn">支持</a><a class="btn">收藏</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="node-ctrl">
-                                <div class="ctrl-nav">
-                                    <ul class="ctrl-list">
-                                        <li><a class="good" href="javascript:;"><i class="approval-icon"></i>赞同</a></li>
-                                        <li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>
-                                        <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 1</a></li>
-                                        <li class="support-box">
-                                            <a class="support" href="javascript:;"><i class="support-icon"></i>支持</a>
-                                            <ul class="support-list" style="display: none;">
-                                                <li><a href="javascript:;">查看他的需求</a></li>
-                                                <li><a href="javascript:;">添加支持</a></li>
-                                            </ul>
-                                        </li>
-                                    <ul>
-                                </div>
-                                <div class="comment-area" style="display: none;">
-                                    <textarea></textarea>
-                                    <div class="btn-area"><button class="btn">发表</button></div>
-                                    <ul>
-                                        <li>
-                                            <div class="user-info">
-                                                <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                                <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>
-                                                <a class="reply" href="javascript:;">回复</a>
-                                            </div>
-                                            <p class="text">中华大地很多地方都可以去啊，比如终南山，你是想遁世隐居吗？</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-content" style="display: none;">
-                        <div class="process-node">
-                            <div class="more">分享你的收获和成果 <a class="btn result-add">添加成果</a></div>
-                        </div>
-                        <div class="process-node">
-                            <div>
-                                <p class="user-info">
-                                    <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                    <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 添加了<a href="javascript:;">成果</a> 于<a href="javascript:;">深圳</a></em>
-                                </p>
-                                <div class="node-content">
-                                    <div class="goods-l">
-                                        <p><img src="/images/result_2.png" /></p>
-                                    </div>
-                                    <div class="goods-r">
-                                        <p>洛神花</p>
-                                        <p>￥100 </p>
-                                        <p>可以物换物</p>
-                                        <p>骑车路过云南，找了点洛神花，有养颜效果，要的从速。... <a href="javascript:;">详细 ></a></p>
-                                        <p class="goods-ctrl"><a class="btn">支持</a><a class="btn">收藏</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="node-ctrl">
-                                <div class="ctrl-nav">
-                                    <ul class="ctrl-list">
-                                        <li><a class="good" href="javascript:;"><i class="approval-icon"></i>赞同</a></li>
-                                        <li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>
-                                        <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 1</a></li>
-                                        <li class="support-box">
-                                            <a class="support" href="javascript:;"><i class="support-icon"></i>支持</a>
-                                            <ul class="support-list" style="display: none;">
-                                                <li><a href="javascript:;">查看他的需求</a></li>
-                                                <li><a href="javascript:;">添加支持</a></li>
-                                            </ul>
-                                        </li>
-                                    <ul>
-                                </div>
-                                <div class="comment-area" style="display: none;">
-                                    <textarea></textarea>
-                                    <div class="btn-area"><button class="btn">发表</button></div>
-                                    <ul>
-                                        <li>
-                                            <div class="user-info">
-                                                <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                                <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>
-                                                <a class="reply" href="javascript:;">回复</a>
-                                            </div>
-                                            <p class="text">中华大地很多地方都可以去啊，比如终南山，你是想遁世隐居吗？</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-content" style="display: none;">
-                        <div class="process-node">
-                            <div class="more">您暂时没有合作记录</div>
-                        </div>
-                    </div>
-                    <div class="tab-content" style="display: none;">
-                        <div class="process-node">
-                            <div class="more">与和你有共同想法的人来次聚会吧 <a class="btn">添加活动</a></div>
-                        </div>
-                        <div class="process-node">
-                            <div>
-                                <p class="user-info">
-                                    <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                    <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 添加了活动 于深圳</em>
-                                </p>
-                                <div class="node-content">
-                                    <div class="goods-l">
-                                        <p><img src="/images/cup.png" /></p>
-                                    </div>
-                                    <div class="goods-r">
-                                        <p>支持获精美赠品</p>
-                                        <p>2016年5月6 ~ 2016年10月6</p>
-                                        <p>大家每支持10元，将获得一个小杯子作为回报... <a href="javascript:;">详细 ></a></p>
-                                        <p class="goods-ctrl"><a class="btn">报名</a><a class="btn">收藏</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="node-ctrl">
-                                <div class="ctrl-nav">
-                                    <ul class="ctrl-list">
-                                        <li><a class="good" href="javascript:;"><i class="approval-icon"></i>赞同</a></li>
-                                        <li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>
-                                        <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 1</a></li>
-                                        <li class="support-box">
-                                            <a class="support" href="javascript:;"><i class="support-icon"></i>支持</a>
-                                            <ul class="support-list" style="display: none;">
-                                                <li><a href="javascript:;">查看他的需求</a></li>
-                                                <li><a href="javascript:;">添加支持</a></li>
-                                            </ul>
-                                        </li>
-                                    <ul>
-                                </div>
-                                <div class="comment-area" style="display: none;">
-                                    <textarea></textarea>
-                                    <div class="btn-area"><button class="btn">发表</button></div>
-                                    <ul>
-                                        <li>
-                                            <div class="user-info">
-                                                <a class="avatar"><img src="/images/user_mini.png" /></a>
-                                                <em class="username"><a href="javascript:;">拉拉小伙儿</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>
-                                                <a class="reply" href="javascript:;">回复</a>
-                                            </div>
-                                            <p class="text">中华大地很多地方都可以去啊，比如终南山，你是想遁世隐居吗？</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        <% } %>
+                    <% } %>
                 </div>
             </div>
             <div class="dream-right">
@@ -507,8 +105,8 @@
                         <h1><%= data.name %></h1>
                         <p><%= data.bio %></p>
                         <p>于<%= data.join_date %>加入</p>
-                        <a href="javascript:;" class="followers">粉丝 2</a>
-                        <a href="javascript:;" class="following">关注 1</a>
+                        <a href="javascript:;" class="followers">粉丝 <%= data.followers? data.followers:0 %></a>
+                        <a href="javascript:;" class="following">关注 <%= data.following? data.following:0 %></a>
                     </div>
                 </div>
                 <!--<div class="tag-area">-->
@@ -521,8 +119,8 @@
                     <div class="company-area">
                         <p class="company-ver">© 2016 深圳娑婆诃科技有限公司　suopoearth.com 版权所有</p>
                         <div class="company-nav">
-                            <a href="intro">关于我们</a>
-                            <a class="contact" href="contact">联系我们</a>
+                            <a href="/intro">关于我们</a>
+                            <a class="contact" href="/contact">联系我们</a>
                         </div>
                     </div>
                 </div>

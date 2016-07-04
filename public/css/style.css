@@ -960,6 +960,17 @@ i.arrow-icon {
 .container .dream-con .dream-left .dream-left-inner {
   padding: 10px;
 }
+.container .dream-con .dream-left .dream-left-inner .tab-nav ul {
+  overflow: hidden;
+}
+.container .dream-con .dream-left .dream-left-inner .tab-nav ul li {
+  float: left;
+}
+.container .dream-con .dream-left .dream-left-inner .tab-nav ul li a {
+  margin: 0 5px;
+  display: block;
+  padding: 10px;
+}
 .container .dream-con .dream-right {
   float: right;
   width: 350px;
