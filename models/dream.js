@@ -27,15 +27,14 @@ Dream.index({'opponents':1});
 Dream.index({'tags':1});
 
 Dream.pre('remove', function(next) {
-    console.log('test...');
-    this.model('Account').find({ 
-        $or: [{
-            dreams: this._id
-        }, {
-            _following_d: this._id
-        }]
-    }).remove().exec();
-    this.nodes.remove().exec();
+    this.model('Account').update({ 
+        dreams: this._id
+    }, { $pull: { "dreams": this._id} });
+    this.model('Account').update({
+        _following_d: this._id
+    }, { $pull: { "_following_d": this._id} })
+    this.model('Node').find({_belong_d: this.id}).remove().exec();
+    this.model('Comment').find({_belong_d: this.id}).remove().exec();
     next();
 });
 module.exports = mongoose.model('Dream', Dream);

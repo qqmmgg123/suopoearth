@@ -161,14 +161,12 @@ router.get('/dream/:id', function(req, res, next) {
             ];
 
             if (req.user) {
-               
-
                 populate.push({
-           path  : '_followers_u',
-           match : { _id: req.user.id},
-           select: "_id",
-           model : Account
-        });
+                    path  : '_followers_u',
+                    match : { _id: req.user.id},
+                    select: "_id",
+                    model : Account
+                });
             }
 
             Dream.findOne({
@@ -181,37 +179,28 @@ router.get('/dream/:id', function(req, res, next) {
                 }
                 cb(null, dream);
             });
-        }, function(cb) {
-            if (!req.user) {
-                return cb(null,[]);
-            }
-            var uid   = req.user.id;
-            console.log(uid);
-            Dream.find({_followers_u: uid }, function(err, followers) {
-                if (err) {
-                    return cb(null, []);
-                }
-                cb(null, followers);
-            });
         }], function(err, results) {
             if (err) {
                 var err = new Error("找不到该想法...");
                 return next(err);
             }
 
-            if (!results || results.length < 3) {
+            if (!results || results.length < 2) {
                 return next(new Error("找不到该想法..."));
             }
 
             var msgs      = results[0],
-                dream     = results[1],
-                followers = results[2];
-
-            console.log(followers);
+                dream     = results[1];
 
             if (msgs && dream) {
                 var accounts  = dream.accounts;
                 var nodes     = dream.nodes;
+
+
+                var isfollow = false;
+                if (req.user) {
+                    isfollow = (dream._followers_u && dream._followers_u.length > 0);
+                }
 
                 Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
                     if (err) {
@@ -290,12 +279,9 @@ router.get('/dream/:id', function(req, res, next) {
                                 prev       : results[1][0],
                                 nodes      : rnodes,
                                 current    : results[2][0],
-                                next       : results[2][1]
+                                next       : results[2][1],
+                                isFollow   : isfollow
                             };
-
-                            if (followers) {
-                                resData.isFollow = (followers.length > 0);
-                            }
 
                             res.render('dream', {
                                 user  : req.user,
@@ -1252,83 +1238,6 @@ router.post('/dream/delete', function(req, res, next) {
         
         dream.remove();
     });
-
-    /*var isdream, isuser;
-      async.parallel([
-        function() {
-            Account.findById(uid, function(err, user) {
-                if (err) return next(err);
-
-                if (!user) {
-                    var err = new Error("删除想法失败...");
-                    return cb(err, null);
-                }
-                
-                isdream = user.dreams.filter(function (dream) {
-                    return dream.equals(dreamID);
-                }).pop();
-
-                cb(null, user);
-            })
-        },
-        function() {
-            Dream.findById(dreamID, function(err, dream) {
-                if (err) return cb(err, null);
-
-                if (!dream) {
-                    var err = new Error("删除想法失败...");
-                    return cb(err, null);
-                }
-                
-                isuser = dream.accounts.filter(function (user) {
-                    return user.equals(uid);
-                }).pop();
-
-                cb(null, dream);
-            })
-        }
-    ], function(err, results) {
-        if (err) return next(err);
-
-        if (!results || results.length < 2) {
-            var err = new Error("删除想法失败...");
-            return next(err);
-        }
-
-        var user = results[0];
-        var dream = results[1];
-
-        if (!isdream && !isuser) {
-            return next(new Error("你没有添加该想法..."));
-        }
-
-        dream.remove();
-        user.dreams.remove(dream);
-        dream.accounts.remove(user);
-
-        async.parallel([
-            function(cb_2) {
-                user.save(function(err) {
-                    if (err) return cb_2(err, null);
-                    cb_2(null, null);
-                });
-            },
-            function(cb_2) {
-                dream.save(function(err) {
-                    if (err) return cb_2(err, null);
-                    cb_2(null, null);
-                });
-            }
-            ], function(err, results) {
-                if (err) return next(err);
-
-                return res.json({
-                    info: "删除想法成功",
-                    result: 0
-                });
-            }
-        );
-    });*/
 }, function(err, req, res, next) {
     if (err) {
         message = err.message;
