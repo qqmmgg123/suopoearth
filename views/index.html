@@ -18,9 +18,9 @@
             <div class="dream-left-inner">
                 <div class="tab-nav">
                     <ul>
-                        <li><a href="/dream/following">全部动态</a></li>
-                        <li><a href="/dream/following">关注的想法的动态</a></li>
-                        <li><a href="/dream/following">关注的人的动态</a></li>
+                        <li><a class="tab" href="/">全部动态</a></li>
+                        <li><a class="tab" href="/?tab=fdream">关注的想法的动态</a></li>
+                        <li><a class="tab" href="/?tab=fuser">关注的人的动态</a></li>
                     </ul>
                 </div>
                 <% if (data.activities && data.activities.length > 0) { %>
@@ -71,10 +71,12 @@
                 <div class="dream-right-inner">
                 <div class="tab-nav">
                     <ul>
-                        <li><a href="/dream/following">我的想法</a></li>
-                        <li><a href="/dream/following">我关注的想法</a></li>
+                        <li><a class="tab" href="javascript:;">我的想法</a></li>
+                        <li><a class="tab" href="javascript:;">我关注的想法</a></li>
                     </ul>
                 </div>
+                <div class="tab-content">
+                    <div class="tab-item">
                 <% if (data.mdreams && data.mdreams.length > 0) { %>
                 <ul>
                 <% data.mdreams.forEach(function(dream) { %>
@@ -87,9 +89,37 @@
                 <% } else { %>
                 <div class="no-dream-content">
                     <div class="no-dream-tips">你目前没有分享任何想法</div>
-                    <div class="btn-group"><a href="/intro" class="btn btn-big">关于娑婆世界</a><a id="first_cdream_btn" class="btn btn-big">分享想法</a></div>
+                    <div class="btn-group"><a href="/intro" class="btn btn-big">了解娑婆世界</a><a id="first_cdream_btn" class="btn btn-big">分享想法</a></div>
                 </div>
                 <% } %>
+                    </div>
+                    <div class="tab-item" style="display:none;">
+                <% if (data.fdreams && data.fdreams.length > 0) { %>
+                <ul>
+                <% data.fdreams.forEach(function(dream) { %>
+                <li>
+                    <h3><a href="/dream/<%= dream.id %>"><%= dream.title %></a></h3>
+                    <p><%= dream.description %></p>
+                </li>
+                <% }); %>
+                </ul>
+                <% } else { %>
+                <div class="no-dream-content">
+                    <div class="no-dream-tips">你目前没有关注任何想法</div>
+                    <div class="btn-group"><a href="/intro" class="btn btn-big">了解娑婆世界</a><a href="/found" class="btn btn-big">看看</a></div>
+                </div>
+                <% } %>
+                </div>
+                    </div>
+                </div>
+                <div class="r-footer">
+                    <div class="company-area">
+                        <p class="company-ver">© 2016 深圳娑婆诃科技有限公司　suopoearth.com 版权所有</p>
+                        <div class="company-nav">
+                            <a href="/intro">关于我们</a>
+                            <a class="contact" href="/contact">联系我们</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -19,8 +19,8 @@
                     <div class="mydream-nav">
                         <div class="nav-list">
                             <ul>
-                                <li><a href="/user/<%= data.id %>" <%if (data.tab == "dream") {%>class="cur"<% } %>>我的想法</a></li>
-                                <li><a href="/user/<%= data.id %>?tab=activity" <%if (data.tab == "activity") {%>class="cur"<% } %>>我的动态</a></li>
+                                <li><a href="/user/<%= data.id %>" class="<%if (data.tab == "dream") {%>cur<% } %> tab">我的想法</a></li>
+                                <li><a href="/user/<%= data.id %>?tab=activity" class="<%if (data.tab == "activity") {%>cur<% } %> tab">我的动态</a></li>
                             </ul>
                         </div>
                         <div class="nav-ctrl">
@@ -135,7 +135,7 @@
         </div>
     </div>
     <% include create.html %>
-    <% include message.html %>
+    <% include messagepop.html %>
 </body>
 <script src="/js/jquery.min.js" type="text/javascript"></script>
 <script src="/js/common.js" type="text/javascript"></script>

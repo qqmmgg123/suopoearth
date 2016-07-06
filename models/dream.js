@@ -25,4 +25,17 @@ Dream.index({'comments':1});
 Dream.index({'supporters':1});
 Dream.index({'opponents':1});
 Dream.index({'tags':1});
+
+Dream.pre('remove', function(next) {
+    console.log('test...');
+    this.model('Account').find({ 
+        $or: [{
+            dreams: this._id
+        }, {
+            _following_d: this._id
+        }]
+    }).remove().exec();
+    this.nodes.remove().exec();
+    next();
+});
 module.exports = mongoose.model('Dream', Dream);

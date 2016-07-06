@@ -2,6 +2,24 @@ $(function() {
     // 绑定用户操作
     common.bindUserCtrl();
 
+    // 删除想法
+    $('[rel="dream-delete"]').click(function() {
+        $.ajax({
+            url: "/dream/delete",
+            data: {
+                did: $(this).data('did')
+            },
+            method: "POST",
+            dataType: "json",
+            success: function(data) {
+                alert(data.info);
+            },
+            error: function() {
+
+            }
+        });
+    });
+
     // 创建历程
     $('#node_create_btn').click(function() {
         var cval = $('#node_create_form').find("textarea").val();
@@ -103,7 +121,7 @@ $(function() {
     });
 
     // 关注想法操作
-    $('[ref="dream-follow"]').click(function() {
+    $('[rel="dream-follow"]').click(function() {
         var isFollow = $(this).data('isfollow');
         var $self = $(this);
         if (!isFollow) {

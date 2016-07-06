@@ -57,7 +57,7 @@
                         <div class="nav-left clearfix">
                             <ul class="tab-nav">
                                 <li>
-                                    <a class="cur" href="javascript:;">心路故事</a>
+                                    <a class="cur tab" href="javascript:;">心路故事</a>
                                 </li>
                                 <!--<li>-->
                                     <!--<a href="javascript:;">甘特图</a>-->
@@ -154,11 +154,15 @@
                 <% if (data.current && data.current._belong_u != (user && user.id)) { %>
                 <div>
                     <% if (!data.isFollow) { %>
-                    <button data-isfollow="<%= data.isFollow %>" data-did="<%= data.current.id %>" ref="dream-follow" class="btn">关注该想法</button>
+                    <button data-isfollow="<%= data.isFollow %>" data-did="<%= data.current.id %>" rel="dream-follow" class="btn">关注该想法</button>
                     <% } else { %>
-                    <button data-isfollow="<%= data.isFollow %>" data-did="<%= data.current.id %>" ref="dream-follow" class="btn">取消关注想法</button>
+                    <button data-isfollow="<%= data.isFollow %>" data-did="<%= data.current.id %>" rel="dream-follow" class="btn">取消关注想法</button>
                     <% } %>
                 </div>
+                <% } %>
+                <% if (data.current && data.current._belong_u == (user && user.id)) { %>
+                    <button data-did="<%= data.current.id %>" rel="dream-delete" class="btn">删除想法</button>
+                    <button class="btn">编辑</button>
                 <% } %>
                 <!--<div class="member">
                     <h2><%= data.membercount %>人有同样的想法</h2>

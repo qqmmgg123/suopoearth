@@ -50,7 +50,7 @@ router.get('/', function(req, res, next) {
             return next(err);
         }
 
-        Activity.find({
+        var fields = {
             $or: [{
                 "_belong_u": { 
                     "$in": user.follows
@@ -60,7 +60,30 @@ router.get('/', function(req, res, next) {
                     "$in": user._following_d
                 }
             }]
-        })
+        };
+
+        if (req.query && req.query.tab) {
+            switch(req.query.tab) {
+                case "fuser":
+                    fields = {
+                        "_belong_u": { 
+                            "$in": user.follows
+                        }
+                    }
+                    break;
+                case "fdream":
+                    fields = {
+                        "_belong_d": {
+                            "$in": user._following_d
+                        }
+                    }
+                    break;
+                 default:
+                    break;
+            }
+        }
+
+        Activity.find(fields)
         .sort('-date')
         .populate([{
                 path: '_create_d'
@@ -138,10 +161,14 @@ router.get('/dream/:id', function(req, res, next) {
             ];
 
             if (req.user) {
+               
+
                 populate.push({
-                    path: '_followers_u',
-                    select: req.user.id
-                });
+           path  : '_followers_u',
+           match : { _id: req.user.id},
+           select: "_id",
+           model : Account
+        });
             }
 
             Dream.findOne({
@@ -159,7 +186,7 @@ router.get('/dream/:id', function(req, res, next) {
                 return cb(null,[]);
             }
             var uid   = req.user.id;
-
+            console.log(uid);
             Dream.find({_followers_u: uid }, function(err, followers) {
                 if (err) {
                     return cb(null, []);
@@ -179,6 +206,8 @@ router.get('/dream/:id', function(req, res, next) {
             var msgs      = results[0],
                 dream     = results[1],
                 followers = results[2];
+
+            console.log(followers);
 
             if (msgs && dream) {
                 var accounts  = dream.accounts;
@@ -1196,6 +1225,120 @@ router.post('/node/new', function(req, res, next) {
     );
 });
 
+// 删除想法
+router.post('/dream/delete', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    var uid = req.user.id;
+
+    if (!req.body.did) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var dreamID = req.body.did;
+
+    Dream.findById(dreamID, function(err, dream) {
+        if (err) return cb(err, null);
+
+        if (!dream) {
+            var err = new Error("删除想法失败...");
+            return cb(err, null);
+        }
+        
+        dream.remove();
+    });
+
+    /*var isdream, isuser;
+      async.parallel([
+        function() {
+            Account.findById(uid, function(err, user) {
+                if (err) return next(err);
+
+                if (!user) {
+                    var err = new Error("删除想法失败...");
+                    return cb(err, null);
+                }
+                
+                isdream = user.dreams.filter(function (dream) {
+                    return dream.equals(dreamID);
+                }).pop();
+
+                cb(null, user);
+            })
+        },
+        function() {
+            Dream.findById(dreamID, function(err, dream) {
+                if (err) return cb(err, null);
+
+                if (!dream) {
+                    var err = new Error("删除想法失败...");
+                    return cb(err, null);
+                }
+                
+                isuser = dream.accounts.filter(function (user) {
+                    return user.equals(uid);
+                }).pop();
+
+                cb(null, dream);
+            })
+        }
+    ], function(err, results) {
+        if (err) return next(err);
+
+        if (!results || results.length < 2) {
+            var err = new Error("删除想法失败...");
+            return next(err);
+        }
+
+        var user = results[0];
+        var dream = results[1];
+
+        if (!isdream && !isuser) {
+            return next(new Error("你没有添加该想法..."));
+        }
+
+        dream.remove();
+        user.dreams.remove(dream);
+        dream.accounts.remove(user);
+
+        async.parallel([
+            function(cb_2) {
+                user.save(function(err) {
+                    if (err) return cb_2(err, null);
+                    cb_2(null, null);
+                });
+            },
+            function(cb_2) {
+                dream.save(function(err) {
+                    if (err) return cb_2(err, null);
+                    cb_2(null, null);
+                });
+            }
+            ], function(err, results) {
+                if (err) return next(err);
+
+                return res.json({
+                    info: "删除想法成功",
+                    result: 0
+                });
+            }
+        );
+    });*/
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
 
 router.post('/dream/out', function(req, res, next) {
     if (!req.user) {
