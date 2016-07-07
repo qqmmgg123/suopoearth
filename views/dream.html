@@ -24,7 +24,9 @@
                 <!--</div>-->
                 <div class="content-area">
                     <h1 ><%= data.current.title %></h1>
+                    <% if (data.current.description) { %>
                     <p class="content"><%= data.current.description %></p>
+                    <% } %>
                 </div>
                 <div data-did="<%= data.current.id %>" data-blid="<%= data.current.id %>" data-bl="0" class="dream-ctrl ctrl-area">
                     <div class="ctrl-nav">
@@ -162,7 +164,7 @@
                 <% } %>
                 <% if (data.current && data.current._belong_u == (user && user.id)) { %>
                     <button data-did="<%= data.current.id %>" rel="dream-delete" class="btn">删除想法</button>
-                    <button class="btn">编辑</button>
+                    <button data-did="<%= data.current.id %>" rel="dream-modify" class="btn">修改</button>
                 <% } %>
                 <!--<div class="member">
                     <h2><%= data.membercount %>人有同样的想法</h2>

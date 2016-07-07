@@ -20,6 +20,19 @@ $(function() {
         });
     });
 
+    // 修改想法
+    $('[rel="dream-modify"]').click(function() {
+        var $dreamContent = $('.content-area');
+        console.log($(this).data('did'));
+        common.dreamPop.show({
+            did: $(this).data('did').toString(),
+            url: '/dream/modify',
+            tips: "修改想法",
+            title: $dreamContent.find('h1').text(),
+            description: $dreamContent.find('p.content').text()
+        });
+    });
+
     // 创建历程
     $('#node_create_btn').click(function() {
         var cval = $('#node_create_form').find("textarea").val();

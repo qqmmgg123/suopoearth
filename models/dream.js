@@ -3,7 +3,7 @@ var mongoose = require('mongoose')
 
 var Dream = new Schema({
     title       : { type: String, required: true, minlength: 1, maxlength: 100, trim: true },
-    description : { type: String, minlength: 1, maxlength: 140, trim: true },
+    description : { type: String, maxlength: 140, trim: true, default: '' },
     author      : { type: String, required: true, minlength: 2, maxlength: 12, trim: true },
     _belong_u   : { type: Schema.Types.ObjectId, ref: 'Account'},
     accounts    : [{ type: Schema.Types.ObjectId, ref: 'Account', unique: true }],

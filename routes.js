@@ -1037,14 +1037,21 @@ router.post('/dream/new', function(req, res, next) {
 
     var uid = req.user.id;
     var nickname = req.user.nickname;
-    if (!req.body.title || !req.body.description) {
-        return next(new Error("标题或概要不能不填..."));
+
+    if (!req.body) {
+        
+    }
+
+    if (!req.body.title) {
+        return next(new Error("参数传递错误..."));
     }
 
     if (req.body.title.length > 100 
         || req.body.description.length > 140) {
         return next(new Error("标题或概要字数超出限制范围.."));
     }
+
+    var des = req.body.description;
     
     Account.findOne({_id: uid}, function(err, user) {
         if (err) return next(err);
@@ -1057,7 +1064,7 @@ router.post('/dream/new', function(req, res, next) {
             _belong_u: uid,
             author   : nickname,
             title: req.body.title,
-            description: req.body.description
+            description: des? des:""
         };
 
         if (req.body.sharestate 
@@ -1229,11 +1236,11 @@ router.post('/dream/delete', function(req, res, next) {
     var dreamID = req.body.did;
 
     Dream.findById(dreamID, function(err, dream) {
-        if (err) return cb(err, null);
+        if (err) return next(err);
 
         if (!dream) {
             var err = new Error("删除想法失败...");
-            return cb(err, null);
+            return next(err);
         }
         
         dream.remove();
@@ -1247,6 +1254,43 @@ router.post('/dream/delete', function(req, res, next) {
         info: message,
         result: 1
     });
+});
+
+// 编辑想法
+router.post('/dream/modify', function(req, res, next) {
+    if (!req.user) {
+        res.redirect('/signin');
+    }
+
+    var uid = req.user.id;
+
+    if (!req.body || !req.body.did) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var dreamID = req.body.did,
+        fields  = {},
+        title   = req.body.title,
+        des     = req.body.description;
+
+    if (title) {
+        fields.title = title;
+    }else{
+        return next(new Error("标题不能不能不填..."))
+    }
+    if (des) fields.description = des? des:"";
+
+    Dream.findOneAndUpdate(
+        { _id: dreamID },
+        { 
+            $set: fields
+        }, 
+        { new: true }, function(err, dream) {
+            if (err) return next(err);
+
+            res.redirect('/dream/' + dream.id);
+        }
+    );
 });
 
 router.post('/dream/out', function(req, res, next) {
@@ -2157,6 +2201,82 @@ router.post('/reply/new', function(req, res, next) {
                 });
             }
         );
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 删除历程
+router.post('/node/delete', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    var uid = req.user.id;
+
+    if (!req.body.did) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var dreamID = req.body.did;
+
+    Dream.findById(dreamID, function(err, dream) {
+        if (err) return next(err);
+
+        if (!dream) {
+            var err = new Error("删除想法失败...");
+            return next(err);
+        }
+        
+        dream.remove();
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 删除评论
+router.post('/comment/delete', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    var uid = req.user.id;
+
+    if (!req.body.did) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var dreamID = req.body.did;
+
+    Dream.findById(dreamID, function(err, dream) {
+        if (err) return next(err);
+
+        if (!dream) {
+            var err = new Error("删除想法失败...");
+            return next(err);
+        }
+        
+        dream.remove();
     });
 }, function(err, req, res, next) {
     if (err) {

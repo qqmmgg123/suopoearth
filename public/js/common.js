@@ -128,38 +128,13 @@ var common = {
         });
     },
     bindCreatCtrl: function($create_btn) {
+        var self = this;
         $create_btn.click(function() {
-            var pagesize = common.getPageSize();
-            var $create_pop = $('#create-pop');
-            $('.modal').show();
-            $create_pop.css({
-                top: (pagesize[3] - $create_pop.height()) * .2,
-                left: (pagesize[2] - $create_pop.width()) / 2
-            }).show().find('input').val($.trim($('.search-in').val()));
-            $(document).off('keypress').on('keydown', function(event) {
-                if (event.keyCode === 27) {
-                    $('.modal').hide();
-                    $create_pop.hide();
-                }
-            });
-            $create_pop.find('a.close')
-                .off('click')
-                .on('click', function() {
-                    $('.modal').hide();
-                    $create_pop.hide();
-            });
-
-            $create_pop.find('button#finish_cdream_btn')
-                .off('click')
-                .on('click', function() {
-                    var formData = {};
-                    // 校验
-                    /*$create_pop.find('p.field').each(function() {
-                        var $widget = $(this).children();
-                        formData[$widget.attr('name')] = $.trim($widget.val());
-                    });*/
-                    $('.modal').hide();
-                    $create_pop.hide();
+            self.dreamPop.show({
+                did: "",
+                url: '/dream/new',
+                tips: "创建想法",
+                title: $.trim($('.search-in').val())
             });
         });
     },
@@ -241,10 +216,76 @@ var common = {
     }
 };
 
+common.dreamPop = {
+    el: '#dream-pop',
+    modal: '.modal',
+    init: function() {
+        this.$el = $(this.el);
+        this.$modal = $(this.modal);
+
+        this.bindCloseCtrl();
+        this.bindFinishCtl();
+    },
+    show: function(fields) {
+        var pagesize = common.getPageSize();
+        this.$modal.show();
+        var $popup = this.$el;
+        
+        $popup.find('form').attr('action', fields && fields.url);
+
+        $popup.find('input[type="hidden"]').val(fields && fields.did);
+
+        $popup.find('span.title', 'div.hd').text(fields && fields.tips);
+
+        $popup.css({
+            top: (pagesize[3] - $popup.height()) * .2,
+            left: (pagesize[2] - $popup.width()) / 2
+        }).show().find('input[type="text"]').val(fields && fields.title);
+
+        $popup.find('textarea').val(fields && fields.description)
+    },
+    close: function() {
+        this.$modal.hide();
+        this.$el.hide();
+    },
+    finish: function() {
+        self.close();
+    },
+    bindCloseCtrl: function() {
+        var self = this,
+        $popup = this.$el;
+
+        $(document).off('keypress').on('keydown', function(event) {
+            if (event.keyCode === 27) {
+                self.close();
+            }
+        });
+
+        $popup.find('a.close')
+            .off('click')
+            .on('click', $.proxy(self.close, self));
+    },
+    bindFinishCtl: function() {
+        $popup = this.$el;
+        $popup.find('#finish_cdream_btn')
+            .off('click')
+            .on('click', function() {
+                //var formData = {};
+                // 校验
+                /*$create_pop.find('p.field').each(function() {
+                  var $widget = $(this).children();
+                  formData[$widget.attr('name')] = $.trim($widget.val());
+                  });*/
+                self.finish();
+            });
+    }
+};
+
 $(function() {
     common.checkBrowser();
     common.placeholder();
 
+    common.dreamPop.init();
     if ($('#create_dream_btn').data('isauthenticated')) {
         common.bindCreatCtrl($('#create_dream_btn'));
     }else{

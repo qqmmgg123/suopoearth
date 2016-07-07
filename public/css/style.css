@@ -1361,26 +1361,26 @@ a.next-btn {
 .dialog .bd {
   padding: 10px;
 }
-.dialog#create-pop {
+.dialog#dream-pop {
   width: 600px;
 }
-.dialog#create-pop .dream-step {
+.dialog#dream-pop .dream-step {
   padding: 10px 0;
 }
-.dialog#create-pop .dream-step ul {
+.dialog#dream-pop .dream-step ul {
   overflow: hidden;
 }
-.dialog#create-pop .dream-step li {
+.dialog#dream-pop .dream-step li {
   margin-right: 10px;
   float: left;
 }
-.dialog#create-pop .dream-area {
+.dialog#dream-pop .dream-area {
   margin-top: 10px;
 }
-.dialog#create-pop input {
+.dialog#dream-pop input {
   width: 360px;
 }
-.dialog#create-pop textarea {
+.dialog#dream-pop textarea {
   width: 360px;
   height: 100px;
   overflow: auto;

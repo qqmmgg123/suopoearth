@@ -1,5 +1,5 @@
 <div class="modal fade-in" style="display: none;"></div>
-<div id="create-pop" class="dialog" style="display: none;">
+<div id="dream-pop" class="dialog" style="display: none;">
     <div class="hd">
         <span class="title">创建想法</span>
         <a href="javascript:;" class="close"></a>
@@ -16,7 +16,7 @@
             <form action="/dream/new" method="post">
                 <div><p class="field"><input type="text" name="title" placeholder="想法标题..." /></p></div>
                 <div><p class="field"><textarea name="description" placeholder="想法概要..."></textarea></p></div>
-                <div>
+                <!--<div>
                     <p class="field"><input id="public" name="sharestate" type="radio" value="0" /></p>
                     <p class="label"><label for="public">共享</label></p>
                     <p>选择共享，其他和你有同样想法的人将和你一起展开该想法的实践旅程。</p>
@@ -25,7 +25,8 @@
                     <p class="field"><input id="private" name="sharestate" type="radio" value="1" /></p>
                     <p class="label"><label for="private">独享</label></p>
                     <p>选择独享，该想法的实践旅程的参与者只能有你一个人。</p>
-                </div>
+                </div>-->
+                <input type="hidden" name="did" value="" />
                 <div><button id="finish_cdream_btn" type="submit" class="btn">写完了 > </button></div>
             </form>
         </div>
