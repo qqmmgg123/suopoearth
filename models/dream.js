@@ -8,7 +8,7 @@ var Dream = new Schema({
     _belong_u   : { type: Schema.Types.ObjectId, ref: 'Account'},
     accounts    : [{ type: Schema.Types.ObjectId, ref: 'Account', unique: true }],
     _followers_u: [{ type: Schema.Types.ObjectId, ref: 'Account', unique: true }],
-    nodes       : [{type: Schema.Types.ObjectId, ref: 'Node', unique: true }],
+    nodes       : [{ type: Schema.Types.ObjectId, ref: 'Node', unique: true }],
     comments    : [{ type: Schema.Types.ObjectId, ref: 'Comment', unique: true }],
     supporters  : [{ type: Schema.Types.ObjectId, ref: 'Account', unique: true }],
     opponents   : [{ type: Schema.Types.ObjectId, ref: 'Account', unique: true }],
@@ -28,13 +28,10 @@ Dream.index({'tags':1});
 
 Dream.pre('remove', function(next) {
     this.model('Account').update({ 
-        dreams: this._id
-    }, { $pull: { "dreams": this._id} });
-    this.model('Account').update({
-        _following_d: this._id
-    }, { $pull: { "_following_d": this._id} })
-    this.model('Node').find({_belong_d: this.id}).remove().exec();
-    this.model('Comment').find({_belong_d: this.id}).remove().exec();
-    next();
+        "dreams": this._id
+    }, { $pull: { "dreams": this._id } }, function(err, dreams) {
+        if (err) return next(err);
+        next(null);
+    });
 });
 module.exports = mongoose.model('Dream', Dream);

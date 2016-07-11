@@ -1243,7 +1243,17 @@ router.post('/dream/delete', function(req, res, next) {
             return next(err);
         }
         
-        dream.remove();
+        dream.remove(function(err) {
+            if (err) {
+                var err = new Error("删除想法失败...");
+                return next(err);
+            }
+
+            res.json({
+                info: "删除想法成功",
+                result: 0
+            });
+        });
     });
 }, function(err, req, res, next) {
     if (err) {
@@ -1378,7 +1388,7 @@ router.post('/dream/out', function(req, res, next) {
                 if (err) return next(err);
 
                 return res.json({
-                    info: "删除想法成功",
+                    info: "退出想法成功",
                     result: 0
                 });
             }
@@ -2224,22 +2234,33 @@ router.post('/node/delete', function(req, res, next) {
 
     var uid = req.user.id;
 
-    if (!req.body.did) {
+    if (!req.body.nid) {
         return next(new Error("请求参数错误..."));
     }
 
-    var dreamID = req.body.did;
+    var nodeID = req.body.nid;
 
-    Dream.findById(dreamID, function(err, dream) {
+    Node.findById(nodeID, function(err, node) {
         if (err) return next(err);
 
-        if (!dream) {
-            var err = new Error("删除想法失败...");
+        if (!node) {
+            var err = new Error("删除历程失败...");
             return next(err);
         }
         
-        dream.remove();
+        node.remove(function(err) {
+            if (err) {
+                var err = new Error("删除历程失败...");
+                return next(err);
+            }
+
+            res.json({
+                info: "删除历程成功",
+                result: 0
+            });
+        });
     });
+
 }, function(err, req, res, next) {
     if (err) {
         message = err.message;

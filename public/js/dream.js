@@ -12,7 +12,16 @@ $(function() {
             method: "POST",
             dataType: "json",
             success: function(data) {
-                alert(data.info);
+                switch (data.result) {
+                    case 0:
+                        window.location.reload(true);
+                        break;
+                    case 1:
+                        alert(data.info);
+                        break;
+                    default:
+                        break;
+                };
             },
             error: function() {
 
@@ -48,6 +57,37 @@ $(function() {
             alert("缺少参数");
             return false;
         }
+    });
+
+    // 删除历程
+    $('[rel="node-delete"]').click(function() {
+        var $belong = $(this).closest('.ctrl-area'),
+            $item   = $(this).closest('.process-node');
+        $.ajax({
+            url: "/node/delete",
+            data: {
+                nid: $belong.data('blid')
+            },
+            method: "POST",
+            dataType: "json",
+            success: function(data) {
+                switch (data.result) {
+                    case 0:
+                        $item.fadeOut(function() {
+                            $(this).remove();
+                        })
+                        break;
+                    case 1:
+                        alert(data.info);
+                        break;
+                    default:
+                        break;
+                };
+            },
+            error: function() {
+
+            }
+        });
     });
 
     // 添加表情
@@ -133,7 +173,7 @@ $(function() {
         }
     });
 
-    // 关注想法操作
+    // 关注提议操作
     $('[rel="dream-follow"]').click(function() {
         var isFollow = $(this).data('isfollow');
         var $self = $(this);
