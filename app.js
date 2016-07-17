@@ -49,6 +49,35 @@ passport.deserializeUser(Account.deserializeUser());
 // mongoose
 mongoose.connect('mongodb://localhost/suopoearth');
 
+app.use(function(req, res, next) {
+    res.msgs = 0;
+    if (!req.user) {
+        return next();
+    }
+    var uid   = req.user._id,
+        rdate = req.user.msgreviewdate;
+
+    var fields = {
+        '_belong_u': uid
+    };
+
+    if (rdate) {
+        fields.date = { 
+            $gt: rdate
+        }
+    }
+
+    console.log(fields);
+
+    Message.count(fields, function (err, count) {
+        if (err) {
+            return next();
+        }
+        res.msgs = count;
+        next();
+    });
+});
+
 // Register routes
 app.use('/', require('./routes'));
 
@@ -59,98 +88,53 @@ app.use(function(req, res, next) {
     next(err);
 });
 
+function makeCommon(data, res) {
+    if (!data.data) {
+        data.data = {};
+    }
+    data.data.messages = res.msgs;
+    return data;
+}
 // error handlers
 
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
-        if (req.user) {
-            var uid   = req.user.id;
-
-            Message.find({
-                '_belong_u': uid
-            }).exec(function(err_2, msgs) {
-                if (err_2) {
-                    msgs = [];
-                }
-
-                res.status(err.status || 500);
-                res.render('error', {
-                    notice: '',
-                    title: settings.APP_NAME,
-                    user : req.user,
-                    message: err.message,
-                    error: err,
-                    data: {
-                        message: msgs
-                    }
-                });
-
-            });
-        }else{
-            res.status(err.status || 500);
-            res.render('error', {
-                notice: '',
-                title: settings.APP_NAME,
-                user : req.user,
-                message: err.message,
-                error: err,
-                data: {
-                    message: []
-                }
-            });
-        }
-    });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    if (req.user) {
-        var uid   = req.user.id;
-
-        Message.find({
-            '_belong_u': uid
-        }).exec(function(err_2, msgs) {
-            if (err_2) {
-                msgs = [];
-            }
-
-            res.status(err.status || 500);
-            res.render('error', {
-                notice: '',
-                title: settings.APP_NAME,
-                user : req.user,
-                message: err.message,
-                error: err,
-                data: {
-                    message: msgs
-                }
-            });
-
-        });
-    }else{
         res.status(err.status || 500);
-        res.render('error', {
+        res.render('error', makeCommon({
             notice: '',
             title: settings.APP_NAME,
             user : req.user,
             message: err.message,
             error: err,
             data: {
-                message: []
             }
-        });
-    }
+        }, res));
+    });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', makeCommon({
+        notice: '',
+        title: settings.APP_NAME,
+        user : req.user,
+        message: err.message,
+        error: err,
+        data: {
+        }
+    }, res));
 });
 
 var server = http.createServer(app);
 
 reload(server, app)
 
-//app.listen(3000);
+    //app.listen(3000);
 
-server.listen(app.get('port'), function(){
-    log('express server running on ' + 3000);
-});
+    server.listen(app.get('port'), function(){
+        log('express server running on ' + 3000);
+    });

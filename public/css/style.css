@@ -369,7 +369,8 @@ i.opposition-icon,
 i.comment-icon,
 i.support-icon,
 i.config-icon,
-i.arrow-icon {
+i.arrow-icon,
+i.remove-icon {
   display: inline-block;
   background: url(/images/sprite_icon_2.png) no-repeat;
   width: 16px;
@@ -397,6 +398,11 @@ i.config-icon {
 }
 i.arrow-icon {
   background-position: -82px -86px;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+i.remove-icon {
+  background-position: -98px -86px;
   margin-top: 5px;
   margin-left: 5px;
 }

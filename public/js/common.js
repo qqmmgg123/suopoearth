@@ -216,6 +216,12 @@ var common = {
     }
 };
 
+common.popup = {
+    el: '.'
+};
+
+common.confirm = $.extend({}, common.popup, {});
+
 common.dreamPop = {
     el: '#dream-pop',
     modal: '.modal',
@@ -291,7 +297,39 @@ $(function() {
     }else{
         common.bindSigninCtrl($('#create_dream_btn'));
     }
-    setInterval($.proxy(common.autoScroll, common, "#reference"), 2000);
+    //setInterval($.proxy(common.autoScroll, common, "#reference"), 2000);
+
+    // 删除想法
+    $('[rel="msg-view"]').click(function() {
+        $.ajax({
+            url: "/message/view",
+            method: "GET",
+            dataType: "json",
+            success: function(data) {
+                switch (data.result) {
+                    case 0:
+                        if (data.data && data.data.length > 0) {
+                            var html = data.data.map(function(item) {
+                                return '<li>' + item.title + '<a href="' + item.url + '"> ' + item.content + '</a></li>'
+                            }).join('');
+                            $('.message-list').html(html).show();
+                        }
+                        break;
+                    case 1:
+                        alert(data.info);
+                        break;
+                    case 2:
+                        alert(data.info);
+                        break;
+                    default:
+                        break;
+                };
+            },
+            error: function() {
+
+            }
+        });
+    });
 
     $(".list-arrow").data('show', false).click(function() {
         var $list = $('.config-list');

@@ -31,11 +31,13 @@
             <% if (user) { %>
             <li>
                 <div class="message-opt">
-                    <a href="/message">消息</a>
-                    <% if (data.messages && data.messages.length > 0) { %>
-                    <span class="message-new">0</span>
+                    <a rel="msg-view" href="javascript:;">消息</a>
+                    <% if (data.messages && data.messages > 0) { %>
+                    <span class="message-new"><%= data.messages %></span>
                     <% } %>
                 </div>
+                <ul class="message-list" style="display: none;">
+                </ul>
             </li>
             <li>
                 <div class="user-nav">

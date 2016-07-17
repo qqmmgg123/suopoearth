@@ -220,20 +220,24 @@ $(function() {
 
     // 添加提议
     $('.comment').data('editShow', false).click(function() {
-        var $this = $(this);
-        var $belong = $this.closest('.ctrl-area');
-        var $commentArea = $belong.find('.comment-area');
-        var editShow = $this.data('editShow');
+        var COMMENT_DREAM = 0,
+            COMMENT_NODE  = 1;
+
+        var $this = $(this),
+            $belong = $this.closest('.ctrl-area'),
+            $commentArea = $belong.find('.comment-area'),
+            editShow = $this.data('editShow');
         
-        var blid  = $belong.data('blid');
-        var did   = $belong.data("did");
-        var bl    = $belong.data('bl');
-        var btype = "";
+        var blid  = $belong.data('blid'),
+            did   = $belong.data("did"),
+            bl    = $belong.data('bl'),
+            btype = "";
+
         switch(bl) {
-            case 0:
+            case COMMENT_DREAM:
                 btype = "dream";
                 break;
-            case 1:
+            case COMMENT_NODE:
                 btype = "node";
                 break;
             default:
@@ -252,14 +256,18 @@ $(function() {
                         case 0:
                             if (data.comments && data.comments.length > 0) {
                                 for (var i=0,l=data.comments.length;i<l;i++) {
+                                    var replyTpl = data.comments[i].isreply? '回复<a href="/user/' + data.comments[i]._reply_u + '">' + data.comments[i].other + '</a>':'';
+
                                     tpl += '<li data-cid="' + data.comments[i]._id + '" data-uid="' + (data.comments[i]._belong_u? data.comments[i]._belong_u._id:'') + '">' + 
                                         '<div class="user-info">' +
                                         '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
-                                        '<em class="username"><a href="javascript:;">' + data.comments[i].author + '</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>' +
+                                        '<em class="username"><a href="/user/' + data.comments[i]._belong_u._id + '">' + data.comments[i].author + '</a>'
+                                         + replyTpl + ' ' + data.comments[i].date + '</em>' +
                                         '</div>' +
                                         '<p class="text">' + data.comments[i].content + '</p>' +
                                         '<div>' +
-                                        '<a class="reply" href="javascript:;">' + (data.comments[i].isowner? '':'回复') + '</a>' +
+                                            '<a rel="comment-delete" href="javascript:;">' + (data.comments[i].isowner? '删除':'') + '</a> ' +
+                                            '<a class="reply" href="javascript:;">' + (data.comments[i].isowner? '':'回复') + '</a>' +
                                         '</div>';
                                     if (data.isauthenticated) {
                                         tpl += '<div class="reply-area" style="display: none;">' +
@@ -269,9 +277,43 @@ $(function() {
                                             '</li>';
                                     }
                                 }
-                                $commentArea.find('ul').html(tpl).off('click').on('click', 'a.reply', function() {
+                                $commentArea.find('ul').html(tpl).off('click')
+                                .on('click', 'a.reply', function() {
+                                    if (!data.isauthenticated) {
+                                        alert("请登录");
+                                    }
+
                                     var $conmmentCurr = $(this).closest('li');
                                     var $replyArea    = $conmmentCurr.find('.reply-area').show();
+                                }).on('click', 'a[rel="comment-delete"]', function() {
+                                    var $conmmentCurr = $(this).closest('li'),
+                                        cid           = $conmmentCurr.data('cid');
+
+                                    $.ajax({
+                                        url: "/comment/delete",
+                                        data: {
+                                            cid: cid
+                                        },
+                                        method: "POST",
+                                        dataType: "json",
+                                        success: function(data) {
+                                            switch (data.result) {
+                                                case 0:
+                                                    $conmmentCurr.fadeOut(function() {
+                                                        $(this).remove();
+                                                    });
+                                                    break;
+                                                case 1:
+                                                    alert(data.info);
+                                                    break;
+                                                default:
+                                                    break;
+                                            };
+                                        },
+                                        error: function() {
+
+                                        }
+                                    });
                                 }).on('click', 'button.btn-reply', function() {
                                     var $this         = $(this);
                                     var $conmmentCurr = $this.closest('li');
@@ -311,7 +353,7 @@ $(function() {
                                                     var tpl = '<li>' + 
                                                         '<div class="user-info">' +
                                                         '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
-                                                        '<em class="username"><a href="/user/'  + data.comment._belong_u +  '">' + data.comment.author + '</a>回复<a href="/user/' + data.comment._reply_u + '">' + data.comment.other + '</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>' +
+                                                        '<em class="username"><a href="/user/'  + data.comment._belong_u +  '">' + data.comment.author + '</a>回复<a href="/user/' + data.comment._reply_u + '">' + data.comment.other + '</a> ' + data.comment.date + '</em>' +
                                                         '<a class="reply" href="javascript:;">' + (data.isowner? '':'回复') + '</a>' +
                                                         '</div>' +
                                                         '<p class="text">' + data.comment.content + '</p>' +
@@ -330,12 +372,24 @@ $(function() {
                                     });
                                 });
                             }
-                            $commentArea.show().find('textarea').focus();
+                            $commentArea.show().find('textarea').off().on('focus', function() {
+                                var $createBtn = $commentArea.find('.btn-area');
+                                if (!$createBtn.data('show')) {
+                                    $createBtn.data('show', true).show();
+                                }
+                            }).on('click', function() {
+                                if (!data.isauthenticated) {
+                                    $commentArea.find('textarea').blur();
+                                    alert("请登录");
+                                }
+                            });
                             $this.data('editShow', true);
                             break;
                         case 1:
                             alert(data.info);
                             break;
+                        case 2:
+                            alert(data.info);
                         default:
                             break;
                     }
@@ -385,19 +439,31 @@ $(function() {
             method: "POST",
             dataType: "json",
             success: function(data) {
-                $textarea.val('');
-
-                var tpl = '<li>' + 
-                    '<div class="user-info">' +
-                    '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
-                    '<em class="username"><a href="javascript:;">' + data.comment.author + '</a> 昨天20:08 于<a href="javascript:;">深圳</a></em>' +
-                    '<a class="reply" href="javascript:;">' + (data.isowner? '':'回复') + '</a>' +
-                    '</div>' +
-                    '<p class="text">' + data.comment.content + '</p>' +
-                    '</li>';
-
-                $commentArea.find('ul').prepend(tpl);
-                    $belong.find('.comment')[0].lastChild.nodeValue = "提议 " + data.total;
+                switch (data.result) {
+                    case 0:
+                        $textarea.val('');
+        
+                        var tpl = '<li>' + 
+                            '<div class="user-info">' +
+                            '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
+                            '<em class="username"><a href="javascript:;">' + data.comment.author + '</a> ' + data.comment.date + '</em>' +
+                            '<a class="reply" href="javascript:;">' + (data.isowner? '':'回复') + '</a>' +
+                            '</div>' +
+                            '<p class="text">' + data.comment.content + '</p>' +
+                            '</li>';
+        
+                        $commentArea.find('ul').prepend(tpl);
+                        $belong.find('.comment')[0].lastChild.nodeValue = "提议 " + data.total;
+                        break;
+                    case 1:
+                        alert(data.info);
+                        break
+                    case 2:
+                        alert(data.info);
+                        break;
+                    default:
+                        break;
+                }
             },
             error: function() {
 

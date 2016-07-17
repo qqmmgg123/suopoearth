@@ -22,8 +22,8 @@ Node.pre('remove', function(next) {
     async.parallel([
         function(cb) {
             self.model('Account').update({ 
-                "nodes": this._id
-            }, { $pull: { "nodes": this._id } }, function(err, dreams) {
+                "nodes": self._id
+            }, { $pull: { "nodes": self._id } }, function(err, users) {
                 if (err) {
                     return cb(err);
                 }
@@ -33,8 +33,8 @@ Node.pre('remove', function(next) {
         },
         function(cb) {
             self.model('Dream').update({ 
-                "nodes": this._id
-            }, { $pull: { "nodes": this._id } }, function(err, dreams) {
+                "nodes": self._id
+            }, { $pull: { "nodes": self._id } }, function(err, dreams) {
                 if (err) {
                     return cb(err);
                 }

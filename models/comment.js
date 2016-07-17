@@ -18,4 +18,19 @@ var Comment = new Schema({
 
 Comment.index({'supporters':1});
 Comment.index({'opponents':1});
+
+Comment.pre('remove', function(next) {
+    var self = this;
+
+    self.model('Node').update({ 
+        "comments": self._id
+    }, { $pull: { "comments": self._id } }, function(err, nodes) {
+        if (err) {
+            return next(err);
+        }
+
+        next(null);
+    });
+});
+
 module.exports = mongoose.model('Comment', Comment);

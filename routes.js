@@ -11,6 +11,14 @@ var async = require("async")
     , log = require('util').log
     , router = require('express').Router();
 
+function makeCommon(data, res) {
+    if (!data.data) {
+        data.data = {};
+    }
+    data.data.messages = res.msgs;
+    return data;
+}
+
 function quote(str) {
     return (str+'').replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
 };
@@ -99,64 +107,44 @@ router.get('/', function(req, res, next) {
                 return next(err);
             }
 
-            res.render('index', {
+            res.render('index', makeCommon({
                 user: req.user,
                 title: settings.APP_NAME,
                 notice: getFlash(req, 'notice'),
                 data: {
                     activities: activities,
-                    fdreams: user._following_d,
-                    mdreams: user.dreams
+                    fdreams  : user._following_d,
+                    mdreams  : user.dreams
                 },
                 success: 1
-            });
+            }, res));
         });
     });
 }, function(req, res, next) {
     var einfo = req.flash('emailinfo');
 
-    res.render('authenticate', {
+    res.render('authenticate', makeCommon({
         title : settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         message: einfo,
         user : req.user,
-        data : {}
-    });
+        data : {
+             messages : res.msgs,
+        }
+    }, res));
 });
 
 // 想法详情页
 router.get('/dream/:id', function(req, res, next) {
+    var msgs = [];
     if (!req.user) {
         req.session.redirectTo = req.originalUrl;
     }
 
     var curId = req.params.id;
 
-    async.parallel([
-        function(cb) {
-            if (!req.user) {
-                return cb(null,[]);
-            }
-            var uid   = req.user.id;
-
-            Message.find({
-                '_belong_u': uid
-            }).exec(function(err, msgs) {
-                if (err) {
-                    return cb(null, []);
-                }
-                cb(null, msgs);
-            });
-        }, function(cb) {
             var populate = [{
-                    path: 'accounts',
-                    options: { limit: 6 },
-                }, {
-                    path: 'nodes',
-                    options: { 
-                        limit: 20,
-                        sort: '-date'
-                    }
+                    path: '_belong_u',
                 }
             ];
 
@@ -174,131 +162,166 @@ router.get('/dream/:id', function(req, res, next) {
             })
             .populate(populate)
             .exec(function(err, dream) {
-                if (err) {
-                    return cb(err, null);
-                }
-                cb(null, dream);
-            });
-        }], function(err, results) {
-            if (err) {
-                var err = new Error("找不到该想法...");
-                return next(err);
-            }
-
-            if (!results || results.length < 2) {
-                return next(new Error("找不到该想法..."));
-            }
-
-            var msgs      = results[0],
-                dream     = results[1];
-
-            if (msgs && dream) {
-                var accounts  = dream.accounts;
-                var nodes     = dream.nodes;
-
-
-                var isfollow = false;
-                if (req.user) {
-                    isfollow = (dream._followers_u && dream._followers_u.length > 0);
+                if (err || !dream) {
+                    var err = new Error("找不到该想法...");
+                    return next(err);
                 }
 
-                Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
-                    if (err) {
-                        return next(err);
+                    var nodes     = dream.nodes;
+
+                    var isfollow = false;
+                    if (req.user) {
+                        isfollow = (dream._followers_u && dream._followers_u.length > 0);
                     }
 
-                    if (!rnodes) {
-                        var err = new Error("找不到该想法...")
-                        return next(err);
-                    }
+                    Node.aggregate([{
+                        $match: {
+                            _id: {
+                                $in: nodes
+                            }
+                        }
+                    }, {
+                        $project: {
+                            id        : 1,
+                            content   : 1,
+                            author    : 1,
+                            _belong_u : 1,
+                            _belong_d : 1,
+                            comments  : { $size: '$comments' },
+                            date      : 1
+                        }
+                    }, {
+                        $sort: { date: -1 }
+                    }, {
+                        $limit: 20
+                    }],
+                    function(err, nodes) {
+                        if (err || !nodes) {
+                            return next(new Error("找不到该想法..."))
+                        };
 
-                    async.parallel([
-                        function(callback) {
-                            Dream.findById(curId, function(err, res) {
-                                var userNum = 0;
-                            
-                                if (res) {
-                                    userNum = res.accounts.length;
-                                }
-
-                                callback(null, userNum);
-                            });
-                        },
-                        function(callback){
-                            Dream
-                            .find({
-                                _id:{$gt: curId}
-                            })
-                            .limit(1)
-                            .exec(function(err, result){
-                                if (err) {
-                                    return callback(err, null);
-                                }
-    
-                                var dreams = result;
-                                callback(null, dreams);
-                            });
-                        },
-                        function(callback){
-                            Dream
-                            .find({
-                                _id:{$lte: curId}
-                            })
-                            .sort('-_id')
-                            .limit(2)
-                            .exec(function(err, result){
-                                if (err) {
-                                    return callback(err, null);
-                                }
-    
-                                var dreams = result;
-                                callback(null, dreams);
-                            });
-                        }],
-                        function(err, results){
-                            if (err) return next(err);
-    
-                            if (!results || results.length < 3) {
-                                var err = new Error("找不到该想法...");
+                        Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
+                            if (err) {
                                 return next(err);
                             }
-                        
-                            if (req.user) {
-                                var uid = req.user.id;
-                                var _uid = mongoose.Types.ObjectId(uid);
-                            
-                                accounts.forEach(function(account) {
-                                    account.isfollow = (account.fans.indexOf(_uid)!== -1);
-                                });
+
+                            if (!rnodes) {
+                                var err = new Error("找不到该想法...")
+                                return next(err);
                             }
 
-                            var resData = {
-                                membercount: results[0],
-                                members    : accounts,
-                                messages   : msgs,
-                                prev       : results[1][0],
-                                nodes      : rnodes,
-                                current    : results[2][0],
-                                next       : results[2][1],
-                                isFollow   : isfollow
-                            };
-
-                            res.render('dream', {
-                                user  : req.user,
-                                title : settings.APP_NAME,
-                                notice: getFlash(req, 'notice'),
-                                data  : resData,
-                                success: 1
+                            rnodes.forEach(function(node) {
+                                node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
                             });
-                        }
-                    );
-                });
-            }else{
-                var unexisterr = new Error("找不到该想法...");
-                next(unexisterr);
-            }
-        }
-    );
+
+                            async.parallel([
+                                function(callback) {
+                                    Dream.findById(curId)
+                                    .populate({
+                                        path: '_followers_u',
+                                        options: { limit: 6 },
+                                    })
+                                    .exec(function(err, res) {
+                                        var userNum = 0,
+                                            dfollowers = [];
+                                        if (err || !res) {
+                                            return callback(null, [userNum, dfollowers]);
+                                        }
+                                        
+                                        dfollowers = res._followers_u || dfollowers;
+
+                                        Dream.aggregate([{
+                                            $match: {
+                                                _id: res._id
+                                            }
+                                        }, {
+                                            $project: {
+                                                _followers_u: {$size: '$_followers_u'}
+                                            }
+                                        }],
+                                        function(err, docs) {
+                                            if (err) return callback(null, [userNum, dfollowers]);
+                                                
+                                            if (docs && docs.length > 0) {
+                                                userNum = docs[0]._followers_u;
+                                            }
+                                            callback(null, [userNum, dfollowers])
+                                        });
+                                    });
+                                },
+                                function(callback){
+                                    Dream
+                                    .find({
+                                        _id:{$gt: curId}
+                                    })
+                                    .limit(1)
+                                    .exec(function(err, result){
+                                        if (err) {
+                                            return callback(err, null);
+                                        }
+        
+                                        var dreams = result;
+                                        callback(null, dreams);
+                                    });
+                                },
+                                function(callback){
+                                    Dream
+                                    .find({
+                                        _id:{$lte: curId}
+                                    })
+                                    .sort('-_id')
+                                    .limit(2)
+                                    .exec(function(err, result){
+                                        if (err) {
+                                            return callback(err, null);
+                                        }
+        
+                                        var dreams = result;
+                                        callback(null, dreams);
+                                    });
+                                }],
+                                function(err, results){
+                                    if (err) return next(err);
+        
+                                    if (!results || results.length < 3) {
+                                        var err = new Error("找不到该想法...");
+                                        return next(err);
+                                    }
+
+                                    var accounts = results[0][1]? results[0][1]:[];
+                            
+                                    if (req.user) {
+                                        var uid = req.user.id;
+                                        var _uid = mongoose.Types.ObjectId(uid);
+                                
+                                        accounts.forEach(function(account) {
+                                            account.isfollow = (account.fans.indexOf(_uid)!== -1);
+                                        });
+                                    }
+
+                                    var resData = {
+                                        author     : dream._belong_u,
+                                        membercount: results[0][0]? results[0][0]:0,
+                                        members    : accounts,
+                                        prev       : results[1][0],
+                                        nodes      : rnodes,
+                                        current    : results[2][0],
+                                        next       : results[2][1],
+                                        isFollow   : isfollow
+                                    };
+
+                                    res.render('dream', makeCommon({
+                                        user  : req.user,
+                                        title : settings.APP_NAME,
+                                        notice: getFlash(req, 'notice'),
+                                        data  : resData,
+                                        success: 1
+                                    }, res));
+                                }
+                            );
+                        });
+                    });
+            });
 });
 
 // 获取想法提议
@@ -335,14 +358,37 @@ router.get('/dream/:id/comments', function(req, res, next) {
 
 // 获取历程提议
 router.get('/node/:id/comments', function(req, res, next) {
-    var curId = req.params.id;
+    var curId = req.params.id,
+        query = { _belong_n: curId };
 
-    Comment.find({ _belong_n: curId }).lean().populate({
-         path: '_belong_u'
-    }).exec(function(err, comments) {
-        if (err) {
-            return next(err);
+    async.parallel([
+        function(cb) {
+            Comment.count(query, function(err, count) {
+                if (err || !count) {
+                    return cb(null, 0);
+                }
+
+                cb(null, count)
+            });
+        },
+        function(cb) {
+            Comment.find(query).lean().populate({
+                path: '_belong_u'
+            }).exec(function(err, comments) {
+                if (err || !comments) {
+                    return cb(err, null);
+                }
+
+                cb(null, comments)
+            })
         }
+    ], function(err, results) {
+        if (err || !results || results.length !== 2) {
+            return next(new Error("未获取评论。"))
+        }
+
+        var comments = results[1],
+            count    = results[0];
 
         comments.forEach(function(comment) {
             comment.isowner = req.user && (comment._belong_u && comment._belong_u._id.equals(req.user.id));
@@ -350,10 +396,11 @@ router.get('/node/:id/comments', function(req, res, next) {
 
         res.json({
             isauthenticated: !!req.user,
+            count   : count,
             comments: comments,
-            result: 0
-        })
-    })
+            result  : 0
+        });
+    });
 }, function(err, req, res, next) {
     if (err) {
         message = err.message;
@@ -411,13 +458,13 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
             };
 
             var resRender = function(data) {
-                res.render('user', {
+                res.render('user', makeCommon({
                     title: settings.APP_NAME,
                     notice: getFlash(req, 'notice'),
                     user : req.user,
                     data: data,
                     success: 1
-                });
+                }, res));
             }
 
             if (req.query && req.query.tab == "activity") {
@@ -453,16 +500,90 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
     });
 });
 
+// 获取消息信息
+router.get('/message/view', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    if (!res.msgs) {
+        return next(new Error('没有最新消息。'));
+    }
+
+    var uid   = req.user.id,
+        rdate = req.user.msgreviewdate;
+
+    var fields = {
+        '_belong_u': uid
+    };
+
+    if (rdate) {
+        fields.date = { 
+            $gt: rdate
+        }
+    }
+        
+        Message.find(fields)
+        .sort('-date')
+        .limit(1)
+        .exec(function(err, msgs) {
+            if (err) {
+                return next(err);
+            }
+
+            if (rdate) {
+                req.user.update({
+                    msgreviewdate : new Date()
+                }, function(err, course) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.msgs = msgs;
+                    res.json({
+                        info: "ok",
+                        data: msgs,
+                        result: 0
+                    });
+                });
+            } else {
+                req.user.msgreviewdate = new Date();
+                req.user.save(function(err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.msgs = msgs;
+                    res.json({
+                        info: "ok",
+                        data: msgs,
+                        result: 0
+                    });
+                })
+            }
+        });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
 // 消息页
 router.get('/message/', function(req, res) {
-    res.render('message', {
+    res.render('message', makeCommon({
         title: settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         user : req.user,
-        data: {
-        },
         result: 0
-    });
+    }, res));
 });
 
 // 更改用户资料
@@ -480,28 +601,17 @@ router.post('/settings/profile/update', function(req, res, next) {
     var nickname = req.body.nickname,
         bio = req.body.bio? req.body.bio:'';
 
-    Account.findById(uid, function(err, user) {
+    req.user.update({
+        nickname : nickname,
+        bio      : bio
+    }, function(err, course) {
         if (err) {
-            return next(err);
+            req.flash('error', err.message);
+            return res.redirect('/settings/profile');
         }
 
-        if (!user) {
-            var err = new Error("网络或者服务器异常，个人信息更新失败！");
-            return next(err);
-        }
-
-        user.update({
-            nickname : nickname,
-            bio      : bio
-        }, function(err, course) {
-            if (err) {
-                req.flash('error', err.message);
-                return res.redirect('/settings/profile');
-            }
-
-            req.flash('notice', "个人信息更新完成。");
-            res.redirect('/settings/profile');
-        });
+        req.flash('notice', "个人信息更新完成。");
+        res.redirect('/settings/profile');
     });
 });
 
@@ -542,7 +652,7 @@ router.get('/settings/profile', function(req, res, next) {
             if (err) {
                 return next(err);
             };
-            res.render('profile', {
+            res.render('profile', makeCommon({
                 title: settings.APP_NAME,
                 notice: getFlash(req, 'notice'),
                 user : req.user,
@@ -553,7 +663,7 @@ router.get('/settings/profile', function(req, res, next) {
                     bio: account.bio? account.bio:''
                 },
                 success: 1
-            });
+            }, res));
         });
     }
 });
@@ -568,7 +678,7 @@ router.get('/settings/account', function(req, res, next) {
                 return next(err);
             };
 
-            res.render('account', {
+            res.render('account', makeCommon({
                 title: settings.APP_NAME,
                 notice: getFlash(req, 'notice'),
                 user : req.user,
@@ -576,7 +686,7 @@ router.get('/settings/account', function(req, res, next) {
                     error: getFlash(req, 'error')
                 },
                 success: 1
-            });
+            }, res));
         });
     }
 });
@@ -595,7 +705,7 @@ router.get('/settings/emails', function(req, res, next) {
                 return next(err);
             };
 
-            res.render('emails', {
+            res.render('emails', makeCommon({
                 title: settings.APP_NAME,
                 notice: getFlash(req, 'notice'),
                 user : req.user,
@@ -603,7 +713,7 @@ router.get('/settings/emails', function(req, res, next) {
                     error: getFlash(req, 'error')
                 },
                 success: 1
-            });
+            }, res));
         });
     }
 });
@@ -727,7 +837,7 @@ router.get('/query', function(req, res, next) {
 // 搜索结果
 router.get('/result', function(req, res, next) {
     function reponse(type, data) {
-        res.render('result', {
+        res.render('result', makeCommon({
             title: settings.APP_NAME,
             notice: getFlash(req, 'notice'),
             user : req.user,
@@ -736,7 +846,7 @@ router.get('/result', function(req, res, next) {
                 results: data
             },
             result: 0
-        });
+        }, res));
     }
 
     if (!req.query) {
@@ -802,36 +912,37 @@ router.get('/result', function(req, res, next) {
 
 // 简介
 router.get('/intro', function(req, res) {
-    res.render('intro', {
+    res.render('intro', makeCommon({
         title: settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         user : req.user,
         data: {
         },
         success: 1
-    });
+    }, res));
 });
 
 // 联系我们
 router.get('/contact', function(req, res) {
-    res.render('contact', {
+    res.render('contact', makeCommon({
         title: settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         user : req.user,
         data: {
         },
         success: 1
-    });
+    }, res));
 });
 
 // 登录页面
 router.get('/signin', function(req, res) {
-    res.render('signin', {
+    console.log(res.msgs);
+    res.render('signin', makeCommon({
         title : settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         error:  getFlash(req, 'info'),
         user : req.user
-    });
+    }, res));
 });
 
 // 登录
@@ -916,11 +1027,11 @@ router.post('/settings/account/pwdupdate', function(req, res, next) {
 
 // 忘记密码
 router.get('/forgot', function(req, res) {
-    res.render('forgot', {
+    res.render('forgot', makeCommon({
         error:  getFlash(req, 'error'),
         title : settings.APP_NAME,
         user: req.user
-    });
+    }, res));
 });
 
 // 发送重置邮件
@@ -950,12 +1061,12 @@ router.get('/reset/:token([A-Za-z0-9]+)', function(req, res) {
             return res.redirect('/forgot');
         }
 
-        res.render('reset', {
+        res.render('reset', makeCommon({
             token : token,
             notice: getFlash(req, 'notice'),
             title : settings.APP_NAME,
             user: req.user
-        });
+        }, res));
     });
 });
 
@@ -997,12 +1108,12 @@ router.get('/email-verification/:token([A-Za-z0-9]+)', function(req, res, next) 
 
 // 注册页面
 router.get('/signup', function(req, res) {
-    res.render('signup', {
+    res.render('signup', makeCommon({
         info : getFlash(req, 'signuperror'),
         notice: getFlash(req, 'notice'),
         title : settings.APP_NAME,
         user : req.user
-    });
+    }, res));
 });
 
 // 登出
@@ -1013,20 +1124,20 @@ router.get('/signout', function(req, res) {
 
 // 建设中
 router.get('/building', function(req, res) {
-    res.render('building', {
+    res.render('building', makeCommon({
         title: settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         user : req.user
-    });
+    }, res));
 });
 
 // 建设中
 router.get('/canvas', function(req, res) {
-    res.render('canvas', {
+    res.render('canvas', makeCommon({
         title: settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         user : req.user
-    });
+     }, res));
 });
 
 // 创建一个想法
@@ -1286,7 +1397,7 @@ router.post('/dream/modify', function(req, res, next) {
     if (title) {
         fields.title = title;
     }else{
-        return next(new Error("标题不能不能不填..."))
+        return next(new Error("标题不能不能不填..."));
     }
     if (des) fields.description = des? des:"";
 
@@ -2234,7 +2345,7 @@ router.post('/node/delete', function(req, res, next) {
 
     var uid = req.user.id;
 
-    if (!req.body.nid) {
+    if (!req.body || !req.body.nid) {
         return next(new Error("请求参数错误..."));
     }
 
@@ -2245,6 +2356,11 @@ router.post('/node/delete', function(req, res, next) {
 
         if (!node) {
             var err = new Error("删除历程失败...");
+            return next(err);
+        }
+
+        if (!node._belong_u.equals(uid)) {
+            var err = new Error("这不是你的历程，你不能删除...");
             return next(err);
         }
         
@@ -2283,21 +2399,36 @@ router.post('/comment/delete', function(req, res, next) {
 
     var uid = req.user.id;
 
-    if (!req.body.did) {
+    if (!req.body || !req.body.cid) {
         return next(new Error("请求参数错误..."));
     }
 
-    var dreamID = req.body.did;
+    var commentID = req.body.cid;
 
-    Dream.findById(dreamID, function(err, dream) {
+    Comment.findById(commentID, function(err, comment) {
         if (err) return next(err);
 
-        if (!dream) {
-            var err = new Error("删除想法失败...");
+        if (!comment) {
+            var err = new Error("删除评论失败...");
             return next(err);
         }
-        
-        dream.remove();
+
+        if (!comment._belong_u.equals(uid)) {
+            var err = new Error("这不是你的评论，你不能删除...");
+            return next(err);
+        }
+
+        comment.remove(function(err) {
+            if (err) {
+                var err = new Error("删除评论失败...");
+                return next(err);
+            }
+
+            res.json({
+                info: "删除评论成功",
+                result: 0
+            });
+        });
     });
 }, function(err, req, res, next) {
     if (err) {
