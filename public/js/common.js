@@ -105,7 +105,7 @@ var common = {
         var $signin_pop = $('#signin-pop');
         $('.modal').show();
         $signin_pop.css({
-            top: (pagesize[3] - $signin_pop.height()) / 2,
+            top: (pagesize[3] - $signin_pop.height()) * .2,
             left: (pagesize[2] - $signin_pop.width()) / 2
         }).show();
         $(document).off('keypress').on('keydown', function(event) {
@@ -189,7 +189,7 @@ var common = {
             var $message_pop = $('#message-pop');
             $('.modal').show();
             $message_pop.css({
-                top: (pagesize[3] - $message_pop.height()) / 2,
+                top: (pagesize[3] - $message_pop.height()) * .2,
                 left: (pagesize[2] - $message_pop.width()) / 2
             }).show();
             $(document).unbind('keypress').on('keydown', function(event) {
@@ -319,7 +319,7 @@ $(function() {
                         alert(data.info);
                         break;
                     case 2:
-                        alert(data.info);
+                        common.showSigninPop();
                         break;
                     default:
                         break;

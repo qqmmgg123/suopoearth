@@ -19,6 +19,9 @@ $(function() {
                     case 1:
                         alert(data.info);
                         break;
+                    case 2:
+                        common.showSigninPop();
+                        break;
                     default:
                         break;
                 };
@@ -79,6 +82,9 @@ $(function() {
                         break;
                     case 1:
                         alert(data.info);
+                        break;
+                    case 2:
+                        common.showSigninPop();
                         break;
                     default:
                         break;
@@ -173,7 +179,7 @@ $(function() {
         }
     });
 
-    // 关注提议操作
+    // 关注想法操作
     $('[rel="dream-follow"]').click(function() {
         var isFollow = $(this).data('isfollow');
         var $self = $(this);
@@ -186,10 +192,19 @@ $(function() {
                 method: "POST",
                 dataType: "json",
                 success: function(data) {
-                    alert(data.info);
-                    if (data.result === 0) {
-                        $self.text("取消关注该想法");
-                        $self.data('isfollow', true);
+                    switch(data.result) {
+                        case 0:
+                            $self.text("取消关注想法");
+                            $self.data('isfollow', true);
+                            break;
+                        case 1:
+                            alert(data.info);
+                            break;
+                        case 2:
+                            common.showSigninPop();
+                            break;
+                        default:
+                            break;
                     }
                 },
                 error: function() {
@@ -205,10 +220,19 @@ $(function() {
                 method: "POST",
                 dataType: "json",
                 success: function(data) {
-                    alert(data.info);
-                    if (data.result === 0) {
-                        $self.text("关注该想法");
-                        $self.data('isfollow', false);
+                    switch(data.result) {
+                        case 0:
+                            $self.text("关注该想法");
+                            $self.data('isfollow', false);
+                            break;
+                        case 1:
+                            alert(data.info);
+                            break;
+                        case 2:
+                            common.showSigninPop();
+                            break;
+                        default:
+                            break;
                     }
                 },
                 error: function() {
@@ -271,7 +295,7 @@ $(function() {
                                         '</div>';
                                     if (data.isauthenticated) {
                                         tpl += '<div class="reply-area" style="display: none;">' +
-                                            '<textarea></textarea>' +
+                                            '<textarea placeholder="说说你的看法..."></textarea>' +
                                             '<button class="btn btn-reply">回复</button>' +
                                             '</div>' +
                                             '</li>';
@@ -280,11 +304,19 @@ $(function() {
                                 $commentArea.find('ul').html(tpl).off('click')
                                 .on('click', 'a.reply', function() {
                                     if (!data.isauthenticated) {
-                                        alert("请登录");
+                                        common.showSigninPop();
                                     }
-
+                                    
+                                    var replyShow     = $(this).data('replyShow');
                                     var $conmmentCurr = $(this).closest('li');
-                                    var $replyArea    = $conmmentCurr.find('.reply-area').show();
+                                    var $replyArea    = $conmmentCurr.find('.reply-area');
+                                    if (!replyShow) {
+                                        $replyArea.show();
+                                        $(this).data('replyShow', true);
+                                    } else {
+                                        $replyArea.hide();
+                                        $(this).data('replyShow', false);
+                                    }
                                 }).on('click', 'a[rel="comment-delete"]', function() {
                                     var $conmmentCurr = $(this).closest('li'),
                                         cid           = $conmmentCurr.data('cid');
@@ -305,6 +337,9 @@ $(function() {
                                                     break;
                                                 case 1:
                                                     alert(data.info);
+                                                    break;
+                                                case 2:
+                                                    common.showSigninPop();
                                                     break;
                                                 default:
                                                     break;
@@ -365,6 +400,9 @@ $(function() {
                                                 case 1:
                                                     alert(data.info);
                                                     break;
+                                                case 2:
+                                                    common.showSigninPop();
+                                                    break;
                                                 default:
                                                     break;
                                             }
@@ -372,24 +410,25 @@ $(function() {
                                     });
                                 });
                             }
-                            $commentArea.show().find('textarea').off().on('focus', function() {
-                                var $createBtn = $commentArea.find('.btn-area');
+                            $commentArea.show().find('textarea:first').off().on('focus', function() {
+                                var $createBtn = $commentArea.find('.btn-area:first');
                                 if (!$createBtn.data('show')) {
                                     $createBtn.data('show', true).show();
                                 }
                             }).on('click', function() {
                                 if (!data.isauthenticated) {
-                                    $commentArea.find('textarea').blur();
-                                    alert("请登录");
+                                    $commentArea.find('textarea:first').blur();
+                                    common.showSigninPop();
                                 }
                             });
                             $this.data('editShow', true);
+                            $this.html('<a class="comment" href="javascript:;"><i class="comment-icon"></i>收起提议</a>');
                             break;
                         case 1:
                             alert(data.info);
                             break;
                         case 2:
-                            alert(data.info);
+                            common.showSigninPop();
                         default:
                             break;
                     }
@@ -400,6 +439,7 @@ $(function() {
             });
         }else{
             $commentArea.hide().find('textarea').blur();
+            $this.html('<a class="comment" href="javascript:;"><i class="comment-icon"></i>提议</a>');
             $this.data('editShow', false);
         }
     });
@@ -459,7 +499,7 @@ $(function() {
                         alert(data.info);
                         break
                     case 2:
-                        alert(data.info);
+                        common.showSigninPop();
                         break;
                     default:
                         break;

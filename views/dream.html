@@ -128,17 +128,19 @@
                                     <ul>
                                 </div>
                                 <div class="comment-area" style="display: none;">
-                                    <textarea placeholder="说说你的看法..."></textarea>
-                                    <div class="btn-area" data-show="false" style="display: none;"><button class="btn btn-comment">发表</button></div>
-                                    <ul>
+                                    <div>
+                                        <textarea placeholder="说说你的看法..."></textarea>
+                                        <div class="btn-area" data-show="false" style="display: none;"><button class="btn btn-comment">发表</button></div>
+                                    </div>
+                                    <ul class="comment-list">
                                     </ul>
                                 </div>
                             </div>
                         </div>
                         <% }); %>
-                        <!--<div class="process-node">-->
-                            <!--<div class="more"><a class="btn">查看更多 ></a></div>-->
-                        <!--</div>-->
+                        <div class="process-node" style="display: none;">
+                            <div class="more"><a class="btn">查看更多 ></a></div>
+                        </div>
                         <% } else { %>
                         <div class="process-node">
                             <div class="result">

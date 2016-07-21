@@ -47,6 +47,7 @@ input:-webkit-autofill {
   border: 1px solid #CCC!important;
 }
 a {
+  color: #333;
   text-decoration: none;
 }
 .t-fixed {
@@ -232,7 +233,8 @@ a {
   font-size: 10px;
   background-color: #ff4d73;
 }
-.header ul.h-right > li .config-list {
+.header ul.h-right > li .config-list,
+.header ul.h-right > li .message-list {
   width: 120px;
   border: 2px solid #ddd;
   background-color: #fff;
@@ -240,14 +242,16 @@ a {
   z-index: 1;
   position: absolute;
 }
-.header ul.h-right > li .config-list a {
+.header ul.h-right > li .config-list a,
+.header ul.h-right > li .message-list a {
   display: block;
   height: 26px;
   line-height: 26px;
   font-size: 12px;
   text-align: center;
 }
-.header ul.h-right > li .config-list a:hover {
+.header ul.h-right > li .config-list a:hover,
+.header ul.h-right > li .message-list a:hover {
   background-color: #eaeaea;
 }
 .header ul.h-lef,
@@ -370,7 +374,8 @@ i.comment-icon,
 i.support-icon,
 i.config-icon,
 i.arrow-icon,
-i.remove-icon {
+i.remove-icon,
+i.search-icon {
   display: inline-block;
   background: url(/images/sprite_icon_2.png) no-repeat;
   width: 16px;
@@ -403,6 +408,11 @@ i.arrow-icon {
 }
 i.remove-icon {
   background-position: -98px -86px;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+i.search-icon {
+  background-position: -114px -86px;
   margin-top: 5px;
   margin-left: 5px;
 }
@@ -962,6 +972,9 @@ i.remove-icon {
   overflow: auto;
   resize: none;
 }
+.container .dream-con .process-area .process-node .comment-area .comment-list {
+  margin-top: 10px;
+}
 .container .dream-con .process-area .process-node .more,
 .container .dream-con .process-area .process-node .result {
   text-align: center;
@@ -1301,6 +1314,30 @@ a.next-btn {
   padding-left: 5px;
   resize: none;
   overflow: auto;
+}
+ul.activity-list > li {
+  margin: 10px 0;
+  padding: 10px;
+}
+ul.activity-list > li p.user-info {
+  color: #999;
+  font-size: 12px;
+  overflow: hidden;
+}
+ul.activity-list > li p.user-info .user-desc {
+  font-style: normal;
+  float: left;
+}
+ul.activity-list > li p.user-info a {
+  font-size: 14px;
+}
+ul.activity-list > li p.user-info a.avatar {
+  float: right;
+}
+ul.activity-list > li .ac-summary {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #666;
 }
 .message-list {
   width: 300px;

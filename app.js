@@ -67,8 +67,6 @@ app.use(function(req, res, next) {
         }
     }
 
-    console.log(fields);
-
     Message.count(fields, function (err, count) {
         if (err) {
             return next();

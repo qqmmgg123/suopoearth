@@ -509,9 +509,9 @@ router.get('/message/view', function(req, res, next) {
         });
     }
 
-    if (!res.msgs) {
-        return next(new Error('没有最新消息。'));
-    }
+    //if (!res.msgs) {
+        //return next(new Error('没有最新消息。'));
+    //}
 
     var uid   = req.user.id,
         rdate = req.user.msgreviewdate;
@@ -520,15 +520,15 @@ router.get('/message/view', function(req, res, next) {
         '_belong_u': uid
     };
 
-    if (rdate) {
-        fields.date = { 
-            $gt: rdate
-        }
-    }
+    //if (rdate) {
+        //fields.date = { 
+            //$gt: rdate
+        //}
+    //}
         
         Message.find(fields)
         .sort('-date')
-        .limit(1)
+        .limit(5)
         .exec(function(err, msgs) {
             if (err) {
                 return next(err);
