@@ -141,64 +141,69 @@ router.get('/dream/:id', function(req, res, next) {
         req.session.redirectTo = req.originalUrl;
     }
 
-    var curId = req.params.id;
+    var curId  = req.params.id,
+        _curId = mongoose.Types.ObjectId(curId);
+        var populate = [{
+            path: '_belong_u',
+        }];
 
-            var populate = [{
-                    path: '_belong_u',
-                }
-            ];
+        if (req.user) {
+            populate.push({
+                path  : '_followers_u',
+                match : { _id: req.user.id},
+                select: "_id",
+                model : Account
+            });
+        }
 
-            if (req.user) {
-                populate.push({
-                    path  : '_followers_u',
-                    match : { _id: req.user.id},
-                    select: "_id",
-                    model : Account
-                });
+        Dream.findOne({
+            _id: _curId
+        })
+        .populate(populate)
+        .exec(function(err, dream) {
+            if (err || !dream) {
+                var err = new Error("找不到该想法...");
+                return next(err);
             }
 
-            Dream.findOne({
-                _id: curId
-            })
-            .populate(populate)
-            .exec(function(err, dream) {
-                if (err || !dream) {
-                    var err = new Error("找不到该想法...");
-                    return next(err);
+            var isfollow = false;
+            if (req.user) {
+                isfollow = (dream._followers_u && dream._followers_u.length > 0);
+            }
+
+            Node.aggregate([{
+                $match: {
+                    _belong_d: _curId
                 }
-
-                    var nodes     = dream.nodes;
-
-                    var isfollow = false;
-                    if (req.user) {
-                        isfollow = (dream._followers_u && dream._followers_u.length > 0);
-                    }
-
-                    Node.aggregate([{
-                        $match: {
-                            _id: {
-                                $in: nodes
-                            }
-                        }
-                    }, {
-                        $project: {
-                            id        : 1,
-                            content   : 1,
-                            author    : 1,
-                            _belong_u : 1,
-                            _belong_d : 1,
-                            comments  : { $size: '$comments' },
-                            date      : 1
-                        }
-                    }, {
-                        $sort: { date: -1 }
-                    }, {
-                        $limit: 20
-                    }],
-                    function(err, nodes) {
-                        if (err || !nodes) {
-                            return next(new Error("找不到该想法..."))
-                        };
+            }, {
+                $project: {
+                    id        : 1,
+                    content   : 1,
+                    author    : 1,
+                    _belong_u : 1,
+                    _belong_d : 1,
+                    comments  : { $size: '$comments' },
+                    date      : 1
+                }
+            }, {
+                $sort: { date: -1 }
+            }, {
+                $skip: 0
+            }, {
+                $limit: 11
+            }],
+            function(err, nodes) {
+                if (err || !nodes) {
+                    return next(new Error("找不到该想法..."))
+                };
+                
+                var ismore = false,
+                    nnext   = 0;
+                if (nodes[10]) {
+                    ismore = true;
+                    nnext = nodes[10].id;
+                }
+                nodes = nodes.slice(0, 10);
 
                         Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
                             if (err) {
@@ -299,12 +304,16 @@ router.get('/dream/:id', function(req, res, next) {
                                         });
                                     }
 
+                                    console.log(ismore);
+
                                     var resData = {
                                         author     : dream._belong_u,
                                         membercount: results[0][0]? results[0][0]:0,
                                         members    : accounts,
                                         prev       : results[1][0],
                                         nodes      : rnodes,
+                                        ismore     : ismore,
+                                        nnext      : nnext,
                                         current    : results[2][0],
                                         next       : results[2][1],
                                         isFollow   : isfollow
@@ -322,6 +331,73 @@ router.get('/dream/:id', function(req, res, next) {
                         });
                     });
             });
+});
+
+// 获取历程信息
+router.get('/dream/:id/nodes', function(req, res, next) {
+    var curId  = req.params.id,
+        _curId = mongoose.Types.ObjectId(curId);
+
+    if (!req.query || !req.query.nnext) {
+        var err = new Error("获取更多历程失败。");
+        return next(err);
+    }
+
+    var _current = mongoose.Types.ObjectId(req.query.nnext);
+
+    Node.aggregate([{
+        $match: {
+            _belong_d: _curId,
+            _id: {
+                $lt: _current
+            }
+        }
+    }, {
+        $project: {
+            id        : 1,
+            content   : 1,
+            author    : 1,
+            _belong_u : 1,
+            _belong_d : 1,
+            comments  : { $size: '$comments' },
+            date      : 1
+        }
+    }, {
+        $sort: { date: -1 }
+    }, {
+        $limit: 11
+    }],
+    function(err, nodes) {
+        if (err || !nodes) {
+            return next(new Error("找不到该想法。"))
+        };
+
+        nodes = nodes.slice(0, 10);
+
+        Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
+            if (err) {
+                return next(err);
+            }
+
+            if (!rnodes) {
+                var err = new Error("找不到该想法...")
+                return next(err);
+            }
+
+            rnodes.forEach(function(node) {
+                node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
+            });
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
 });
 
 // 获取想法提议
@@ -509,62 +585,52 @@ router.get('/message/view', function(req, res, next) {
         });
     }
 
-    //if (!res.msgs) {
-        //return next(new Error('没有最新消息。'));
-    //}
-
     var uid   = req.user.id,
         rdate = req.user.msgreviewdate;
 
     var fields = {
         '_belong_u': uid
     };
-
-    //if (rdate) {
-        //fields.date = { 
-            //$gt: rdate
-        //}
-    //}
         
-        Message.find(fields)
-        .sort('-date')
-        .limit(5)
-        .exec(function(err, msgs) {
-            if (err) {
-                return next(err);
-            }
+    Message.find(fields)
+    .sort('-date')
+    .limit(5)
+    .exec(function(err, msgs) {
+        if (err) {
+            return next(err);
+        }
 
-            if (rdate) {
-                req.user.update({
-                    msgreviewdate : new Date()
-                }, function(err, course) {
-                    if (err) {
-                        return next(err);
-                    }
+        if (rdate) {
+            req.user.update({
+                msgreviewdate : new Date()
+            }, function(err, course) {
+                if (err) {
+                    return next(err);
+                }
 
-                    res.msgs = msgs;
-                    res.json({
-                        info: "ok",
-                        data: msgs,
-                        result: 0
-                    });
+                res.msgs = msgs;
+                res.json({
+                    info: "ok",
+                    data: msgs,
+                    result: 0
                 });
-            } else {
-                req.user.msgreviewdate = new Date();
-                req.user.save(function(err) {
-                    if (err) {
-                        return next(err);
-                    }
+            });
+        } else {
+            req.user.msgreviewdate = new Date();
+            req.user.save(function(err) {
+                if (err) {
+                    return next(err);
+                }
 
-                    res.msgs = msgs;
-                    res.json({
-                        info: "ok",
-                        data: msgs,
-                        result: 0
-                    });
-                })
-            }
-        });
+                res.msgs = msgs;
+                res.json({
+                    info: "ok",
+                    data: msgs,
+                    result: 0
+                });
+            })
+        }
+    });
 }, function(err, req, res, next) {
     if (err) {
         message = err.message;

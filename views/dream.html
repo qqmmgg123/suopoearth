@@ -138,9 +138,11 @@
                             </div>
                         </div>
                         <% }); %>
-                        <div class="process-node" style="display: none;">
+                        <% if (data.ismore) { %>
+                        <div class="process-node">
                             <div class="more"><a class="btn">查看更多 ></a></div>
                         </div>
+                        <% } %>
                         <% } else { %>
                         <div class="process-node">
                             <div class="result">
