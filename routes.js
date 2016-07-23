@@ -197,10 +197,10 @@ router.get('/dream/:id', function(req, res, next) {
                     return next(new Error("找不到该想法..."))
                 };
                 
-                var ismore = false,
+                var hasmore = false,
                     nnext   = 0;
                 if (nodes[10]) {
-                    ismore = true;
+                    hasmore = true;
                     nnext = nodes[10].id;
                 }
                 nodes = nodes.slice(0, 10);
@@ -304,15 +304,13 @@ router.get('/dream/:id', function(req, res, next) {
                                         });
                                     }
 
-                                    console.log(ismore);
-
                                     var resData = {
                                         author     : dream._belong_u,
                                         membercount: results[0][0]? results[0][0]:0,
                                         members    : accounts,
                                         prev       : results[1][0],
                                         nodes      : rnodes,
-                                        ismore     : ismore,
+                                        hasmore     : hasmore,
                                         nnext      : nnext,
                                         current    : results[2][0],
                                         next       : results[2][1],
@@ -336,11 +334,11 @@ router.get('/dream/:id', function(req, res, next) {
 // 获取历程信息
 router.get('/dream/:id/nodes', function(req, res, next) {
     var curId  = req.params.id,
+        defaultErr = new Error("获取更多历程失败。"),
         _curId = mongoose.Types.ObjectId(curId);
 
     if (!req.query || !req.query.nnext) {
-        var err = new Error("获取更多历程失败。");
-        return next(err);
+        return next(defaultErr);
     }
 
     var _current = mongoose.Types.ObjectId(req.query.nnext);
@@ -369,23 +367,35 @@ router.get('/dream/:id/nodes', function(req, res, next) {
     }],
     function(err, nodes) {
         if (err || !nodes) {
-            return next(new Error("找不到该想法。"))
+            return next(defaultErr);
         };
+
+        var hasmore = false,
+            nnext   = 0;
+        if (nodes[10]) {
+            hasmore = true;
+            nnext = nodes[10].id;
+        }
 
         nodes = nodes.slice(0, 10);
 
         Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
-            if (err) {
-                return next(err);
-            }
-
-            if (!rnodes) {
-                var err = new Error("找不到该想法...")
-                return next(err);
+            if (err || !rnodes) {
+                return next(defaultErr);
             }
 
             rnodes.forEach(function(node) {
                 node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
+            });
+
+            return res.json({
+                info: "ok",
+                result: 0,
+                data: {
+                    nodes: rnodes,
+                    hasmore: hasmore,
+                    nnext: nnext
+                }
             });
         });
     });
@@ -1002,7 +1012,6 @@ router.get('/contact', function(req, res) {
 
 // 登录页面
 router.get('/signin', function(req, res) {
-    console.log(res.msgs);
     res.render('signin', makeCommon({
         title : settings.APP_NAME,
         notice: getFlash(req, 'notice'),
