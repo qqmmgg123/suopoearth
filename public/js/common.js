@@ -1,3 +1,5 @@
+define(['jquery'], function ($) {
+
 var _d = document;
 
 var common = {
@@ -213,6 +215,22 @@ var common = {
                 $(this).css({ marginTop: "0px" }).find("li:first").appendTo(this);
             });
         }
+    }, 
+    xhrReponseManage: function(data, callback) {
+        var self = this;
+        switch (data.result) {
+            case 0:
+                callback(data);
+                break;
+            case 1:
+                alert(data.info);
+                break;
+            case 2:
+                self.showSigninPop();
+                break;
+            default:
+                break;
+        };
     }
 };
 
@@ -356,4 +374,7 @@ $(function() {
     }, function() {
         common.isScroll = true;
     });
-})
+});
+
+return common;
+});

@@ -201,19 +201,19 @@ router.get('/dream/:id', function(req, res, next) {
                     nnext   = 0;
                 if (nodes[10]) {
                     hasmore = true;
-                    nnext = nodes[10].id;
+                    nnext = nodes[10]._id;
                 }
                 nodes = nodes.slice(0, 10);
 
-                        Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
-                            if (err) {
-                                return next(err);
-                            }
+                Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
+                    if (err) {
+                        return next(err);
+                    }
 
-                            if (!rnodes) {
-                                var err = new Error("找不到该想法...")
-                                return next(err);
-                            }
+                    if (!rnodes) {
+                        var err = new Error("找不到该想法...")
+                            return next(err);
+                    }
 
                             rnodes.forEach(function(node) {
                                 node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
@@ -310,7 +310,7 @@ router.get('/dream/:id', function(req, res, next) {
                                         members    : accounts,
                                         prev       : results[1][0],
                                         nodes      : rnodes,
-                                        hasmore     : hasmore,
+                                        hasmore    : hasmore,
                                         nnext      : nnext,
                                         current    : results[2][0],
                                         next       : results[2][1],
@@ -374,12 +374,15 @@ router.get('/dream/:id/nodes', function(req, res, next) {
             nnext   = 0;
         if (nodes[10]) {
             hasmore = true;
-            nnext = nodes[10].id;
+            nnext = nodes[10]._id;
         }
 
         nodes = nodes.slice(0, 10);
 
-        Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
+        Account.populate(nodes, { 
+            path: '_belong_u',
+            select: 'nickname _id'
+        }, function(err, rnodes) {
             if (err || !rnodes) {
                 return next(defaultErr);
             }

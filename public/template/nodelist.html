@@ -1,0 +1,54 @@
+<% if (data.nodes.length > 0) { %>
+<% data.nodes.forEach(function(node) { %>
+<div class="process-node">
+    <div>
+        <p class="user-info">
+        <a class="avatar" href="/user/<%= node._belong_u? node._belong_u.id:node._belong_u %>"><img src="/images/user_mini.png" /></a>
+        <em class="username">
+            <% if (node._belong_u) { %>
+            <a href="/user/<%= node._belong_u.id %>">
+                <%= node._belong_u.nickname %>
+                <% } else { %>
+                <a href="/user/<%= node._belong_u %>">
+                    <%= node.author %>
+                    <% } %>
+                </a> <%= node.date %> 更新了历程
+        </em>
+        </p>
+        <p class="node-content"><%= node.content %></p>
+    </div>
+    <div data-did="<%= data.current.id %>" data-blid="<%= node._id %>" data-bl="1" class="node-ctrl ctrl-area">
+        <div class="ctrl-nav">
+            <ul class="ctrl-list">
+                <!--<li><a class="good" href="javascript:;"><i class="approval-icon"></i>支持</a></li>-->
+                <!--<li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>-->
+                <% if (node.isowner) { %>
+                <li><a class="remove" rel="node-delete" href="javascript:;"><i class="remove-icon"></i>删除</a></li>
+                <% } %>
+                <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 <%= node.comments %></a></li>
+                <ul>
+        </div>
+        <div class="comment-area" style="display: none;">
+            <div>
+                <textarea placeholder="说说你的看法..."></textarea>
+                <div class="btn-area" data-show="false" style="display: none;"><button class="btn btn-comment">发表</button></div>
+            </div>
+            <ul class="comment-list">
+            </ul>
+        </div>
+    </div>
+</div>
+<% }); %>
+<% if (data.hasmore) { %>
+<div class="process-node">
+    <div data-did="<%= data.current.id %>" data-nnext="<%= data.nnext %>" class="more"><a class="btn">查看更多 ></a></div>
+</div>
+<% } %>
+<% } else { %>
+<div class="process-node">
+    <div class="result">
+        没有想法的践行历程
+    </div>
+</div>
+<% } %>
+

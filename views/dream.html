@@ -97,59 +97,9 @@
                             <!--和我的想法一样 <button class="btn">参与</button>-->
                         <!--</div>-->
                         <% } %>
-                        <% if (data.nodes.length > 0) { %>
-                        <% data.nodes.forEach(function(node) { %>
-                        <div class="process-node">
-                            <div>
-                                <p class="user-info">
-                                <a class="avatar" href="/user/<%= node._belong_u? node._belong_u.id:node._belong_u %>"><img src="/images/user_mini.png" /></a>
-                                    <em class="username">
-                                        <% if (node._belong_u) { %>
-                                            <a href="/user/<%= node._belong_u.id %>">
-                                            <%= node._belong_u.nickname %>
-                                        <% } else { %>
-                                            <a href="/user/<%= node._belong_u %>">
-                                            <%= node.author %>
-                                        <% } %>
-                                        </a> <%= timeFormat(node.date) %> 更新了历程
-                                    </em>
-                                </p>
-                                <p class="node-content"><%= node.content %></p>
-                            </div>
-                            <div data-did="<%= data.current.id %>" data-blid="<%= node._id %>" data-bl="1" class="node-ctrl ctrl-area">
-                                <div class="ctrl-nav">
-                                    <ul class="ctrl-list">
-                                        <!--<li><a class="good" href="javascript:;"><i class="approval-icon"></i>支持</a></li>-->
-                                        <!--<li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>-->
-                                        <% if (node.isowner) { %>
-                                        <li><a class="remove" rel="node-delete" href="javascript:;"><i class="remove-icon"></i>删除</a></li>
-                                        <% } %>
-                                        <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 <%= node.comments %></a></li>
-                                    <ul>
-                                </div>
-                                <div class="comment-area" style="display: none;">
-                                    <div>
-                                        <textarea placeholder="说说你的看法..."></textarea>
-                                        <div class="btn-area" data-show="false" style="display: none;"><button class="btn btn-comment">发表</button></div>
-                                    </div>
-                                    <ul class="comment-list">
-                                    </ul>
-                                </div>
-                            </div>
+                        <div id="node-list">
+                            <% include nodelist.html %>
                         </div>
-                        <% }); %>
-                        <% if (data.hasmore) { %>
-                        <div class="process-node">
-                            <div class="more"><a class="btn">查看更多 ></a></div>
-                        </div>
-                        <% } %>
-                        <% } else { %>
-                        <div class="process-node">
-                            <div class="result">
-                                    没有想法的践行历程
-                            </div>
-                        </div>
-                        <% } %>
                     </div>
                     <div class="tab-content" style="display: none;">
                     </div>
@@ -262,8 +212,5 @@
     <% include messagepop.html %>
     <% include face.html %>
 </body>
-<script src="/js/jquery.min.js" type="text/javascript"></script>
-<script src="/js/underscore-min.js" type="text/javascript"></script>
-<script src="/js/common.js" type="text/javascript"></script>
-<script src="/js/dream.js" type="text/javascript"></script>
+<script data-main="/js/dream.js" src="/js/require.js"></script>
 </html>

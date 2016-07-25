@@ -131,8 +131,8 @@ var server = http.createServer(app);
 
 reload(server, app)
 
-    //app.listen(3000);
+//app.listen(3000);
 
-    server.listen(app.get('port'), function(){
-        log('express server running on ' + 3000);
-    });
+server.listen(app.get('port'), function(){
+    log('express server running on ' + 3000);
+});
