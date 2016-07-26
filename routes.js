@@ -451,6 +451,15 @@ router.get('/node/:id/comments', function(req, res, next) {
     var curId = req.params.id,
         query = { _belong_n: curId };
 
+    var page  = 1,
+        limit = 10;
+
+    if (req.query && req.query.page) {
+        page = req.query.page;
+    }
+
+    var skip = (page - 1) * 10;
+
     async.parallel([
         function(cb) {
             Comment.count(query, function(err, count) {
@@ -462,9 +471,16 @@ router.get('/node/:id/comments', function(req, res, next) {
             });
         },
         function(cb) {
-            Comment.find(query).lean().populate({
+            Comment
+            .find(query)
+            .lean()
+            .populate({
                 path: '_belong_u'
-            }).exec(function(err, comments) {
+            })
+            .sort('-date')
+            .skip(skip)
+            .limit(limit)
+            .exec(function(err, comments) {
                 if (err || !comments) {
                     return cb(err, null);
                 }

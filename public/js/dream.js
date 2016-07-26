@@ -146,12 +146,17 @@ define([
                         $.ajax({
                             url: "/" + btype + "/" + blid + "/comments",
                             method: "GET",
+                            data: {
+                                page: currPage || 1
+                            },
                             dataType: "json",
                             success: function(data) {
                                 var tpl = "";
                                 common.xhrReponseManage(data, function() {
+                                    var total = data.count || '0',
+                                        limit = 10;
+                                    $this.data('total', total);
                                     if (data.comments && data.comments.length > 0) {
-                                        if (data.count) $this.data('total', data.count);
                                         for (var i=0,l=data.comments.length;i<l;i++) {
                                             var replyTpl = data.comments[i].isreply? '回复<a href="/user/' + data.comments[i]._reply_u + '">' + data.comments[i].other + '</a>':'';
 
@@ -174,6 +179,24 @@ define([
                                                     '</li>';
                                             }
                                         }
+
+                                        var pageCount = Math.ceil(total / limit);
+
+                                        tpl += '<a>上一页</a>';
+                                        tpl += '<a>1</a>';
+
+                                        var start = 2,
+                                            rand  = 3;
+                                        for (var p = start, l = pageCount; p < l && p < start + rand; p++) {
+                                            tpl += '<a>' + p + '</a>';
+                                        }
+                                        if (p < pageCount) {
+                                            tpl += '...'
+                                        }
+                                        tpl += '<a>' + pageCount + '</a>';
+                                        tpl += '<a>下一页</a>';
+                                        
+
                                         $commentArea.find('ul').html(tpl).off('click')
                                         .on('click', 'a.reply', function() {
                                             if (!data.isauthenticated) {
