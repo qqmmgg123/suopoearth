@@ -8,7 +8,7 @@ var settings = {
         COLLAPSE_COMMENT: '收起提议',
         EXPANSION_COMMENT: '提议'
     }
-}
+};
 
 // 模块定义
 if (typeof(module) === 'object' && module.exports === exports) {
