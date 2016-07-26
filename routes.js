@@ -1,5 +1,5 @@
 var async = require("async")
-    , settings = require("./settings")()
+    , settings = require("./public/const/settings")
     , mongoose = require('mongoose')
     , passport = require('passport')
     , Account = require('./models/account')
@@ -314,7 +314,8 @@ router.get('/dream/:id', function(req, res, next) {
                                         nnext      : nnext,
                                         current    : results[2][0],
                                         next       : results[2][1],
-                                        isFollow   : isfollow
+                                        isFollow   : isfollow,
+                                        text       : settings.COMMENT_TEXT
                                     };
 
                                     res.render('dream', makeCommon({
@@ -347,7 +348,7 @@ router.get('/dream/:id/nodes', function(req, res, next) {
         $match: {
             _belong_d: _curId,
             _id: {
-                $lt: _current
+                $lte: _current
             }
         }
     }, {
@@ -469,7 +470,7 @@ router.get('/node/:id/comments', function(req, res, next) {
                 }
 
                 cb(null, comments)
-            })
+            });
         }
     ], function(err, results) {
         if (err || !results || results.length !== 2) {
@@ -915,9 +916,14 @@ router.get('/query', function(req, res, next) {
 
 // 搜索结果
 router.get('/result', function(req, res, next) {
+    if (!req.query || !req.query.query) {
+        return reponse(0, []);
+    }
+
     function reponse(type, data) {
         res.render('result', makeCommon({
             title: settings.APP_NAME,
+            query: req.query.query,
             notice: getFlash(req, 'notice'),
             user : req.user,
             data: {
@@ -926,10 +932,6 @@ router.get('/result', function(req, res, next) {
             },
             result: 0
         }, res));
-    }
-
-    if (!req.query) {
-        return reponse(0, []);
     }
 
     var query = req.query.query;
@@ -1227,11 +1229,7 @@ router.post('/dream/new', function(req, res, next) {
     var uid = req.user.id;
     var nickname = req.user.nickname;
 
-    if (!req.body) {
-        
-    }
-
-    if (!req.body.title) {
+    if (!req.body || !req.body.title) {
         return next(new Error("参数传递错误..."));
     }
 
@@ -1475,9 +1473,16 @@ router.post('/dream/modify', function(req, res, next) {
     if (title) {
         fields.title = title;
     }else{
-        return next(new Error("标题不能不能不填..."));
+        return next(new Error("标题不能不填..."));
     }
-    if (des) fields.description = des? des:"";
+
+    if (typeof des === "string") {
+        if (des.length <= 140) {
+            fields.description = des;
+        }else{
+            return next(new Error("想法的介绍超过内容最大限制..."));
+        }
+    }
 
     Dream.findOneAndUpdate(
         { _id: dreamID },
@@ -2243,7 +2248,7 @@ router.post('/comment/new', function(req, res, next) {
     });
 });
 
-// 创建评论
+// 创建回复
 router.post('/reply/new', function(req, res, next) {
     if (!req.user) {
         return res.json({
@@ -2368,7 +2373,7 @@ router.post('/reply/new', function(req, res, next) {
                     _belong_u: toid,
                     url      : url,
                     title    : '你有新的回复',
-                    summary  : comment.content
+                    content  : comment.content
                 }
                 
                 var message = new Message(msgfields);

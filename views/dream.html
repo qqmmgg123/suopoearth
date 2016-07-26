@@ -124,10 +124,10 @@
                 <div class="author">
                     <h2>发起人</h2>
                     <div class="author-top">
-                        <a class="avatar">
+                        <a class="avatar" href="/user/<%= data.author.id %>">
                             <img src="/images/user.png" />
                         </a>
-                        <a class="author-name"><%= data.author.nickname %></a>
+                        <a class="author-name" href="/user/<%= data.author.id %>"><%= data.author.nickname %></a>
                         <p class="admonition"><%= data.author.bio %></p>
                     </div>
                     <!--<p class="author-ctrl">

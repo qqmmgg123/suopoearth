@@ -1,6 +1,6 @@
 define(['jquery'], function ($) {
 
-var _d = document;
+    var _d = document;
 
 var common = {
     isScroll: true,
@@ -317,34 +317,41 @@ $(function() {
     }
     //setInterval($.proxy(common.autoScroll, common, "#reference"), 2000);
 
-    // 删除想法
-    $('[rel="msg-view"]').click(function() {
-        $.ajax({
-            url: "/message/view",
-            method: "GET",
-            dataType: "json",
-            success: function(data) {
-                switch (data.result) {
-                    case 0:
+    // 查看消息列表
+    $('[rel="msg-view"]').data('show', false).click(function() {
+        var $list = $('.message-list'),
+            $this = $(this);
+
+        if (!$this.data('show')) {
+            $list.text('加载中...').show();
+            $this.data('show', true);
+            $.ajax({
+                url: "/message/view",
+                method: "GET",
+                dataType: "json",
+                success: function(data) {
+                    common.xhrReponseManage(data, function() {
                         if (data.data && data.data.length > 0) {
                             var html = data.data.map(function(item) {
                                 return '<li>' + item.title + '<a href="' + item.url + '"> ' + item.content + '</a></li>'
                             }).join('');
-                            $('.message-list').html(html).show();
+                            $list.html(html).show();
                         }
-                        break;
-                    case 1:
-                        alert(data.info);
-                        break;
-                    case 2:
-                        common.showSigninPop();
-                        break;
-                    default:
-                        break;
-                };
-            },
-            error: function() {
+                    });
+                },
+                error: function() {
+                    $list.text('加载失败...');
+                }
+            });
+        } else {
+            $list.hide();
+            $this.data('show', false);
+        }
 
+        $(document).off('mousedown').on('mousedown', function(event) {
+            if ($this.data('show') && event.target !== $list[0] && !$.contains($list[0], event.target)) {
+                $list.hide();
+                $this.data('show', false);
             }
         });
     });

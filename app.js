@@ -1,6 +1,6 @@
 var path = require('path')
   , flash = require('connect-flash')
-  , settings = require("./settings")()
+  , settings = require("./public/const/settings")
   , express = require('express')
   , cookieParser = require('cookie-parser')
   , session = require('cookie-session')

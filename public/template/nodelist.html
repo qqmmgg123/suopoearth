@@ -12,12 +12,12 @@
                 <a href="/user/<%= node._belong_u %>">
                     <%= node.author %>
                     <% } %>
-                </a> <%= node.date %> 更新了历程
+                </a> <%= timeFormat(node.date) %> 更新了历程
         </em>
         </p>
         <p class="node-content"><%= node.content %></p>
     </div>
-    <div data-did="<%= data.current.id %>" data-blid="<%= node._id %>" data-bl="1" class="node-ctrl ctrl-area">
+    <div data-did="<%= data.current.id %>" data-total="<%= node.comments %>" data-blid="<%= node._id %>" data-bl="1" class="node-ctrl ctrl-area">
         <div class="ctrl-nav">
             <ul class="ctrl-list">
                 <!--<li><a class="good" href="javascript:;"><i class="approval-icon"></i>支持</a></li>-->
@@ -25,7 +25,7 @@
                 <% if (node.isowner) { %>
                 <li><a class="remove" rel="node-delete" href="javascript:;"><i class="remove-icon"></i>删除</a></li>
                 <% } %>
-                <li><a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 <%= node.comments %></a></li>
+                <li><a class="comment" href="javascript:;"><i class="comment-icon"></i><%= data.text.EXPANSION_COMMENT %> <%= node.comments %></a></li>
                 <ul>
         </div>
         <div class="comment-area" style="display: none;">

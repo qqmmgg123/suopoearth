@@ -1,5 +1,6 @@
 requirejs.config({
     paths   : {
+        'const': '../const',
         'underscore': 'underscore-min',
         'jquery': 'jquery.min',
         'common': 'common',
@@ -9,14 +10,17 @@ requirejs.config({
 });
 
 define([
+   'const/settings',
    'underscore',
    'jquery',
    'common',
-   'text!template/nodelist.html',
-], function (_, $, common, nodesTpl) {
+   'text!template/nodelist.html'
+], function (settings, _, $, common, nodesTpl) {
     $(function() {
         // 绑定用户操作
         common.bindUserCtrl();
+
+        var text = settings.COMMENT_TEXT;
 
         // 历程列表
         var nodelist = {
@@ -66,7 +70,16 @@ define([
                             if (data) {
                                 data.data.current = {
                                     id: did
-                                }
+                                };
+
+                                data.data.text = text;
+
+                                data = _.extend(data, { 
+                                    timeFormat: function(date) {
+                                        var date = (new Date(date));
+                                        return date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                                    }
+                                });
 
                                 var template = _.template(nodesTpl);
                                 $('#node-list').append(template(data));
@@ -105,204 +118,179 @@ define([
             },
             showComments: function() {
                 // 添加提议
-                    var COMMENT_DREAM = 0,
-                        COMMENT_NODE  = 1;
+                var COMMENT_DREAM = 0,
+                    COMMENT_NODE  = 1;
 
-                    var $this = $(this),
-                        $belong = $this.closest('.ctrl-area'),
-                        $commentArea = $belong.find('.comment-area'),
-                        editShow = $this.data('editShow');
-        
-                    var blid  = $belong.data('blid'),
-                        did   = $belong.data("did"),
-                        bl    = $belong.data('bl'),
-                        btype = "";
+                var $this = $(this),
+                    $belong = $this.closest('.ctrl-area'),
+                    $commentArea = $belong.find('.comment-area'),
+                    editShow = $this.data('editShow');
+    
+                var blid  = $belong.data('blid'),
+                    did   = $belong.data("did"),
+                    bl    = $belong.data('bl'),
+                    btype = "";
 
-                    switch(bl) {
-                        case COMMENT_DREAM:
-                            btype = "dream";
-                            break;
-                        case COMMENT_NODE:
-                            btype = "node";
-                            break;
-                        default:
-                            return;
-                    }
+                switch(bl) {
+                    case COMMENT_DREAM:
+                        btype = "dream";
+                        break;
+                    case COMMENT_NODE:
+                        btype = "node";
+                        break;
+                    default:
+                        return;
+                }
 
-                    if (!editShow) {
+                if (!editShow) {
                         $.ajax({
                             url: "/" + btype + "/" + blid + "/comments",
                             method: "GET",
                             dataType: "json",
                             success: function(data) {
-                                    var tpl = "";
-                    
-                                    switch(data.result) {
-                                        case 0:
-                                            if (data.comments && data.comments.length > 0) {
-                                                for (var i=0,l=data.comments.length;i<l;i++) {
-                                                    var replyTpl = data.comments[i].isreply? '回复<a href="/user/' + data.comments[i]._reply_u + '">' + data.comments[i].other + '</a>':'';
+                                var tpl = "";
+                                common.xhrReponseManage(data, function() {
+                                    if (data.comments && data.comments.length > 0) {
+                                        if (data.count) $this.data('total', data.count);
+                                        for (var i=0,l=data.comments.length;i<l;i++) {
+                                            var replyTpl = data.comments[i].isreply? '回复<a href="/user/' + data.comments[i]._reply_u + '">' + data.comments[i].other + '</a>':'';
 
-                                                    tpl += '<li data-cid="' + data.comments[i]._id + '" data-uid="' + (data.comments[i]._belong_u? data.comments[i]._belong_u._id:'') + '">' + 
-                                                        '<div class="user-info">' +
-                                                        '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
-                                                        '<em class="username"><a href="/user/' + data.comments[i]._belong_u._id + '">' + data.comments[i].author + '</a>'
-                                                        + replyTpl + ' ' + data.comments[i].date + '</em>' +
-                                                        '</div>' +
-                                                        '<p class="text">' + data.comments[i].content + '</p>' +
-                                                        '<div>' +
-                                                        '<a rel="comment-delete" href="javascript:;">' + (data.comments[i].isowner? '删除':'') + '</a> ' +
-                                                        '<a class="reply" href="javascript:;">' + (data.comments[i].isowner? '':'回复') + '</a>' +
-                                                        '</div>';
-                                                    if (data.isauthenticated) {
-                                                        tpl += '<div class="reply-area" style="display: none;">' +
-                                                            '<textarea placeholder="说说你的看法..."></textarea>' +
-                                                            '<button class="btn btn-reply">回复</button>' +
-                                                            '</div>' +
-                                                            '</li>';
-                                                    }
-                                                }
-                                                $commentArea.find('ul').html(tpl).off('click')
-                                                .on('click', 'a.reply', function() {
-                                                    if (!data.isauthenticated) {
-                                                        common.showSigninPop();
-                                                    }
-                                    
-                                                    var replyShow     = $(this).data('replyShow');
-                                                    var $conmmentCurr = $(this).closest('li');
-                                                    var $replyArea    = $conmmentCurr.find('.reply-area');
-                                                    if (!replyShow) {
-                                                        $replyArea.show();
-                                                        $(this).data('replyShow', true);
-                                                    } else {
-                                                        $replyArea.hide();
-                                                        $(this).data('replyShow', false);
-                                                    }
-                                                }).on('click', 'a[rel="comment-delete"]', function() {
-                                                    var $conmmentCurr = $(this).closest('li'),
-                                                        cid           = $conmmentCurr.data('cid');
-
-                                                    $.ajax({
-                                                        url: "/comment/delete",
-                                                        data: {
-                                                            cid: cid
-                                                        },
-                                                        method: "POST",
-                                                        dataType: "json",
-                                                        success: function(data) {
-                                                            switch (data.result) {
-                                                                case 0:
-                                                                    $conmmentCurr.fadeOut(function() {
-                                                                        $(this).remove();
-                                                                    });
-                                                                    break;
-                                                                case 1:
-                                                                    alert(data.info);
-                                                                    break;
-                                                                case 2:
-                                                                    common.showSigninPop();
-                                                                    break;
-                                                                default:
-                                                                    break;
-                                                            };
-                                                        },
-                                                        error: function() {
-
-                                                        }
-                                                    });
-                                                }).on('click', 'button.btn-reply', function() {
-                                                    var $this         = $(this);
-                                                    var $conmmentCurr = $this.closest('li');
-                                                    var $replyArea    = $conmmentCurr.find('.reply-area');
-                                                    var $textarea     = $replyArea.find('textarea');
-                                                    var newcon        = $.trim($textarea.val());
-                                                    var toid          = $conmmentCurr.data('uid');
-                                                    var forid         = $conmmentCurr.data('cid');
-
-                                                    if (!newcon) {
-                                                        alert('评论不能为空');
-                                                        return;
-                                                    }
-
-                                                    if (newcon.length > 140) {
-                                                        alert('评论字数限制在140个字符内');
-                                                        return;
-                                                    }
-
-                                                    $.ajax({
-                                                        url: '/reply/new',
-                                                        method: 'POST',
-                                                        dataType: 'json',
-                                                        data: {
-                                                            bl      : bl,
-                                                            did     : did,
-                                                            blid    : blid,
-                                                            toid    : toid,
-                                                            forid   : forid,
-                                                            content : newcon
-                                                        },
-                                                        success: function(data) {
-                                                            $textarea.val('');
-
-                                                            switch(data.result) {
-                                                                case 0:
-                                                                    var tpl = '<li>' + 
-                                                                        '<div class="user-info">' +
-                                                                        '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
-                                                                        '<em class="username"><a href="/user/'  + data.comment._belong_u +  '">' + data.comment.author + '</a>回复<a href="/user/' + data.comment._reply_u + '">' + data.comment.other + '</a> ' + data.comment.date + '</em>' +
-                                                                        '<a class="reply" href="javascript:;">' + (data.isowner? '':'回复') + '</a>' +
-                                                                        '</div>' +
-                                                                        '<p class="text">' + data.comment.content + '</p>' +
-                                                                        '</li>';
-
-                                                                    $commentArea.find('ul').prepend(tpl);
-                                                                    $belong.find('.comment')[0].lastChild.nodeValue = "提议 " + data.total;
-                                                                    break;
-                                                                case 1:
-                                                                    alert(data.info);
-                                                                    break;
-                                                                case 2:
-                                                                    common.showSigninPop();
-                                                                    break;
-                                                                default:
-                                                                    break;
-                                                            }
-                                                        }
-                                                    });
-                                                });
+                                            tpl += '<li data-cid="' + data.comments[i]._id + '" data-uid="' + (data.comments[i]._belong_u? data.comments[i]._belong_u._id:'') + '">' + 
+                                                '<div class="user-info">' +
+                                                '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
+                                                '<em class="username"><a href="/user/' + data.comments[i]._belong_u._id + '">' + data.comments[i].author + '</a>'
+                                                + replyTpl + ' ' + data.comments[i].date + '</em>' +
+                                                '</div>' +
+                                                '<p class="text">' + data.comments[i].content + '</p>' +
+                                                '<div>' +
+                                                '<a rel="comment-delete" href="javascript:;">' + (data.comments[i].isowner? '删除':'') + '</a> ' +
+                                                '<a class="reply" href="javascript:;">' + (data.comments[i].isowner? '':'回复') + '</a>' +
+                                                '</div>';
+                                            if (data.isauthenticated) {
+                                                tpl += '<div class="reply-area" style="display: none;">' +
+                                                    '<textarea placeholder="说说你的看法..."></textarea>' +
+                                                    '<button class="btn btn-reply">回复</button>' +
+                                                    '</div>' +
+                                                    '</li>';
                                             }
-                                            $commentArea.show().find('textarea:first').off().on('focus', function() {
-                                                var $createBtn = $commentArea.find('.btn-area:first');
-                                                if (!$createBtn.data('show')) {
-                                                    $createBtn.data('show', true).show();
-                                                }
-                                            }).on('click', function() {
-                                                if (!data.isauthenticated) {
-                                                    $commentArea.find('textarea:first').blur();
-                                                    common.showSigninPop();
+                                        }
+                                        $commentArea.find('ul').html(tpl).off('click')
+                                        .on('click', 'a.reply', function() {
+                                            if (!data.isauthenticated) {
+                                                common.showSigninPop();
+                                            }
+                                    
+                                            var replyShow     = $(this).data('replyShow');
+                                            var $conmmentCurr = $(this).closest('li');
+                                            var $replyArea    = $conmmentCurr.find('.reply-area');
+                                            if (!replyShow) {
+                                                $replyArea.show();
+                                                $(this).data('replyShow', true);
+                                            } else {
+                                                $replyArea.hide();
+                                                $(this).data('replyShow', false);
+                                            }
+                                        }).on('click', 'a[rel="comment-delete"]', function() {
+                                            var $conmmentCurr = $(this).closest('li'),
+                                                cid           = $conmmentCurr.data('cid');
+
+                                            $.ajax({
+                                                url: "/comment/delete",
+                                                data: {
+                                                    cid: cid
+                                                },
+                                                method: "POST",
+                                                dataType: "json",
+                                                success: function(data) {
+                                                    common.xhrReponseManage(data, function() {
+                                                        $conmmentCurr.fadeOut(function() {
+                                                            $(this).remove();
+                                                        });
+                                                    });
+                                                },
+                                                error: function() {
+    
                                                 }
                                             });
-                                            $this.data('editShow', true);
-                                            $this.html('<i class="comment-icon"></i>收起提议');
-                                            break;
-                                        case 1:
-                                            alert(data.info);
-                                            break;
-                                        case 2:
-                                            common.showSigninPop();
-                                        default:
-                                            break;
-                                    }
-                                },
-                                error: function() {
+                                        }).on('click', 'button.btn-reply', function() {
+                                            var $this         = $(this);
+                                            var $conmmentCurr = $this.closest('li');
+                                            var $replyArea    = $conmmentCurr.find('.reply-area');
+                                            var $textarea     = $replyArea.find('textarea');
+                                            var newcon        = $.trim($textarea.val());
+                                            var toid          = $conmmentCurr.data('uid');
+                                            var forid         = $conmmentCurr.data('cid');
 
-                                }
-                            });
-                        }else{
-                            $commentArea.hide().find('textarea').blur();
-                            $this.html('<i class="comment-icon"></i>提议');
-                            $this.data('editShow', false);
-                        }
+                                            if (!newcon) {
+                                                alert('评论不能为空');
+                                                return;
+                                            }
+
+                                            if (newcon.length > 140) {
+                                                alert('评论字数限制在140个字符内');
+                                                return;
+                                            }
+
+                                            $.ajax({
+                                                url: '/reply/new',
+                                                method: 'POST',
+                                                dataType: 'json',
+                                                data: {
+                                                    bl      : bl,
+                                                    did     : did,
+                                                    blid    : blid,
+                                                    toid    : toid,
+                                                    forid   : forid,
+                                                    content : newcon
+                                                },
+                                                success: function(data) {
+                                                    $textarea.val('');
+
+                                                    common.xhrReponseManage(data, function() {
+                                                        var tpl = '<li>' + 
+                                                            '<div class="user-info">' +
+                                                            '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
+                                                            '<em class="username"><a href="/user/'  + data.comment._belong_u +  '">' + data.comment.author + '</a>回复<a href="/user/' + data.comment._reply_u + '">' + data.comment.other + '</a> ' + data.comment.date + '</em>' +
+                                                            '<a class="reply" href="javascript:;">' + (data.isowner? '':'回复') + '</a>' +
+                                                            '</div>' +
+                                                            '<p class="text">' + data.comment.content + '</p>' +
+                                                            '</li>';
+
+                                                        $commentArea.find('ul').prepend(tpl);
+                                                        $belong.find('.comment')[0].lastChild.nodeValue = text.EXPANSION_COMMENT + " " + data.total;
+                                                    });
+                                                },
+                                                error: function() {
+
+                                                }
+                                            });
+                                        });
+                                    }
+                                    $commentArea.show().find('textarea:first').off().on('focus', function() {
+                                        var $createBtn = $commentArea.find('.btn-area:first');
+                                        if (!$createBtn.data('show')) {
+                                            $createBtn.data('show', true).show();
+                                        }
+                                    }).on('click', function() {
+                                        if (!data.isauthenticated) {
+                                            $commentArea.find('textarea:first').blur();
+                                            common.showSigninPop();
+                                        }
+                                    });
+                                    $this.data('editShow', true);
+                                    $this.html('<i class="comment-icon"></i>' + text.COLLAPSE_COMMENT);
+                                });
+                            },
+                            error: function() {
+
+                            }
+                        });
+                    }else{
+                        var total = $this.data('total');
+                        $commentArea.hide().find('textarea').blur();
+                        $this.html('<i class="comment-icon"></i>' + text.EXPANSION_COMMENT + ' ' + total);
+                        $this.data('editShow', false);
+                    }
             },
             createComment: function() {
                 var $this        = $(this);
@@ -350,7 +338,7 @@ define([
                                 '</li>';
 
                             $commentArea.find('ul').prepend(tpl);
-                            $belong.find('.comment')[0].lastChild.nodeValue = "提议 " + data.total;
+                            $belong.find('.comment')[0].lastChild.nodeValue = text.COLLAPSE_COMMENT;
                         });
                     },
                     error: function() {
