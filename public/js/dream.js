@@ -25,9 +25,45 @@ define([
         // 历程列表
         var nodelist = {
             el: '#node-list',
+            climit: 10,
             init: function() {
                 this.$el = $(this.el);
-                this.$el.find('.comment').data('editShow', false);
+                var $currentView      = 
+                    this.$currentView = 
+                    this.$el.find('#currView'),
+                    $currentShow      =
+                    this.$el.find('#currShow');
+                
+                if (this.$currentView.length > 0) {
+                    var $belong = $currentView.find('.ctrl-area'),
+                        $commentArea = $belong.find('.comment-area'),
+                        isauthenticated = $currentView.data('isauthenticated');
+
+                    var opts = {
+                        blid  : $belong.data('blid'),
+                        bl    : $belong.data('bl'),
+                        did   : $belong.data('did'),
+                        $belong  : $belong,
+                        $commentArea : $commentArea,
+                        isauthenticated : isauthenticated,
+                        total : $belong.find('.comment').data('total'),
+                        currPage : $commentArea.find('.comment-page').data('page')
+                    }
+
+                    this.layoutComments(opts);
+                    this.bindComentInput(opts);
+                    this.layoutCommentPage(opts);
+                    $commentArea.show();
+
+                    // 滚动到具体显示对象位置
+                    var top = $currentShow.position().top;
+                    $('html, body').animate({
+                        scrollTop: top
+                    }, 360, function() {
+                        $currentShow.css('border', '1px solid #eee');
+                    });
+                }
+                
                 this.bindEvent();
             },
             bindEvent: function() {
@@ -51,6 +87,102 @@ define([
                         }
                     }
                 });
+            },
+            layoutCommentPage: function(opts) {
+                var self  = this,
+                    total = opts.total,
+                    currPage = opts.currPage,
+                    $belong  = opts.$belong,
+                    $commentArea = opts.$commentArea;
+
+                // 显示分页
+                var ptpl      = '',
+                    pageCount = Math.ceil(total / this.climit),
+                    prePage   = 0,
+                    nextPage  = 0,
+                    preData   = '',
+                    nextData  = '',
+                    preClass  = '',
+                    preClass  = 'class="disable"',
+                    nextClass = 'class="disable"';
+
+                if (currPage > 1) {
+                    prePage = Math.max(1, currPage - 1);
+                    preData ='data-num="' + prePage + '"';
+                    preClass = '';
+                }
+
+                if (currPage < pageCount) {
+                    nextPage = Math.min(pageCount, currPage + 1);
+                    nextData ='data-num="' + nextPage + '"';
+                    nextClass = '';
+                }
+
+                ptpl += '<a ' + preData + ' ' + preClass + ' href="javascript:;">上一页</a>';
+
+                var firstClass = '';
+                if (currPage == 1) {
+                    firstClass = 'class="curr"';
+                }
+                ptpl += '<a ' + firstClass + ' data-num="1" href="javascript:;">1</a>';
+
+                var start = 2,
+                    rand  = 3;
+
+                if (pageCount > 3 && currPage > pageCount - 3) {
+                    start = pageCount - 3;
+                }
+                
+                if (currPage > 3 && currPage <= pageCount - 3) {
+                    start = prePage;
+                }
+
+                if (start > 2) {
+                    ptpl += '...'
+                }
+
+                for (var p = start, l = pageCount; p < l && p < start + rand; p++) {
+                    var pageClass = '';
+                    if (p == currPage) {
+                        pageClass = 'class="curr"';
+                    }
+                    ptpl += '<a ' + pageClass + ' data-num="' + p + '" href="javascript:;">' + p + '</a>';
+                }
+                if (p < pageCount) {
+                    ptpl += '...'
+                }
+
+
+                if (pageCount > 1) {
+                    var lastClass = '';
+                    if (currPage == pageCount) {
+                        lastClass = 'class="curr"';
+                    }
+                    ptpl += '<a ' + lastClass + ' data-num="' + pageCount + '" href="javascript:;">' + pageCount + '</a>';
+                }
+                ptpl += '<a ' + nextData + ' ' + nextClass + ' href="javascript:;">下一页</a>';
+                
+                $commentArea.find('.comment-page').html(ptpl).off('click')
+                .on('click', 'a', self.pageComments).show();
+            },
+            bindComentInput: function(opts) {
+                var $commentArea = opts.$commentArea,
+                    isauthenticated = opts.isauthenticated;
+
+                // 评论输入框操作
+                $commentArea.find('textarea:first').off().on('focus', function() {
+                    var $createBtn = $commentArea.find('.btn-area:first');
+                    if (!$createBtn.data('show')) {
+                        $createBtn.data('show', true).show();
+                    }
+                }).on('click', function() {
+                    if (!isauthenticated) {
+                        $commentArea.find('textarea:first').blur();
+                        common.showSigninPop();
+                    }
+                });
+
+                $commentArea.find('.comment-input').show();
             },
             loadMoreNodes: function() {
                 // 加载更多历程
@@ -116,6 +248,223 @@ define([
                     }
                 });
             },
+            layoutComments: function(opts) {
+                var self  = this,
+                    blid  = opts.blid,
+                    bl    = opts.bl,
+                    did   = opts.did,
+                    $belong  = opts.$belong,
+                    $commentArea = opts.$commentArea,
+                    isauthenticated = opts.isauthenticated;
+
+                $commentArea.find('ul').off('click')
+                .on('click', 'a.reply', function() {
+                    if (!isauthenticated) {
+                        common.showSigninPop();
+                    }
+            
+                    var replyShow     = $(this).data('replyShow');
+                    var $conmmentCurr = $(this).closest('li');
+                    var $replyArea    = $conmmentCurr.find('.reply-area');
+                    if (!replyShow) {
+                        $replyArea.show();
+                        $(this).data('replyShow', true);
+                    } else {
+                        $replyArea.hide();
+                        $(this).data('replyShow', false);
+                    }
+                }).on('click', 'a[rel="comment-delete"]', function() {
+                    var $conmmentCurr = $(this).closest('li'),
+                        cid           = $conmmentCurr.data('cid');
+
+                    $.ajax({
+                        url: "/comment/delete",
+                        data: {
+                            cid: cid
+                        },
+                        method: "POST",
+                        dataType: "json",
+                        success: function(data) {
+                            common.xhrReponseManage(data, function() {
+                                $conmmentCurr.fadeOut(function() {
+                                    $(this).remove();
+                                });
+                            });
+                        },
+                        error: function() {
+
+                        }
+                    });
+                }).on('click', 'button.btn-reply', function() {
+                    var $this         = $(this);
+                    var $conmmentCurr = $this.closest('li');
+                    var $replyArea    = $conmmentCurr.find('.reply-area');
+                    var $textarea     = $replyArea.find('textarea');
+                    var newcon        = $.trim($textarea.val());
+                    var toid          = $conmmentCurr.data('uid');
+                    var forid         = $conmmentCurr.data('cid');
+
+                    if (!newcon) {
+                        alert('评论不能为空');
+                        return;
+                    }
+
+                    if (newcon.length > 140) {
+                        alert('评论字数限制在140个字符内');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/reply/new',
+                        method: 'POST',
+                        dataType: 'json',
+                        data: {
+                            bl      : bl,
+                            did     : did,
+                            blid    : blid,
+                            toid    : toid,
+                            forid   : forid,
+                            content : newcon
+                        },
+                        success: function(data) {
+                            $textarea.val('');
+
+                            common.xhrReponseManage(data, function() {
+                                var tpl = '<li>' + 
+                                    '<div class="user-info">' +
+                                    '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
+                                    '<em class="username"><a href="/user/'  + data.comment._belong_u +  '">' + data.comment.author + '</a>回复<a href="/user/' + data.comment._reply_u + '">' + data.comment.other + '</a> ' + data.comment.date + '</em>' +
+                                    '<a class="reply" href="javascript:;">' + (data.isowner? '':'回复') + '</a>' +
+                                    '</div>' +
+                                    '<p class="text">' + data.comment.content + '</p>' +
+                                    '</li>';
+
+                                $commentArea.find('ul').prepend(tpl);
+                                $belong.find('.comment')[0].lastChild.nodeValue = text.EXPANSION_COMMENT + " " + data.total;
+                            });
+                        },
+                        error: function() {
+
+                        }
+                    });
+                });
+            },
+            loadComments: function(opts, callback) {
+                var self  = this,
+                    btype = opts.btype,
+                    blid  = opts.blid,
+                    bl    = opts.bl,
+                    did   = opts.did,
+                    currPage = opts.page,
+                    $belong  = opts.$belong,
+                    $pageCacheEl = opts.$pageCacheEl,
+                    $commentArea = opts.$commentArea;
+
+                $.ajax({
+                    url: "/" + btype + "/" + blid + "/comments",
+                    method: "GET",
+                    data: {
+                        page: currPage || 1
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        var tpl = "";
+                        $commentArea.find('ul').html(tpl);
+                        common.xhrReponseManage(data, function() {
+                            var total = data.count || '0';
+                            
+                            // 缓存评论总数
+                            $pageCacheEl.data('total', total);
+
+                            if (data.comments && data.comments.length > 0) {
+                                for (var i = 0, l = data.comments.length ;i < l; i++) {
+                                    var replyTpl = data.comments[i].isreply? '回复<a href="/user/' + data.comments[i]._reply_u + '">' + data.comments[i].other + '</a>':'';
+
+                                    tpl += '<li data-cid="' + data.comments[i]._id + '" data-uid="' + (data.comments[i]._belong_u? data.comments[i]._belong_u._id:'') + '">' + 
+                                        '<div class="user-info">' +
+                                        '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
+                                        '<em class="username"><a href="/user/' + data.comments[i]._belong_u._id + '">' + data.comments[i].author + '</a>'
+                                        + replyTpl + ' ' + data.comments[i].date + '</em>' +
+                                        '</div>' +
+                                        '<p class="text">' + data.comments[i].content + '</p>' +
+                                        '<div>' +
+                                        '<a rel="comment-delete" href="javascript:;">' + (data.comments[i].isowner? '删除':'') + '</a> ' +
+                                        '<a class="reply" href="javascript:;">' + (data.comments[i].isowner? '':'回复') + '</a>' +
+                                        '</div>';
+                                    if (data.isauthenticated) {
+                                        tpl += '<div class="reply-area" style="display: none;">' +
+                                            '<textarea placeholder="说说你的看法..."></textarea>' +
+                                            '<button class="btn btn-reply">回复</button>' +
+                                            '</div>';
+                                    }
+
+                                    tpl += '</li>';
+                                }
+
+                                $commentArea.find('ul').html(tpl);
+
+                                opts.isauthenticated = data.isauthenticated;
+                                self.layoutComments(opts);
+                                
+                                opts.total = total;
+                                opts.currPage = currPage;
+                                self.layoutCommentPage(opts);
+                            }
+
+                            callback(data);
+                        });
+                    },
+                    error: function() {
+                        var tpl = "<li>评论加载失败</li>";
+                        $commentArea.find('ul').html(tpl);
+                    }
+                });
+            },
+            pageComments: function() {
+                var $this = $(this),
+                    isDis = $this.hasClass('disable');
+
+                if (isDis) return;
+
+                // 添加提议
+                var COMMENT_DREAM = 0,
+                    COMMENT_NODE  = 1;
+
+                var $belong = $this.closest('.ctrl-area'),
+                    $commentArea = $belong.find('.comment-area');
+
+                var blid  = $belong.data('blid'),
+                    did   = $belong.data("did"),
+                    bl    = $belong.data('bl'),
+                    page  = $this.data('num');
+                    btype = "";
+
+                switch(bl) {
+                    case COMMENT_DREAM:
+                        btype = "dream";
+                        break;
+                    case COMMENT_NODE:
+                        btype = "node";
+                        break;
+                    default:
+                        return;
+                }
+
+                var params = {
+                    btype : btype,
+                    blid  : blid,
+                    bl    : bl,
+                    did   : did,
+                    page  : page,
+                    $$belong     : $belong,
+                    $pageCacheEl : $this,
+                    $commentArea : $commentArea
+                }
+
+                nodelist.loadComments(params, function(data) {
+                    $commentArea.find('.comment-input').show();
+                });
+            },
             showComments: function() {
                 // 添加提议
                 var COMMENT_DREAM = 0,
@@ -124,7 +473,7 @@ define([
                 var $this = $(this),
                     $belong = $this.closest('.ctrl-area'),
                     $commentArea = $belong.find('.comment-area'),
-                    editShow = $this.data('editShow');
+                    editShow = $this.data('show');
     
                 var blid  = $belong.data('blid'),
                     did   = $belong.data("did"),
@@ -143,177 +492,36 @@ define([
                 }
 
                 if (!editShow) {
-                        $.ajax({
-                            url: "/" + btype + "/" + blid + "/comments",
-                            method: "GET",
-                            data: {
-                                page: currPage || 1
-                            },
-                            dataType: "json",
-                            success: function(data) {
-                                var tpl = "";
-                                common.xhrReponseManage(data, function() {
-                                    var total = data.count || '0',
-                                        limit = 10;
-                                    $this.data('total', total);
-                                    if (data.comments && data.comments.length > 0) {
-                                        for (var i=0,l=data.comments.length;i<l;i++) {
-                                            var replyTpl = data.comments[i].isreply? '回复<a href="/user/' + data.comments[i]._reply_u + '">' + data.comments[i].other + '</a>':'';
+                    // 显示并切换到展开评论状态
+                    $commentArea.show();
+                    $this.html('<i class="comment-icon"></i>' + text.COLLAPSE_COMMENT);
+                    $this.data('show', true);
 
-                                            tpl += '<li data-cid="' + data.comments[i]._id + '" data-uid="' + (data.comments[i]._belong_u? data.comments[i]._belong_u._id:'') + '">' + 
-                                                '<div class="user-info">' +
-                                                '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
-                                                '<em class="username"><a href="/user/' + data.comments[i]._belong_u._id + '">' + data.comments[i].author + '</a>'
-                                                + replyTpl + ' ' + data.comments[i].date + '</em>' +
-                                                '</div>' +
-                                                '<p class="text">' + data.comments[i].content + '</p>' +
-                                                '<div>' +
-                                                '<a rel="comment-delete" href="javascript:;">' + (data.comments[i].isowner? '删除':'') + '</a> ' +
-                                                '<a class="reply" href="javascript:;">' + (data.comments[i].isowner? '':'回复') + '</a>' +
-                                                '</div>';
-                                            if (data.isauthenticated) {
-                                                tpl += '<div class="reply-area" style="display: none;">' +
-                                                    '<textarea placeholder="说说你的看法..."></textarea>' +
-                                                    '<button class="btn btn-reply">回复</button>' +
-                                                    '</div>' +
-                                                    '</li>';
-                                            }
-                                        }
-
-                                        var pageCount = Math.ceil(total / limit);
-
-                                        tpl += '<a>上一页</a>';
-                                        tpl += '<a>1</a>';
-
-                                        var start = 2,
-                                            rand  = 3;
-                                        for (var p = start, l = pageCount; p < l && p < start + rand; p++) {
-                                            tpl += '<a>' + p + '</a>';
-                                        }
-                                        if (p < pageCount) {
-                                            tpl += '...'
-                                        }
-                                        tpl += '<a>' + pageCount + '</a>';
-                                        tpl += '<a>下一页</a>';
-                                        
-
-                                        $commentArea.find('ul').html(tpl).off('click')
-                                        .on('click', 'a.reply', function() {
-                                            if (!data.isauthenticated) {
-                                                common.showSigninPop();
-                                            }
-                                    
-                                            var replyShow     = $(this).data('replyShow');
-                                            var $conmmentCurr = $(this).closest('li');
-                                            var $replyArea    = $conmmentCurr.find('.reply-area');
-                                            if (!replyShow) {
-                                                $replyArea.show();
-                                                $(this).data('replyShow', true);
-                                            } else {
-                                                $replyArea.hide();
-                                                $(this).data('replyShow', false);
-                                            }
-                                        }).on('click', 'a[rel="comment-delete"]', function() {
-                                            var $conmmentCurr = $(this).closest('li'),
-                                                cid           = $conmmentCurr.data('cid');
-
-                                            $.ajax({
-                                                url: "/comment/delete",
-                                                data: {
-                                                    cid: cid
-                                                },
-                                                method: "POST",
-                                                dataType: "json",
-                                                success: function(data) {
-                                                    common.xhrReponseManage(data, function() {
-                                                        $conmmentCurr.fadeOut(function() {
-                                                            $(this).remove();
-                                                        });
-                                                    });
-                                                },
-                                                error: function() {
-    
-                                                }
-                                            });
-                                        }).on('click', 'button.btn-reply', function() {
-                                            var $this         = $(this);
-                                            var $conmmentCurr = $this.closest('li');
-                                            var $replyArea    = $conmmentCurr.find('.reply-area');
-                                            var $textarea     = $replyArea.find('textarea');
-                                            var newcon        = $.trim($textarea.val());
-                                            var toid          = $conmmentCurr.data('uid');
-                                            var forid         = $conmmentCurr.data('cid');
-
-                                            if (!newcon) {
-                                                alert('评论不能为空');
-                                                return;
-                                            }
-
-                                            if (newcon.length > 140) {
-                                                alert('评论字数限制在140个字符内');
-                                                return;
-                                            }
-
-                                            $.ajax({
-                                                url: '/reply/new',
-                                                method: 'POST',
-                                                dataType: 'json',
-                                                data: {
-                                                    bl      : bl,
-                                                    did     : did,
-                                                    blid    : blid,
-                                                    toid    : toid,
-                                                    forid   : forid,
-                                                    content : newcon
-                                                },
-                                                success: function(data) {
-                                                    $textarea.val('');
-
-                                                    common.xhrReponseManage(data, function() {
-                                                        var tpl = '<li>' + 
-                                                            '<div class="user-info">' +
-                                                            '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
-                                                            '<em class="username"><a href="/user/'  + data.comment._belong_u +  '">' + data.comment.author + '</a>回复<a href="/user/' + data.comment._reply_u + '">' + data.comment.other + '</a> ' + data.comment.date + '</em>' +
-                                                            '<a class="reply" href="javascript:;">' + (data.isowner? '':'回复') + '</a>' +
-                                                            '</div>' +
-                                                            '<p class="text">' + data.comment.content + '</p>' +
-                                                            '</li>';
-
-                                                        $commentArea.find('ul').prepend(tpl);
-                                                        $belong.find('.comment')[0].lastChild.nodeValue = text.EXPANSION_COMMENT + " " + data.total;
-                                                    });
-                                                },
-                                                error: function() {
-
-                                                }
-                                            });
-                                        });
-                                    }
-                                    $commentArea.show().find('textarea:first').off().on('focus', function() {
-                                        var $createBtn = $commentArea.find('.btn-area:first');
-                                        if (!$createBtn.data('show')) {
-                                            $createBtn.data('show', true).show();
-                                        }
-                                    }).on('click', function() {
-                                        if (!data.isauthenticated) {
-                                            $commentArea.find('textarea:first').blur();
-                                            common.showSigninPop();
-                                        }
-                                    });
-                                    $this.data('editShow', true);
-                                    $this.html('<i class="comment-icon"></i>' + text.COLLAPSE_COMMENT);
-                                });
-                            },
-                            error: function() {
-
-                            }
+                    if (!$this.data('firstShow')) {
+                        var loading = '<li>评论加载中...</li>';
+                        $commentArea.find('ul.comment-list').html(loading)
+                        var params = {
+                            btype : btype,
+                            blid  : blid,
+                            bl    : bl,
+                            did   : did,
+                            page  : 1,
+                            $belong      : $belong,
+                            $pageCacheEl : $this,
+                            $commentArea : $commentArea
+                        }
+                        nodelist.loadComments(params, function(data) {
+                            params.isauthenticated = data.isauthenticated;
+                            nodelist.bindComentInput(params);
+                            $this.data('firstShow', true);
                         });
-                    }else{
-                        var total = $this.data('total');
-                        $commentArea.hide().find('textarea').blur();
-                        $this.html('<i class="comment-icon"></i>' + text.EXPANSION_COMMENT + ' ' + total);
-                        $this.data('editShow', false);
                     }
+                }else{
+                    var total = $this.data('total');
+                    $commentArea.hide().find('textarea').blur();
+                    $this.html('<i class="comment-icon"></i>' + text.EXPANSION_COMMENT + ' ' + total);
+                    $this.data('show', false);
+                }
             },
             createComment: function() {
                 var $this        = $(this);

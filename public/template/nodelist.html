@@ -25,16 +25,16 @@
                 <% if (node.isowner) { %>
                 <li><a class="remove" rel="node-delete" href="javascript:;"><i class="remove-icon"></i>删除</a></li>
                 <% } %>
-                <li><a class="comment" href="javascript:;"><i class="comment-icon"></i><%= data.text.EXPANSION_COMMENT %> <%= node.comments %></a></li>
+                <li><a class="comment" data-show="false" href="javascript:;"><i class="comment-icon"></i><%= data.text.EXPANSION_COMMENT %> <%= node.comments %></a></li>
                 <ul>
         </div>
         <div class="comment-area" style="display: none;">
-            <div>
+            <div class="comment-input" style="display: none;">
                 <textarea placeholder="说说你的看法..."></textarea>
                 <div class="btn-area" data-show="false" style="display: none;"><button class="btn btn-comment">发表</button></div>
             </div>
-            <ul class="comment-list">
-            </ul>
+            <ul class="comment-list"></ul>
+            <div class="comment-page"></div>
         </div>
     </div>
 </div>

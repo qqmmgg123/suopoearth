@@ -975,6 +975,9 @@ i.search-icon {
 .container .dream-con .process-area .process-node .comment-area .comment-list {
   margin-top: 10px;
 }
+.container .dream-con .process-area .process-node .comment-area .comment-page a.curr {
+  color: #ff335e;
+}
 .container .dream-con .process-area .process-node .more,
 .container .dream-con .process-area .process-node .result {
   text-align: center;

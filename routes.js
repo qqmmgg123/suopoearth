@@ -43,15 +43,21 @@ router.get('/', function(req, res, next) {
         return res.redirect('/found');
     }
 
-    var uid = req.user.id;
+    var uid = req.user._id;
 
     Account.findById(uid)
     .populate([{
             path: 'dreams',
-            select: 'title description'
+            select: 'title description',
+            options: {
+                sort: '-date'
+            }
         }, {
             path: '_following_d',
-            select: 'title description'
+            select: 'title description',
+            options: {
+                sort: '-date'
+            }
         }])
     .exec(function(err, user) {
         if (err) {
@@ -67,6 +73,8 @@ router.get('/', function(req, res, next) {
                 "_belong_d": {
                     "$in": user._following_d
                 }
+            }, {
+                "_belong_u": uid
             }]
         };
 
@@ -93,6 +101,7 @@ router.get('/', function(req, res, next) {
 
         Activity.find(fields)
         .sort('-date')
+        .limit(11)
         .populate([{
                 path: '_create_d'
             }, {
@@ -103,18 +112,30 @@ router.get('/', function(req, res, next) {
                 path: '_belong_d'
         }])
         .exec(function(err, activities) {
-            if (err) {
-                return next(err);
+            if (err || !activities) {
+                var unKonwErr = new Error('未知错误。')
+                return next(err || unKonwErr);
             }
+
+            var hasmore = false,
+                anext   = 0;
+            if (activities[10]) {
+                hasmore = true;
+                nnext = activities[10]._id;
+            }
+            activities = activities.slice(0, 10);
 
             res.render('index', makeCommon({
                 user: req.user,
                 title: settings.APP_NAME,
                 notice: getFlash(req, 'notice'),
                 data: {
-                    activities: activities,
-                    fdreams  : user._following_d,
-                    mdreams  : user.dreams
+                    activities : activities,
+                    fdreams    : user._following_d,
+                    mdreams    : user.dreams,
+                    anext      : anext,
+                    hasmore    : hasmore,
+                    tab        : (req.query && req.query.tab) || 'all'
                 },
                 success: 1
             }, res));
@@ -143,39 +164,132 @@ router.get('/dream/:id', function(req, res, next) {
 
     var curId  = req.params.id,
         _curId = mongoose.Types.ObjectId(curId);
-        var populate = [{
-            path: '_belong_u',
-        }];
 
-        if (req.user) {
-            populate.push({
-                path  : '_followers_u',
-                match : { _id: req.user.id},
-                select: "_id",
-                model : Account
-            });
+    var populate = [{
+        path: '_belong_u',
+    }];
+
+    if (req.user) {
+        populate.push({
+            path  : '_followers_u',
+            match : { _id: req.user.id},
+            select: "_id",
+            model : Account
+        });
+    }
+
+    Dream.findOne({
+        _id: _curId
+    })
+    .populate(populate)
+    .exec(function(err, dream) {
+        var noExistErr  = new Error("找不到该想法..."),
+            viewType    = 0,
+            currComments = null;
+
+        var currNid, currCid;
+        if (req.query && req.query.nid) {
+            noExistErr = new Error("找不到该历程...");
+            viewType   = 1;
+
+            try {
+                var currNid =  mongoose.Types.ObjectId(req.query.nid);
+            }catch(err) {};
         }
 
-        Dream.findOne({
-            _id: _curId
-        })
-        .populate(populate)
-        .exec(function(err, dream) {
-            if (err || !dream) {
-                var err = new Error("找不到该想法...");
-                return next(err);
-            }
+        if (req.query && req.query.cid) {
+            noExistErr = new Error("找不到该评论...");
+            viewType   = 2;
+            currCid = req.query.cid;
+        }
 
-            var isfollow = false;
-            if (req.user) {
-                isfollow = (dream._followers_u && dream._followers_u.length > 0);
-            }
+        if (err || !dream) {
+            return next(noExistErr);
+        }
 
-            Node.aggregate([{
-                $match: {
-                    _belong_d: _curId
+        var isfollow = false;
+        if (req.user) {
+            isfollow = (dream._followers_u && dream._followers_u.length > 0);
+        }
+
+        var match = {
+            $match: {
+                _belong_d: _curId
+            }
+        };
+
+        if (currCid) {
+            return Comment.findById(currCid)
+            .exec(function(err, comment) {
+                if (err || !comment || !comment._belong_n) {
+                    return next(noExistErr);
                 }
-            }, {
+
+                currNid = comment._belong_n;
+                _resComment();
+            });
+
+            function _resComment() {
+                Comment.count({
+                    _belong_n: currNid,
+                    _id: {
+                        $gte: currCid
+                    }
+                }, function(err, count) {
+                    if (err || !count) {
+                        return next(noExistErr);
+                    }
+    
+                    var query = { _belong_n: currNid };
+        
+                    match.$match._id = {
+                        $lte: currNid
+                    };
+    
+                    var limit = 10,
+                        page  = Math.ceil(count / limit);
+    
+                    var skip = (page - 1) * 10;
+    
+                    Comment
+                    .find(query)
+                    .lean()
+                    .populate({
+                        path: '_belong_u'
+                    })
+                    .sort('-date')
+                    .skip(skip)
+                    .limit(limit)
+                    .exec(function(err, comments) {
+                        if (err || !comments) {
+                            return next(noExistErr);
+                        }
+                        
+                        comments.forEach(function(comment) {
+                            comment.isowner = req.user && (comment._belong_u && comment._belong_u._id.equals(req.user.id));
+                        });
+
+                        console.log(comments);
+                        currComments = {
+                            currPage: page,
+                            comments: comments
+                        };
+                        _reponse();
+                    });
+                });
+            }
+        }
+        
+        if (currNid) {
+            match.$match._id = {
+                $lte: currNid
+            };
+        }
+
+        _reponse();
+
+        function _reponse() {
+            Node.aggregate([match, {
                 $project: {
                     id        : 1,
                     content   : 1,
@@ -188,13 +302,11 @@ router.get('/dream/:id', function(req, res, next) {
             }, {
                 $sort: { date: -1 }
             }, {
-                $skip: 0
-            }, {
                 $limit: 11
             }],
             function(err, nodes) {
                 if (err || !nodes) {
-                    return next(new Error("找不到该想法..."))
+                    return next(noExistErr);
                 };
                 
                 var hasmore = false,
@@ -211,125 +323,240 @@ router.get('/dream/:id', function(req, res, next) {
                     }
 
                     if (!rnodes) {
-                        var err = new Error("找不到该想法...")
-                            return next(err);
+                        return next(noExistErr);
                     }
 
-                            rnodes.forEach(function(node) {
-                                node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
-                            });
-
-                            async.parallel([
-                                function(callback) {
-                                    Dream.findById(curId)
-                                    .populate({
-                                        path: '_followers_u',
-                                        options: { limit: 6 },
-                                    })
-                                    .exec(function(err, res) {
-                                        var userNum = 0,
-                                            dfollowers = [];
-                                        if (err || !res) {
-                                            return callback(null, [userNum, dfollowers]);
-                                        }
-                                        
-                                        dfollowers = res._followers_u || dfollowers;
-
-                                        Dream.aggregate([{
-                                            $match: {
-                                                _id: res._id
-                                            }
-                                        }, {
-                                            $project: {
-                                                _followers_u: {$size: '$_followers_u'}
-                                            }
-                                        }],
-                                        function(err, docs) {
-                                            if (err) return callback(null, [userNum, dfollowers]);
-                                                
-                                            if (docs && docs.length > 0) {
-                                                userNum = docs[0]._followers_u;
-                                            }
-                                            callback(null, [userNum, dfollowers])
-                                        });
-                                    });
-                                },
-                                function(callback){
-                                    Dream
-                                    .find({
-                                        _id:{$gt: curId}
-                                    })
-                                    .limit(1)
-                                    .exec(function(err, result){
-                                        if (err) {
-                                            return callback(err, null);
-                                        }
-        
-                                        var dreams = result;
-                                        callback(null, dreams);
-                                    });
-                                },
-                                function(callback){
-                                    Dream
-                                    .find({
-                                        _id:{$lte: curId}
-                                    })
-                                    .sort('-_id')
-                                    .limit(2)
-                                    .exec(function(err, result){
-                                        if (err) {
-                                            return callback(err, null);
-                                        }
-        
-                                        var dreams = result;
-                                        callback(null, dreams);
-                                    });
-                                }],
-                                function(err, results){
-                                    if (err) return next(err);
-        
-                                    if (!results || results.length < 3) {
-                                        var err = new Error("找不到该想法...");
-                                        return next(err);
-                                    }
-
-                                    var accounts = results[0][1]? results[0][1]:[];
-                            
-                                    if (req.user) {
-                                        var uid = req.user.id;
-                                        var _uid = mongoose.Types.ObjectId(uid);
-                                
-                                        accounts.forEach(function(account) {
-                                            account.isfollow = (account.fans.indexOf(_uid)!== -1);
-                                        });
-                                    }
-
-                                    var resData = {
-                                        author     : dream._belong_u,
-                                        membercount: results[0][0]? results[0][0]:0,
-                                        members    : accounts,
-                                        prev       : results[1][0],
-                                        nodes      : rnodes,
-                                        hasmore    : hasmore,
-                                        nnext      : nnext,
-                                        current    : results[2][0],
-                                        next       : results[2][1],
-                                        isFollow   : isfollow,
-                                        text       : settings.COMMENT_TEXT
-                                    };
-
-                                    res.render('dream', makeCommon({
-                                        user  : req.user,
-                                        title : settings.APP_NAME,
-                                        notice: getFlash(req, 'notice'),
-                                        data  : resData,
-                                        success: 1
-                                    }, res));
-                                }
-                            );
-                        });
+                    rnodes.forEach(function(node) {
+                        node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
                     });
+
+                    async.parallel([
+                        function(callback) {
+                            Dream.findById(curId)
+                            .populate({
+                                path: '_followers_u',
+                                options: { limit: 6 },
+                            })
+                            .exec(function(err, res) {
+                                var userNum = 0,
+                                    dfollowers = [];
+                                if (err || !res) {
+                                    return callback(null, [userNum, dfollowers]);
+                                }
+                                
+                                dfollowers = res._followers_u || dfollowers;
+
+                                Dream.aggregate([{
+                                    $match: {
+                                        _id: res._id
+                                    }
+                                }, {
+                                    $project: {
+                                        _followers_u: {$size: '$_followers_u'}
+                                    }
+                                }],
+                                function(err, docs) {
+                                    if (err) return callback(null, [userNum, dfollowers]);
+                                        
+                                    if (docs && docs.length > 0) {
+                                        userNum = docs[0]._followers_u;
+                                    }
+                                    callback(null, [userNum, dfollowers])
+                                });
+                            });
+                        },
+                        function(callback){
+                            Dream
+                            .find({
+                                _id:{$gt: curId}
+                            })
+                            .limit(1)
+                            .exec(function(err, result){
+                                if (err) {
+                                    return callback(err, null);
+                                }
+
+                                var dreams = result;
+                                callback(null, dreams);
+                            });
+                        },
+                        function(callback){
+                            Dream
+                            .find({
+                                _id:{$lte: curId}
+                            })
+                            .sort('-date')
+                            .limit(2)
+                            .exec(function(err, result){
+                                if (err) {
+                                    return callback(err, null);
+                                }
+
+                                var dreams = result;
+                                callback(null, dreams);
+                            });
+                        }],
+                        function(err, results){
+                            if (err) return next(err);
+
+                            if (!results || results.length < 3) {
+                                return next(noExistErr);
+                            }
+
+                            var accounts = results[0][1]? results[0][1]:[];
+                    
+                            if (req.user) {
+                                var uid = req.user.id;
+                                var _uid = mongoose.Types.ObjectId(uid);
+                        
+                                accounts.forEach(function(account) {
+                                    account.isfollow = (account.fans.indexOf(_uid)!== -1);
+                                });
+                            }
+
+                            var resData = {
+                                author     : dream._belong_u,
+                                membercount: results[0][0]? results[0][0]:0,
+                                members    : accounts,
+                                prev       : results[1][0],
+                                nodes      : rnodes,
+                                hasmore    : hasmore,
+                                nnext      : nnext,
+                                current    : results[2][0],
+                                next       : results[2][1],
+                                isFollow   : isfollow,
+                                text       : settings.COMMENT_TEXT,
+                                viewType   : viewType,
+                                currNid    : currNid,
+                                currCid    : currCid,
+                                currComments: currComments,
+                                isauthenticated: !!req.user
+                            };
+
+                            res.render('dream', makeCommon({
+                                user  : req.user,
+                                title : settings.APP_NAME,
+                                notice: getFlash(req, 'notice'),
+                                data  : resData,
+                                success: 1
+                            }, res));
+                        }
+                    );
+                });
             });
+        }
+    });
+});
+
+// 获取动态信息
+router.get('/activities', function(req, res, next) {
+    var defaultErr = new Error("获取更多动态失败。");
+
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    var user = req.user,
+        uid  = user._id;
+
+    if (!req.query || !req.query.anext) {
+        return next(defaultErr);
+    }
+
+    var _current = req.query.anext;
+
+    var fields = {
+        $or: [{
+            "_belong_u": { 
+                "$in": user.follows
+            }
+        }, {
+            "_belong_d": {
+                "$in": user._following_d
+            }
+        }, {
+            "_belong_u": uid
+        }]
+    };
+
+    var tab = 'all';
+    if (req.query && req.query.tab) {
+        tab = req.query.tab;
+        switch(tab) {
+            case "fuser":
+                fields = {
+                    "_belong_u": { 
+                        "$in": user.follows
+                    }
+                }
+                break;
+            case "fdream":
+                fields = {
+                    "_belong_d": {
+                        "$in": user._following_d
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    fields._id =  {
+        $lte: _current
+    };
+
+    var _current = req.query.nnext;
+
+    Activity.find(fields)
+    .sort('-date')
+    .limit(11)
+    .populate([{
+            path: '_create_d'
+        }, {
+            path: '_create_n'
+        }, {
+            path: '_belong_u'
+        }, {
+            path: '_belong_d'
+    }])
+    .exec(function(err, activities) {
+        if (err || !activities) {
+            var unKonwErr = new Error('未知错误。')
+            return next(err || unKonwErr);
+        }
+
+        var hasmore = false,
+            anext   = 0;
+        if (activities[10]) {
+            hasmore = true;
+            nnext = activities[10]._id;
+        }
+        activities = activities.slice(0, 10);
+
+        res.json({
+            info: "ok",
+            result: 0,
+            data: {
+                activities : activities,
+                hasmore    : hasmore,
+                nnext      : nnext,
+                tab        : tab
+            }
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
 });
 
 // 获取历程信息
