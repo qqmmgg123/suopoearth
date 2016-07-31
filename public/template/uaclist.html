@@ -3,28 +3,28 @@
                         <li>
                             <div>
                                 <p class="user-info">
-                                <a class="avatar" href="/user/<%= ac._belong_u? ac._belong_u.id:ac._belong_u %>"><img src="/images/user_mini.png" /></a>
+                                <a class="avatar" href="/user/<%- ac._belong_u? ac._belong_u.id:ac._belong_u %>"><img src="/images/user_mini.png" /></a>
                                 <em class="user-desc">
                                     <% if (ac._belong_u) { %>
-                                    <a href="/user/<%= ac._belong_u.id %>">
-                                    <%= ac._belong_u.nickname %>
+                                    <a href="/user/<%- ac._belong_u.id %>">
+                                    <%- ac._belong_u.nickname %>
                                     <% } else { %>
-                                    <a href="/user/<%= ac._belong_u %>">
-                                    <%= ac.alias %>
+                                    <a href="/user/<%- ac._belong_u %>">
+                                    <%- ac.alias %>
                                     <% } %>
                                     </a>
-                                    于<%= timeFormat(ac.date) %>
+                                    于<%- timeFormat(ac.date) %>
                                     <% if (ac.type == 0) { %>
                                     创建了想法
                                     <% if (ac._create_d) { %>
-                                    <a href="/dream/<%= ac._create_d.id %>"><%= ac._create_d.title %></a>
+                                    <a href="/dream/<%- ac._create_d.id %>"><%- ac._create_d.title %></a>
                                     <% } else { %>
                                     该想法已经不存在
                                     <% } %>
                                     <% } else if (ac.type == 1) { %>
                                     在想法
                                     <% if (ac._belong_d) { %>
-                                    <a href="/dream/<%= ac._belong_d.id %>"><%= ac._belong_d.title %></a>
+                                    <a href="/dream/<%- ac._belong_d.id %>"><%- ac._belong_d.title %></a>
                                     <% } else { %>
                                     该想法已经不存在
                                     <% } %>
@@ -34,11 +34,11 @@
                                 </em>
                                 </p>
                                 <% if (ac.type == 0 && ac._create_d) { %>
-                                <p class="ac-summary"><%= ac._create_d.description %></p>
+                                <p class="ac-summary"><%- ac._create_d.description %></p>
                                 <% } else if (ac.type == 1) { %>
                                 <% if (ac._create_n) { %>
-                                <p class="ac-summary"><%= ac._create_n.content %></p>
-                                <p><a href="/dream/<%= ac._belong_d && ac._belong_d._id %>?nid=<%= ac._create_n._id %>">查看</a></p>
+                                <p class="ac-summary"><%- ac._create_n.content %></p>
+                                <p><a href="/dream/<%- ac._belong_d && ac._belong_d._id %>?nid=<%- ac._create_n._id %>">查看</a></p>
                                 <% } else { %>
                                 该历程已经不存在
                                 <% } %>
@@ -48,7 +48,7 @@
                         <% }); %>
                         <li>
                         <% if (data.hasmore) { %>
-                            <div  data-anext="<%= data.anext %>" data-uid="<%= data.id %>" class="more"><a class="btn">查看更多 ></a></div>
+                            <div  data-anext="<%- data.anext %>" data-uid="<%- data.id %>" class="more"><a class="btn">查看更多 ></a></div>
                         <% } %>
                         </li>
                         <% } else { %>

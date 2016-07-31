@@ -18,9 +18,9 @@
             <div class="dream-left-inner">
                 <div class="tab-nav">
                     <ul>
-                        <li><a class="tab" href="/">全部动态</a></li>
-                        <li><a class="tab" href="/?tab=fdream">关注的想法的动态</a></li>
-                        <li><a class="tab" href="/?tab=fuser">关注的人的动态</a></li>
+                        <li><a class="tab <% if (data.tab == 'all') { %>cur"<% } %>" href="/">全部动态</a></li>
+                        <li><a class="tab <% if (data.tab == 'fdream') { %>cur"<% } %>" href="/?tab=fdream">关注的想法的动态</a></li>
+                        <li><a class="tab <% if (data.tab == 'fuser') { %>cur"<% } %>" href="/?tab=fuser">关注的人的动态</a></li>
                     </ul>
                 </div>
                 <ul id="ac-list" class="activity-list">
@@ -32,7 +32,7 @@
                 <div class="dream-right-inner">
                 <div class="tab-nav">
                     <ul>
-                        <li><a class="tab" href="javascript:;">我的想法</a></li>
+                        <li><a class="tab cur" href="javascript:;">我的想法</a></li>
                         <li><a class="tab" href="javascript:;">我关注的想法</a></li>
                     </ul>
                 </div>

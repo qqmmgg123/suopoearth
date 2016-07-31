@@ -117,8 +117,26 @@ a {
     position: absolute;
 }
 
-.tab {
-    .disable-selection();
+.tab-nav {
+    ul {
+        border-bottom: 1px solid #eaeaea;
+        li {
+            margin-bottom: -1px;
+            display: inline-block;
+            .tab {
+                background-color: #fff;
+                padding: 5px 20px;
+                margin: 0 5px;
+                display: block;
+                .disable-selection();
+                &.cur {
+                    border: 1px solid #eaeaea;
+                    border-bottom: 1px solid #fff;
+                    border-radius: 5px 5px 0 0;
+                }
+            }
+        }
+    }
 }
 
 .none {
@@ -291,16 +309,17 @@ a {
     background-color: white;
 }
 
-.for-signin {
-    height: 420px !important;
+div.for-signin {
+    height: 480px !important;
     .banner-bg {
-        margin-top: 60px !important;
+        height: 420px;
+        background: url(/images/banner_signin.png) no-repeat;
     }
 }
 
 .banner {
     height: 300px;
-    background-color: wight;
+    background-color: #fff;
     position: relative;
     top: 67px;
     .banner-bg {
@@ -311,12 +330,18 @@ a {
         background: url(/images/banner_bg.png) no-repeat;
     }
     .signin-area {
-        margin-top: 20px;
-        padding: 10px;
+        margin: 80px 20px 0 0;
+        padding: 10px 20px 20px;
         width: 320px;
-        background: #fff;
         float: right;
-        height: 250px;
+        border: 2px solid #eaeaea;
+        background-color: #fff;
+        border-radius: 5px;
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
         .slogan {
             color: #666;
             margin-top: 20px;
@@ -522,27 +547,8 @@ i.search-icon {
     }
     .team-area {
         padding: 10px;
-        .team-nav {
-            ul {
-                height: 26px;
-                border-bottom: 1px solid #eaeaea;
-            }
-            li {
-                height: 26px;
-                float: left;
-                a {
-                    background-color: #fff;
-                    margin: 0 5px;
-                    display: block;
-                    padding: 0 15px;
-                    height: 26px;
-                    line-height: 26px;
-                    &.cur {
-                        border: 1px solid #eaeaea;
-                        border-bottom-color: #fff;
-                    }
-                }
-            }
+        .team-content {
+            padding: 10px;
         }
     }
     .team-area p {
@@ -1007,21 +1013,6 @@ i.search-icon {
             width: 650px;
             .dream-left-inner {
                 padding: 10px;
-                
-                .tab-nav {
-                    ul {
-                        overflow: hidden;
-                        li {
-                            float: left;
-
-                            a {
-                                margin: 0 5px;
-                                display: block;
-                                padding: 10px;
-                            }
-                        }
-                    }
-                }
             }
         }
         .dream-right {
@@ -1029,21 +1020,6 @@ i.search-icon {
             width: 350px;
             .dream-right-inner {
                 padding: 10px;
-
-                .tab-nav {
-                     ul {
-                        overflow: hidden;
-                        li {
-                            float: left;
-
-                            a {
-                                margin: 0 5px;
-                                display: block;
-                                padding: 10px;
-                            }
-                        }
-                    }
-                }
             }
 
             h2 {

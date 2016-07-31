@@ -105,7 +105,18 @@ a {
   z-index: 1;
   position: absolute;
 }
-.tab {
+.tab-nav ul {
+  border-bottom: 1px solid #eaeaea;
+}
+.tab-nav ul li {
+  margin-bottom: -1px;
+  display: inline-block;
+}
+.tab-nav ul li .tab {
+  background-color: #fff;
+  padding: 5px 20px;
+  margin: 0 5px;
+  display: block;
   -moz-user-select: none;
   /* Firefox */
   -ms-user-select: none;
@@ -116,6 +127,11 @@ a {
   /* Chrome,Safari,and Opera */
   -webkit-touch-callout: none;
   /* Disable Android and IOS callout */
+}
+.tab-nav ul li .tab.cur {
+  border: 1px solid #eaeaea;
+  border-bottom: 1px solid #fff;
+  border-radius: 5px 5px 0 0;
 }
 .none {
   display: none;
@@ -278,15 +294,16 @@ a {
 .header ul.h-right > li {
   float: left;
 }
-.for-signin {
-  height: 420px !important;
+div.for-signin {
+  height: 480px !important;
 }
-.for-signin .banner-bg {
-  margin-top: 60px !important;
+div.for-signin .banner-bg {
+  height: 420px;
+  background: url(/images/banner_signin.png) no-repeat;
 }
 .banner {
   height: 300px;
-  background-color: wight;
+  background-color: #fff;
   position: relative;
   top: 67px;
 }
@@ -298,12 +315,18 @@ a {
   background: url(/images/banner_bg.png) no-repeat;
 }
 .banner .signin-area {
-  margin-top: 20px;
-  padding: 10px;
+  margin: 80px 20px 0 0;
+  padding: 10px 20px 20px;
   width: 320px;
-  background: #fff;
   float: right;
-  height: 250px;
+  border: 2px solid #eaeaea;
+  background-color: #fff;
+  border-radius: 5px;
+}
+.banner .signin-area h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 16px;
 }
 .banner .signin-area .slogan {
   color: #666;
@@ -523,25 +546,8 @@ i.search-icon {
 .container .team-area {
   padding: 10px;
 }
-.container .team-area .team-nav ul {
-  height: 26px;
-  border-bottom: 1px solid #eaeaea;
-}
-.container .team-area .team-nav li {
-  height: 26px;
-  float: left;
-}
-.container .team-area .team-nav li a {
-  background-color: #fff;
-  margin: 0 5px;
-  display: block;
-  padding: 0 15px;
-  height: 26px;
-  line-height: 26px;
-}
-.container .team-area .team-nav li a.cur {
-  border: 1px solid #eaeaea;
-  border-bottom-color: #fff;
+.container .team-area .team-content {
+  padding: 10px;
 }
 .container .team-area p {
   text-indent: 2em;
@@ -1010,33 +1016,11 @@ i.search-icon {
 .container .dream-con .dream-left .dream-left-inner {
   padding: 10px;
 }
-.container .dream-con .dream-left .dream-left-inner .tab-nav ul {
-  overflow: hidden;
-}
-.container .dream-con .dream-left .dream-left-inner .tab-nav ul li {
-  float: left;
-}
-.container .dream-con .dream-left .dream-left-inner .tab-nav ul li a {
-  margin: 0 5px;
-  display: block;
-  padding: 10px;
-}
 .container .dream-con .dream-right {
   float: right;
   width: 350px;
 }
 .container .dream-con .dream-right .dream-right-inner {
-  padding: 10px;
-}
-.container .dream-con .dream-right .dream-right-inner .tab-nav ul {
-  overflow: hidden;
-}
-.container .dream-con .dream-right .dream-right-inner .tab-nav ul li {
-  float: left;
-}
-.container .dream-con .dream-right .dream-right-inner .tab-nav ul li a {
-  margin: 0 5px;
-  display: block;
   padding: 10px;
 }
 .container .dream-con .dream-right h2 {

@@ -59,13 +59,16 @@
     </div>
 </div>
 <% if (user) { %>
-    <div class="note-area">
         <% if (!user.isAuthenticated ) { %>
-        <div class="note">注：您的帐号没有经过认证，请确认认证邮件并认证账号以免帐号过期，<a href="/settings/emails">未收到认证邮件点击-></a>。
+        <div class="note-area">
+            <div class="note">注：您的帐号没有经过认证，请确认认证邮件并认证账号以免帐号过期，<a href="/settings/emails">未收到认证邮件点击-></a>。
+            </div>
         </div>
         <% } %>
         <% if (notice) { %>
-        <div class="note-area"><div class="note"><%= notice %></div></div>
+        <div class="note-area">
+            <div class="note"><%= notice %></div>
+        </div>
         <% } %>
     </div>
 <% } %>
