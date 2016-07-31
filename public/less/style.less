@@ -89,6 +89,10 @@ a {
     }
 }
 
+.btn-small {
+    padding: 2px 5px;
+}
+
 .btn-big {
     padding: 10px;
 }
@@ -102,6 +106,15 @@ a {
         background-color: #286090;
         border-color: #204d74;
     }
+}
+
+.dropDown {
+    width: 120px;
+    border: 2px solid #ddd;
+    background-color: #fff;
+    padding: 10px 0;
+    z-index: 1;
+    position: absolute;
 }
 
 .tab {
@@ -233,13 +246,7 @@ a {
                 font-size: 10px;
                 background-color: #ff4d73;
             }
-            .config-list, .message-list {
-                width: 120px;
-                border: 2px solid #ddd;
-                background-color: #fff;
-                padding: 10px 0;
-                z-index: 1;
-                position: absolute;
+            .config-list {
                 a {
                     display: block;
                     height: 26px;
@@ -248,6 +255,23 @@ a {
                     text-align: center;
                     &:hover {
                         background-color: #eaeaea;
+                    }
+                }
+            }
+
+            .message-list {
+                padding: 0;
+                width: 200px;
+                li {
+                    font-size: 12px;
+                    text-align: left;
+                    padding: 10px;
+                    a.btn {
+                        display: inline-block;
+                    }
+                    &.view-all {
+                        border-top: 1px solid #ddd;
+                        text-align: center;
                     }
                 }
             }
@@ -1354,26 +1378,31 @@ ul.activity-list {
             font-size: 12px;
             color: #666;
         }
-    }
-}
-
-.message-list {
-    width: 300px;
-    overflow: hidden;
-    li {
-        a {
-            display: block;
-            border-top: 1px solid #eaeaea;
-            &:hover {
-                color: #333;
-                background-color: #e6e6e6;
-            }
-            &.last {
-                border-bottom: 1px solid #eaeaea;
+        div.more {
+            a.btn {
+                display: block;
             }
         }
     }
 }
+
+/*.message-list {*/
+    /*width: 300px;*/
+    /*overflow: hidden;*/
+    /*li {*/
+        /*a {*/
+            /*display: block;*/
+            /*border-top: 1px solid #eaeaea;*/
+            /*&:hover {*/
+                /*color: #333;*/
+                /*background-color: #e6e6e6;*/
+            /*}*/
+            /*&.last {*/
+                /*border-bottom: 1px solid #eaeaea;*/
+            /*}*/
+        /*}*/
+    /*}*/
+/*}*/
 
 .team-way {
     overflow: hidden;

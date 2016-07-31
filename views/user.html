@@ -19,8 +19,8 @@
                     <div class="mydream-nav">
                         <div class="nav-list">
                             <ul>
-                                <li><a href="/user/<%= data.id %>" class="<%if (data.tab == "dream") {%>cur<% } %> tab">我的想法</a></li>
-                                <li><a href="/user/<%= data.id %>?tab=activity" class="<%if (data.tab == "activity") {%>cur<% } %> tab">我的动态</a></li>
+                                <li><a href="/user/<%= data.id %>" class="<%if (data.tab == "dream") {%>cur<% } %> tab"><%= data.currUser %>的想法</a></li>
+                                <li><a href="/user/<%= data.id %>?tab=activity" class="<%if (data.tab == "activity") {%>cur<% } %> tab"><%= data.currUser %>的动态</a></li>
                             </ul>
                         </div>
                         <div class="nav-ctrl">
@@ -58,63 +58,9 @@
                         <% } %>
                     </div>
                     <% } else if (data.tab == "activity") { %>
-                        <% if (data.activities && data.activities.length > 0) { %>
-                        <% data.activities.forEach(function(ac) { %>
-                        <div class="process-node">
-                            <div>
-                                <p class="user-info">
-                                <a class="avatar" href="/user/<%= ac._belong_u? ac._belong_u.id:ac._belong_u %>"><img src="/images/user_mini.png" /></a>
-                                <em class="username">
-                                    <% if (ac._belong_u) { %>
-                                    <a href="/user/<%= ac._belong_u.id %>">
-                                    <%= ac._belong_u.nickname %>
-                                    <% } else { %>
-                                    <a href="/user/<%= ac._belong_u %>">
-                                    <%= ac.alias %>
-                                    <% } %>
-                                    </a>
-                                    于<%= timeFormat(ac.date) %>
-                                    <% if (ac.type == 0) { %>
-                                    创建了想法
-                                    <% if (ac._create_d) { %>
-                                    <a href="/dream/<%= ac._create_d.id %>"><%= ac._create_d.title %></a>
-                                    <% } else { %>
-                                    该想法已经不存在
-                                    <% } %>
-                                    <% } else if (ac.type == 1) { %>
-                                    在想法
-                                    <% if (ac._belong_d) { %>
-                                    <a href="/dream/<%= ac._belong_d.id %>"><%= ac._belong_d.title %></a>
-                                    <% } else { %>
-                                    该想法已经不存在
-                                    <% } %>
-                                    中
-                                    更新了历程
-                                    <% } %>
-                                </em>
-                                </p>
-                                <% if (ac.type == 0 && ac._create_d) { %>
-                                <p class="node-content"><%= ac._create_d.description %></p>
-                                <% } else if (ac.type == 1) { %>
-                                <% if (ac._create_n) { %>
-                                <p class="node-content"><%= ac._create_n.content %></p>
-                                <% } else { %>
-                                该历程已经不存在
-                                <% } %>
-                                <% } %>
-                            </div>
-                        </div>
-                        <% }); %>
-                        <!--<div class="process-node">-->
-                        <!--<div class="more"><a class="btn">查看更多 ></a></div>-->
-                        <!--</div>-->
-                        <% } else { %>
-                        <div class="process-node">
-                            <div class="result">
-                                没有想法的践行历程
-                            </div>
-                        </div>
-                        <% } %>
+                    <ul id="ac-list" class="activity-list">
+                    <% include uaclist.html %>
+                    </ul>
                     <% } %>
                 </div>
             </div>
@@ -127,8 +73,8 @@
                         <h1><%= data.name %></h1>
                         <p><%= data.bio %></p>
                         <p>于<%= data.join_date %>加入</p>
-                        <a href="javascript:;" class="followers">粉丝 <%= data.followers? data.followers:0 %></a>
-                        <a href="javascript:;" class="following">关注 <%= data.following? data.following:0 %></a>
+                        <a href="/user/<%= data.id %>/followers" class="followers">粉丝 <%= data.followers? data.followers:0 %></a>
+                        <a href="/user/<%= data.id %>/following" class="following">关注 <%= data.following? data.following:0 %></a>
                     </div>
                 </div>
                 <!--<div class="tag-area">-->

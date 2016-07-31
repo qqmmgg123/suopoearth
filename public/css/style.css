@@ -81,6 +81,9 @@ a {
   background-color: #e6e6e6;
   border-color: #adadad;
 }
+.btn-small {
+  padding: 2px 5px;
+}
 .btn-big {
   padding: 10px;
 }
@@ -93,6 +96,14 @@ a {
   color: #fff;
   background-color: #286090;
   border-color: #204d74;
+}
+.dropDown {
+  width: 120px;
+  border: 2px solid #ddd;
+  background-color: #fff;
+  padding: 10px 0;
+  z-index: 1;
+  position: absolute;
 }
 .tab {
   -moz-user-select: none;
@@ -233,26 +244,31 @@ a {
   font-size: 10px;
   background-color: #ff4d73;
 }
-.header ul.h-right > li .config-list,
-.header ul.h-right > li .message-list {
-  width: 120px;
-  border: 2px solid #ddd;
-  background-color: #fff;
-  padding: 10px 0;
-  z-index: 1;
-  position: absolute;
-}
-.header ul.h-right > li .config-list a,
-.header ul.h-right > li .message-list a {
+.header ul.h-right > li .config-list a {
   display: block;
   height: 26px;
   line-height: 26px;
   font-size: 12px;
   text-align: center;
 }
-.header ul.h-right > li .config-list a:hover,
-.header ul.h-right > li .message-list a:hover {
+.header ul.h-right > li .config-list a:hover {
   background-color: #eaeaea;
+}
+.header ul.h-right > li .message-list {
+  padding: 0;
+  width: 200px;
+}
+.header ul.h-right > li .message-list li {
+  font-size: 12px;
+  text-align: left;
+  padding: 10px;
+}
+.header ul.h-right > li .message-list li a.btn {
+  display: inline-block;
+}
+.header ul.h-right > li .message-list li.view-all {
+  border-top: 1px solid #ddd;
+  text-align: center;
 }
 .header ul.h-lef,
 .header ul.h-right {
@@ -1342,21 +1358,26 @@ ul.activity-list > li .ac-summary {
   font-size: 12px;
   color: #666;
 }
-.message-list {
-  width: 300px;
-  overflow: hidden;
-}
-.message-list li a {
+ul.activity-list > li div.more a.btn {
   display: block;
-  border-top: 1px solid #eaeaea;
 }
-.message-list li a:hover {
-  color: #333;
-  background-color: #e6e6e6;
-}
-.message-list li a.last {
-  border-bottom: 1px solid #eaeaea;
-}
+/*.message-list {*/
+/*width: 300px;*/
+/*overflow: hidden;*/
+/*li {*/
+/*a {*/
+/*display: block;*/
+/*border-top: 1px solid #eaeaea;*/
+/*&:hover {*/
+/*color: #333;*/
+/*background-color: #e6e6e6;*/
+/*}*/
+/*&.last {*/
+/*border-bottom: 1px solid #eaeaea;*/
+/*}*/
+/*}*/
+/*}*/
+/*}*/
 .team-way {
   overflow: hidden;
 }

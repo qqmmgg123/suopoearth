@@ -121,7 +121,7 @@ router.get('/', function(req, res, next) {
                 anext   = 0;
             if (activities[10]) {
                 hasmore = true;
-                nnext = activities[10]._id;
+                anext = activities[10]._id;
             }
             activities = activities.slice(0, 10);
 
@@ -509,8 +509,6 @@ router.get('/activities', function(req, res, next) {
         $lte: _current
     };
 
-    var _current = req.query.nnext;
-
     Activity.find(fields)
     .sort('-date')
     .limit(11)
@@ -533,7 +531,7 @@ router.get('/activities', function(req, res, next) {
             anext   = 0;
         if (activities[10]) {
             hasmore = true;
-            nnext = activities[10]._id;
+            anext = activities[10]._id;
         }
         activities = activities.slice(0, 10);
 
@@ -543,7 +541,7 @@ router.get('/activities', function(req, res, next) {
             data: {
                 activities : activities,
                 hasmore    : hasmore,
-                nnext      : nnext,
+                anext      : anext,
                 tab        : tab
             }
         });
@@ -774,13 +772,17 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
         if (!account) {
             return next(unexisterr);
         }else{
-            var isfollow = false;
+            var isfollow = false,
+                currUser = account.nickname;
             if (req.user) {
+                var uid = req.user._id;
+                if (uid.equals(curId)) currUser = "我"
                 isfollow = (account.fans && account.fans.length > 0);
             }
 
             var resData = {
                 id       : curId,
+                currUser : currUser,
                 name     : account.nickname,
                 bio      : account.bio,
                 isfollow : isfollow,
@@ -805,6 +807,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                     "_belong_u": account._id
                 })
                 .sort('-date')
+                .limit(11)
                 .populate([{
                         path: '_create_d'
                     }, {
@@ -815,10 +818,22 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                         path: '_belong_d'
                 }])
                 .exec(function(err, activities) {
-                    if (err) {
-                        return next(err);
+                    if (err || !activities) {
+                        var unKonwErr = new Error('未知错误。')
+                            return next(err || unKonwErr);
                     }
+
+                    var hasmore = false,
+                        anext   = 0;
+                    if (activities[10]) {
+                        hasmore = true;
+                        anext = activities[10]._id;
+                    }
+                    activities = activities.slice(0, 10);
+
                     resData.tab = "activity";
+                    resData.anext = anext;
+                    resData.hasmore = hasmore;
                     resData.activities = activities;
                     resRender(resData);
                 });
@@ -830,6 +845,73 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
             resData.dreams  = account.dreams;
             resRender(resData);
         }
+    });
+});
+
+// 获取用户动态信息
+router.get('/user/:id([a-z0-9]+)/activities', function(req, res, next) {
+    var defaultErr = new Error("获取更多动态失败。");
+
+    var curId = req.params.id;
+
+    if (!req.query || !req.query.anext) {
+        return next(defaultErr);
+    }
+
+    var _current = req.query.anext;
+
+    var fields = {
+        "_belong_u": curId,
+        "_id"      : {
+            $lte: _current
+        }
+    };
+
+    Activity.find(fields)
+    .sort('-date')
+    .limit(11)
+    .populate([{
+            path: '_create_d'
+        }, {
+            path: '_create_n'
+        }, {
+            path: '_belong_u'
+        }, {
+            path: '_belong_d'
+    }])
+    .exec(function(err, activities) {
+        if (err || !activities) {
+            var unKonwErr = new Error('未知错误。')
+            return next(err || unKonwErr);
+        }
+
+        var hasmore = false,
+            anext   = 0;
+        if (activities[10]) {
+            hasmore = true;
+            anext = activities[10]._id;
+        }
+        activities = activities.slice(0, 10);
+
+        res.json({
+            info: "ok",
+            result: 0,
+            data: {
+                id         : curId,
+                activities : activities,
+                hasmore    : hasmore,
+                anext      : anext
+            }
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
     });
 });
 
@@ -901,12 +983,36 @@ router.get('/message/view', function(req, res, next) {
 
 // 消息页
 router.get('/message/', function(req, res) {
-    res.render('message', makeCommon({
-        title: settings.APP_NAME,
-        notice: getFlash(req, 'notice'),
-        user : req.user,
-        result: 0
-    }, res));
+    if (!req.user) {
+        return res.redirect('/signin');
+    }
+
+    var uid   = req.user.id,
+        rdate = req.user.msgreviewdate;
+
+    var fields = {
+        '_belong_u': uid
+    };
+
+
+    Message.find(fields)
+    .sort('-date')
+    .exec(function(err, msgs) {
+        if (err || !msgs) {
+            var unKnowErr = new Error('未知错误。');
+            return next(err || unKnowErr);
+        }
+
+        res.render('message', makeCommon({
+            title: settings.APP_NAME,
+            notice: getFlash(req, 'notice'),
+            user : req.user,
+            data: {
+                msgs: msgs
+            },
+            result: 0
+        }, res));
+    });
 });
 
 // 更改用户资料
@@ -1166,10 +1272,10 @@ router.get('/result', function(req, res, next) {
     function reponse(type, data) {
         res.render('result', makeCommon({
             title: settings.APP_NAME,
-            query: req.query.query,
             notice: getFlash(req, 'notice'),
             user : req.user,
             data: {
+                query: req.query.query,
                 type: type,
                 results: data
             },
@@ -2752,6 +2858,59 @@ router.post('/comment/delete', function(req, res, next) {
 
             res.json({
                 info: "删除评论成功",
+                result: 0
+            });
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 移除评论
+router.post('/message/remove', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    var uid = req.user.id;
+
+    if (!req.body || !req.body.mid) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var msgId = req.body.mid;
+
+    Message.findById(msgId, function(err, msg) {
+        if (err) return next(err);
+
+        if (!msg) {
+            var err = new Error("移除消息失败...");
+            return next(err);
+        }
+
+        if (!msg._belong_u.equals(uid)) {
+            var err = new Error("这不是你的消息，你不能移除...");
+            return next(err);
+        }
+
+        msg.remove(function(err) {
+            if (err) {
+                var err = new Error("移除消息失败...");
+                return next(err);
+            }
+
+            res.json({
+                info: "移除消息成功",
                 result: 0
             });
         });

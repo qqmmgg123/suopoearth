@@ -15,8 +15,8 @@
         <div class="search-area">
             <div class="tab-nav">
                 <ul>
-                    <li><a class="tab" href="/result?query=<%= query %>&type=content">想法</a></li>
-                    <li><a class="tab" href="/result?query=<%= query %>&type=user">用户</a></li>
+                    <li><a class="tab" href="/result?query=<%= data.query %>&type=content">想法</a></li>
+                    <li><a class="tab" href="/result?query=<%= data.query %>&type=user">用户</a></li>
                 </ul>
             </div>
             <% if (data.results.length > 0) { %>

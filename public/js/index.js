@@ -52,7 +52,7 @@ define([
             loadMoreActivities: function() {
                 // 加载更多历程
                 var $this = $(this),
-                    anext = $this.data('nnext'),
+                    anext = $this.data('anext'),
                     tab   = $this.data('tab');
 
                 $.ajax({
@@ -75,7 +75,7 @@ define([
 
                                 var template = _.template(acTpl);
                                 $('#ac-list').append(template(data));
-                                $this.closest('.li').remove();
+                                $this.closest('li').remove();
                             }
                         });
                     },

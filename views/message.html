@@ -12,9 +12,16 @@
 <body>
     <% include header.html %>
     <div class="container">
+        <ul id="msg-list">
+            <% if (data.msgs) { %>
+            <% data.msgs.forEach(function(msg) { %>
+            <li><%= msg.title %> <a href="<%= msg.url %>"><%= msg.content %></a> <a data-mid="<%= msg._id %>" rel="message-remove" class="btn">移除</a></li>
+            <% }); %>
+            <% } %>
+        </ul>
     </div>
     <% include footer.html %>
     <% include create.html %>
 </body>
-<script data-main="/js/default.js" src="/js/require.js"></script>
+<script data-main="/js/message.js" src="/js/require.js"></script>
 </html>

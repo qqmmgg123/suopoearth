@@ -333,14 +333,41 @@ $(function() {
                     common.xhrReponseManage(data, function() {
                         if (data.data && data.data.length > 0) {
                             var html = data.data.map(function(item) {
-                                return '<li>' + item.title + '<a href="' + item.url + '"> ' + item.content + '</a></li>'
+                                return '<li>' + item.title + '<a href="' + item.url + '"> ' + item.content + '</a> <a class="btn btn-small" data-mid="' + item._id + '">移除</a></li>'
                             }).join('');
                             $list.html(html).show();
+                            $list.append('<li class="view-all"><a href="/message">查看所有消息</a></li>').off('click')
+                                .on('click', 'a.btn', function() {
+                                    var $this = $(this),
+                                        mid = $this.data('mid'),
+                                        $msgCurr = $this.closest('li');
+
+                                    $.ajax({
+                                        url: "/message/remove",
+                                        data: {
+                                            mid: mid
+                                        },
+                                        method: "POST",
+                                        dataType: "json",
+                                        success: function(data) {
+                                            common.xhrReponseManage(data, function() {
+                                                $msgCurr.fadeOut(function() {
+                                                    $(this).remove();
+                                                });
+                                            });
+                                        },
+                                        error: function() {
+
+                                        }
+                                    });
+                                });
+                            return;
                         }
+                        $list.html("没有消息。").show();
                     });
                 },
                 error: function() {
-                    $list.text('加载失败...');
+                    $list.text('加载失败。');
                 }
             });
         } else {

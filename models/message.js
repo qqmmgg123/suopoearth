@@ -9,4 +9,12 @@ var Message = new Schema({
     date      : { type: Date, default: Date.now }
 });
 
+Message.pre('remove', function(next) {
+    this.model('Account').update({ 
+        "messages": this._id
+    }, { $pull: { "messages": this._id } }, function(err, messages) {
+        if (err) return next(err);
+        next(null);
+    });
+});
 module.exports = mongoose.model('Message', Message);
