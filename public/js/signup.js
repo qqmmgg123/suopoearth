@@ -1,7 +1,9 @@
 requirejs.config({
     paths   : {
+        'underscore': 'underscore-min',
         'jquery': 'jquery.min',
-        'common': 'common'
+        'common': 'common',
+        'backbone' : 'backbone-min'
     }
 });
 

@@ -43,104 +43,144 @@ router.get('/', function(req, res, next) {
         return res.redirect('/found');
     }
 
-    var uid = req.user._id;
+    // 查询耗时测试
+    var start = new Date().getTime();
+    var user = req.user,
+        uid  = user._id;
 
-    Account.findById(uid)
-    .populate([{
-            path: 'dreams',
-            select: 'title description',
-            options: {
-                sort: '-date'
-            }
-        }, {
-            path: '_following_d',
-            select: 'title description',
-            options: {
-                sort: '-date'
-            }
-        }])
-    .exec(function(err, user) {
-        if (err) {
-            return next(err);
-        }
+        async.parallel([
+            function(cb) {
+                Dream.find({
+                    _belong_u: uid
+                }, '_id title description',
+                {
+                    sort: '-date',
+                    limit: 10
+                }, function(err, dreams) {
+                    if (err || !dreams) {
+                        var unKonwErr = new Error('未知错误。')
+                        return cb(err || unKonwErr, []);
+                    }
 
-        var fields = {
-            $or: [{
-                "_belong_u": { 
-                    "$in": user.follows
-                }
-            }, {
-                "_belong_d": {
-                    "$in": user._following_d
-                }
-            }, {
-                "_belong_u": uid
-            }]
-        };
+                    cb(null, dreams);
+                }).lean();
+            },
+            function(cb) {
+                Dream.find({
+                    _id: {
+                        $in: user._following_d
+                    }
+                }, '_id title description',
+                {
+                    sort: '-date',
+                    limit: 10
+                }, function(err, dreams) {
+                    if (err || !dreams) {
+                        var unKonwErr = new Error('未知错误。')
+                        return cb(err || unKonwErr, []);
+                    }
 
-        if (req.query && req.query.tab) {
-            switch(req.query.tab) {
-                case "fuser":
-                    fields = {
+                    cb(null, dreams);
+                }).lean();
+            },
+            function(cb) {
+                var fields = {
+                    $or: [{
                         "_belong_u": { 
                             "$in": user.follows
                         }
-                    }
-                    break;
-                case "fdream":
-                    fields = {
+                    }, {
                         "_belong_d": {
                             "$in": user._following_d
                         }
+                    }, {
+                        "_belong_u": uid
+                    }]
+                };
+
+                if (req.query && req.query.tab) {
+                    switch(req.query.tab) {
+                        case "fuser":
+                            fields = {
+                                "_belong_u": { 
+                                    "$in": user.follows
+                                }
+                            }
+                            break;
+                        case "fdream":
+                            fields = {
+                                "_belong_d": {
+                                    "$in": user._following_d
+                                }
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    break;
-                 default:
-                    break;
-            }
-        }
+                }
 
-        Activity.find(fields)
-        .sort('-date')
-        .limit(11)
-        .populate([{
-                path: '_create_d'
-            }, {
-                path: '_create_n'
-            }, {
-                path: '_belong_u'
-            }, {
-                path: '_belong_d'
-        }])
-        .exec(function(err, activities) {
-            if (err || !activities) {
-                var unKonwErr = new Error('未知错误。')
-                return next(err || unKonwErr);
-            }
+                Activity.find(fields)
+                .lean()
+                .sort('-date')
+                .limit(11)
+                .populate([{
+                    path: '_create_d',
+                    select: '_id title description'
+                }, {
+                    path: '_create_n',
+                    select: '_id content'
+                }, {
+                    path: '_belong_u',
+                    select: '_id nickname'
+                }, {
+                    path: '_belong_d',
+                    select: '_id title description'
+                }])
+                .exec(function(err, activities) {
+                    if (err || !activities) {
+                        var unKonwErr = new Error('未知错误。')
+                        return cb(err || unKonwErr, []);
+                    }
 
-            var hasmore = false,
-                anext   = 0;
-            if (activities[10]) {
-                hasmore = true;
-                anext = activities[10]._id;
-            }
-            activities = activities.slice(0, 10);
+                    cb(null, activities);
+                });
+            }], function(err, results) {
+                if (err && results.length < 3) {
+                    return next(err);
+                }
 
-            res.render('index', makeCommon({
-                user: req.user,
-                title: settings.APP_NAME,
-                notice: getFlash(req, 'notice'),
-                data: {
-                    activities : activities,
-                    fdreams    : user._following_d,
-                    mdreams    : user.dreams,
-                    anext      : anext,
-                    hasmore    : hasmore,
-                    tab        : (req.query && req.query.tab) || 'all'
-                },
-                success: 1
-            }, res));
-        });
-    });
+                var mdreams    = results[0],
+                    fdreams    = results[1],
+                    activities = results[2];
+
+                var hasmore = false,
+                    anext   = 0;
+                if (activities[10]) {
+                    hasmore = true;
+                    anext = activities[10]._id;
+                }
+                activities = activities.slice(0, 10);
+
+                res.render('index', makeCommon({
+                    user: req.user,
+                    title: settings.APP_NAME,
+                    notice: getFlash(req, 'notice'),
+                    data: {
+                        activities : activities,
+                        fdreams    : fdreams,
+                        mdcount    : user.dreams.length,
+                        fdcount    : user._following_d.length,
+                        mdreams    : mdreams,
+                        anext      : anext,
+                        hasmore    : hasmore,
+                        tab        : (req.query && req.query.tab) || 'all'
+                    },
+                    success: 1
+                }, res));
+
+                var end = new Date().getTime();
+                console.log('index spend' + (end - start) + 'ms');
+            });
 }, function(req, res, next) {
     var einfo = req.flash('emailinfo');
 
@@ -178,6 +218,8 @@ router.get('/dream/:id', function(req, res, next) {
         });
     }
 
+    // 查询耗时测试
+    var start = new Date().getTime();
     Dream.findOne({
         _id: _curId
     })
@@ -440,11 +482,110 @@ router.get('/dream/:id', function(req, res, next) {
                                 data  : resData,
                                 success: 1
                             }, res));
+                            var end = new Date().getTime();
+                            console.log('dream spend' + (end - start) + 'ms');
                         }
                     );
                 });
             });
         }
+    });
+});
+
+// 获取想法信息
+router.get('/dreams', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    var user = req.user,
+        uid  = user.id,
+        query = { 
+            _belong_u: uid 
+        };
+
+    var tab = "mdreams";
+    if (req.query && req.query.tab) {
+        tab = req.query.tab;
+        switch(tab) {
+            case "mdreams":
+                query = {
+                    "_belong_u": uid
+                }
+                break;
+            case "fdreams":
+                query = {
+                    "_id": {
+                        "$in": user._following_d
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    var page  = 1,
+        limit = 10;
+
+    if (req.query && req.query.page) {
+        page = req.query.page;
+    }
+
+    var skip = (page - 1) * 10;
+
+    async.parallel([
+        function(cb) {
+            Dream.count(query, function(err, count) {
+                if (err || !count) {
+                    return cb(null, 0);
+                }
+
+                cb(null, count)
+            });
+        },
+        function(cb) {
+            Dream
+            .find(query)
+            .select('_id title  description')
+            .lean()
+            .sort('-date')
+            .skip(skip)
+            .limit(limit)
+            .exec(function(err, dreams) {
+                if (err || !dreams) {
+                    return cb(err, null);
+                }
+
+                cb(null, dreams)
+            });
+        }
+    ], function(err, results) {
+        if (err || !results || results.length !== 2) {
+            return next(new Error("未获取评论。"))
+        }
+
+        var dreams = results[1],
+            count  = results[0];
+
+        res.json({
+            count   : count,
+            dreams  : dreams,
+            tab     : tab,
+            result  : 0
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
     });
 });
 

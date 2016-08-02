@@ -30,6 +30,7 @@
             </div>
             <div class="dream-right">
                 <div class="dream-right-inner">
+                <div>
                 <div class="tab-nav">
                     <ul>
                         <li><a class="tab cur" href="javascript:;">我的想法</a></li>
@@ -39,10 +40,10 @@
                 <div class="tab-content">
                     <div class="tab-item">
                 <% if (data.mdreams && data.mdreams.length > 0) { %>
-                <ul>
+                <ul id="dream-list" data-total="<%= data.mdcount %>">
                 <% data.mdreams.forEach(function(dream) { %>
                 <li>
-                    <h3><a href="/dream/<%= dream.id %>"><%= dream.title %></a></h3>
+                    <h3><a href="/dream/<%= dream._id %>"><%= dream.title %></a></h3>
                     <p><%= dream.description %></p>
                 </li>
                 <% }); %>
@@ -59,7 +60,7 @@
                 <ul>
                 <% data.fdreams.forEach(function(dream) { %>
                 <li>
-                    <h3><a href="/dream/<%= dream.id %>"><%= dream.title %></a></h3>
+                    <h3><a href="/dream/<%= dream._id %>"><%= dream.title %></a></h3>
                     <p><%= dream.description %></p>
                 </li>
                 <% }); %>
@@ -70,6 +71,7 @@
                     <div class="btn-group"><a href="/intro" class="btn btn-big">了解娑婆世界</a><a href="/found" class="btn btn-big">看看</a></div>
                 </div>
                 <% } %>
+                </div>
                 </div>
                 </div>
                 </div>

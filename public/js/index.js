@@ -2,18 +2,20 @@ requirejs.config({
     paths   : {
         'underscore': 'underscore-min',
         'jquery': 'jquery.min',
-        'common': 'common',
         'text'  : 'text',
-        'template' : '../template'
+        'backbone' : 'backbone-min',
+        'template' : '../template',
+        'common': 'common'
     }
 });
 
 define([
    'underscore',
    'jquery',
+   'backbone',
    'common',
    'text!template/aclist.html'
-], function (_, $, common, acTpl) {
+], function (_, $, backbone, common, acTpl) {
     $(function() {
         common.bindCreatCtrl($('#first_cdream_btn'));
 
@@ -92,5 +94,23 @@ define([
         };
 
         aclist.init();
+
+        var dreamList = {
+            el: '#dream-list',
+            pageArea :  null,
+            init: function() {
+                this.$el = $(this.el);
+                this.pageArea = new common.Page({
+                    currPage: 1,
+                    total: this.$el.data('total'),
+                    list: this,
+                    limit: 10
+                });
+
+                this.$el.after(this.pageArea.$el);
+            }
+        };
+
+        dreamList.init();
     });
 });

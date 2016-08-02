@@ -3,6 +3,7 @@ requirejs.config({
         'const': '../const',
         'underscore': 'underscore-min',
         'jquery': 'jquery.min',
+        'backbone' : 'backbone-min',
         'common': 'common',
         'text'  : 'text',
         'template' : '../template'
