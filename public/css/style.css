@@ -50,6 +50,9 @@ a {
   color: #333;
   text-decoration: none;
 }
+a:hover {
+  color: #ff4d73;
+}
 .t-fixed {
   position: fixed;
   top: 0px;
@@ -315,7 +318,7 @@ div.for-signin .banner-bg {
   background: url(/images/banner_bg.png) no-repeat;
 }
 .banner .signin-area {
-  margin: 80px 20px 0 0;
+  margin: 100px 20px 0 0;
   padding: 10px 20px 20px;
   width: 320px;
   float: right;

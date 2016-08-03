@@ -244,10 +244,13 @@ common.Page = Backbone.View.extend({
     },
 
     initialize: function(opts) {
-        console.log(opts);
         _.extend(this, opts);
         this.render();
         //this.listenTo(this.model, "change", this.render);
+    },
+
+    updateOpts: function(opts) {
+        _.extend(this, opts);
     },
 
     render: function() {
@@ -327,8 +330,9 @@ common.Page = Backbone.View.extend({
 
     },
 
-    loadList: function() {
-        console.log(this.list);
+    loadList: function(ev) {
+        var page = $(ev.target).data('num');
+        this.list.loadList(page, $.proxy(this.render, this));
     }
 });
 

@@ -67,7 +67,8 @@ function clearcomment() {
 
 function test() {
     var start = new Date().getTime();
-   /*for (var i=0;i<2000;i++) {
+    var n = 0;
+   for (var i=0;i<2000;i++) {
          var uid = '5762028b5847bae44a78cc5c';
          var nickname = 'qqmmgg123';
 
@@ -83,7 +84,7 @@ function test() {
         var fields = {
             _belong_u: uid,
             author   : nickname,
-            title: 'test',
+            title: 'Test...' + n,
             description: des? des:""
         };
 
@@ -124,19 +125,19 @@ function test() {
             if (err) {
                 console.log(err.message);
             }
-
-            if (i == 2000) {
+            n++;
+            if (n == 2000) {
                 var end = new Date().getTime();
-                console.log(start - end);
+                console.log(end - start);
             }
         });
     });
 
     }
 
-    //console.log('complate');*/
-         var uid = '5762028b5847bae44a78cc5c';
-         uid = mongoose.Types.ObjectId(uid);
+    //console.log('complate');
+         //var uid = '5762028b5847bae44a78cc5c';
+         //uid = mongoose.Types.ObjectId(uid);
 /*Account.findById(uid)
     .populate([{
             path: 'dreams',
@@ -150,7 +151,7 @@ function test() {
         console.log(user.dreams.length, end - start);
     });*/
 
-async.parallel([
+/*async.parallel([
             function(cb) {
 
 Dream.find({
@@ -173,7 +174,7 @@ Dream.find({
     
         var end = new Date().getTime();
         console.log(end - start);
-});
+});*/
 
 
 /*Dream.find({}, function(err, count) {

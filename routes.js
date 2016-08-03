@@ -565,16 +565,20 @@ router.get('/dreams', function(req, res, next) {
         }
     ], function(err, results) {
         if (err || !results || results.length !== 2) {
-            return next(new Error("未获取评论。"))
+            return next(new Error("未获取到想法。"))
         }
 
         var dreams = results[1],
             count  = results[0];
 
         res.json({
-            count   : count,
-            dreams  : dreams,
-            tab     : tab,
+            info    : 'ok',
+            data    : {
+                count   : count,
+                dreams  : dreams,
+                tab     : tab,
+                page    : page
+            },
             result  : 0
         });
     });

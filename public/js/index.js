@@ -71,7 +71,7 @@ define([
                     method: "GET",
                     dataType: "json",
                     success: function(data) {
-                        common.xhrReponseManage(data, function() {
+                        common.xhrReponseManage(data, function(data) {
                             if (data) {
                                 data = _.extend(data, {
                                     timeFormat: function(date) {
@@ -95,7 +95,7 @@ define([
 
         aclist.init();
 
-        var dreamList = {
+        var mdreamList = {
             el: '#dream-list',
             pageArea :  null,
             init: function() {
@@ -106,11 +106,50 @@ define([
                     list: this,
                     limit: 10
                 });
-
+                
                 this.$el.after(this.pageArea.$el);
+            },
+            loadList: function(page, cb) {
+                var self = this;
+                this.$el.html('<li>想法列表加载中...</li>');
+                $.ajax({
+                    url: "/dreams",
+                    data: {
+                        tab   : 'mdreams',
+                        page  : page
+                    },
+                    method: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        common.xhrReponseManage(data, function(data) {
+                            if (data && data.data && data.data.dreams && data.data.dreams.length) {
+                                var dreamsTpl = [
+                                    '<% data.dreams.forEach(function(dream) { %>',
+                                    '<li>',
+                                    '<h3><a href="/dream/<%- dream._id %>"><%- dream.title %></a></h3>',
+                                    '<p><%- dream.description %></p>',
+                                    '</li>',
+                                    '<% }); %>'].join('');
+
+                                var template = _.template(dreamsTpl);
+                                self.$el.html(template(data));
+
+                                var data = data.data;
+                                self.pageArea.updateOpts({
+                                    currPage: data.page,
+                                    total: data.count
+                                });
+                                cb();
+                            }
+                        });
+                    },
+                    error: function() {
+                        self.$el.html('<li>想法列表加载失败...</li>');
+                    }
+                });
             }
         };
 
-        dreamList.init();
+        mdreamList.init();
     });
 });
