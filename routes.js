@@ -311,7 +311,6 @@ router.get('/dream/:id', function(req, res, next) {
                             comment.isowner = req.user && (comment._belong_u && comment._belong_u._id.equals(req.user.id));
                         });
 
-                        console.log(comments);
                         currComments = {
                             currPage: page,
                             comments: comments
@@ -557,7 +556,7 @@ router.get('/dreams', function(req, res, next) {
             .limit(limit)
             .exec(function(err, dreams) {
                 if (err || !dreams) {
-                    return cb(err, null);
+                    return cb(null, []);
                 }
 
                 cb(null, dreams)
@@ -565,7 +564,7 @@ router.get('/dreams', function(req, res, next) {
         }
     ], function(err, results) {
         if (err || !results || results.length !== 2) {
-            return next(new Error("未获取到想法。"))
+            return next(new Error("异常错误。"))
         }
 
         var dreams = results[1],
@@ -852,7 +851,7 @@ router.get('/node/:id/comments', function(req, res, next) {
             .limit(limit)
             .exec(function(err, comments) {
                 if (err || !comments) {
-                    return cb(err, null);
+                    return cb(null, []);
                 }
 
                 cb(null, comments)
@@ -860,7 +859,7 @@ router.get('/node/:id/comments', function(req, res, next) {
         }
     ], function(err, results) {
         if (err || !results || results.length !== 2) {
-            return next(new Error("未获取评论。"))
+            return next(new Error("异常错误。"))
         }
 
         var comments = results[1],
@@ -891,22 +890,21 @@ router.get('/node/:id/comments', function(req, res, next) {
 // 用户
 router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
     var curId = req.params.id;
-    var populate = [{
-        path: 'dreams',
-        select: 'title description'
-    }];
+
+    var populate = null;
 
     if (req.user) {
-        var opt = {
+        populate = {
            path  : 'fans',
            match : { _id: req.user.id},
            select: "_id",
            model : Account
         };
-        populate.push(opt);
     }
 
+    var start = new Date().getTime();
     Account.findOne({_id: curId})
+    .lean()
     .populate(populate)
     .exec(function(err, account) {
         var unexisterr = new Error(settings.USER_NOT_EXIST_TIPS);
@@ -917,78 +915,136 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
         if (!account) {
             return next(unexisterr);
         }else{
-            var isfollow = false,
-                currUser = account.nickname;
-            if (req.user) {
-                var uid = req.user._id;
-                if (uid.equals(curId)) currUser = "我"
-                isfollow = (account.fans && account.fans.length > 0);
+            var page  = 1,
+                limit = 10;
+
+            if (req.query && req.query.page) {
+                page = req.query.page;
             }
 
-            var resData = {
-                id       : curId,
-                currUser : currUser,
-                name     : account.nickname,
-                bio      : account.bio,
-                isfollow : isfollow,
-                following: account.followers? account.followers.length:0,
-                followers: account.fans? account.fans.length:0,
-                join_date: account.date.toISOString()
-                    .replace(/T/, ' ').replace(/\..+/, '')
-            };
+            var skip = (page - 1) * 10;
 
-            var resRender = function(data) {
-                res.render('user', makeCommon({
-                    title: settings.APP_NAME,
-                    notice: getFlash(req, 'notice'),
-                    user : req.user,
-                    data: data,
-                    success: 1
-                }, res));
-            }
+            async.parallel([
+                function(cb) {
+                    Dream.count({
+                        _belong_u: curId
+                    }, function(err, count) {
+                        if (err || !count) {
+                            return cb(null, 0);
+                        }
+        
+                        cb(null, count)
+                    });
+                },
+                function(cb) {
+                    Dream
+                    .find({
+                        _belong_u: curId
+                    })
+                    .select('title description')
+                    .lean()
+                    .sort('-date')
+                    .skip(skip)
+                    .limit(limit)
+                    .exec(function(err, dreams) {
+                        if (err || !dreams) {
+                            return cb(null, []);
+                        }
+        
+                        cb(null, dreams)
+                    });
+                }
+            ], function(err, results) {
+                if (err || !results || results.length !== 2) {
+                    return next(new Error("异常错误。"))
+                }
+        
+                var dreams = results[1],
+                    count  = results[0];
 
-            if (req.query && req.query.tab == "activity") {
-                Activity.find({
-                    "_belong_u": account._id
-                })
-                .sort('-date')
-                .limit(11)
-                .populate([{
-                        path: '_create_d'
+                var isfollow = false,
+                    currUser = account.nickname;
+                if (req.user) {
+                    var uid = req.user._id;
+                    if (uid.equals(curId)) currUser = "我"
+                    isfollow = (account.fans && account.fans.length > 0);
+                }
+    
+                var resData = {
+                    id       : curId,
+                    currUser : currUser,
+                    name     : account.nickname,
+                    bio      : account.bio,
+                    isfollow : isfollow,
+                    following: account.followers? account.followers.length:0,
+                    followers: account.fans? account.fans.length:0,
+                    join_date: account.date.toISOString()
+                        .replace(/T/, ' ').replace(/\..+/, '')
+                };
+    
+                var resRender = function(data) {
+                    res.render('user', makeCommon({
+                        title: settings.APP_NAME,
+                        notice: getFlash(req, 'notice'),
+                        user : req.user,
+                        data: data,
+                        success: 1
+                    }, res));
+    
+                    var end = new Date().getTime();
+                    console.log('user spend' + (end - start) + 'ms');
+                }
+    
+                if (req.query && req.query.tab == "activity") {
+                    Activity.find({
+                        "_belong_u": account._id
+                    })
+                    .lean()
+                    .sort('-date')
+                    .limit(11)
+                    .populate([{
+                    path: '_create_d',
+                    select: '_id title description'
                     }, {
-                        path: '_create_n'
+                        path: '_create_n',
+                        select: '_id content'
                     }, {
-                        path: '_belong_u'
+                        path: '_belong_u',
+                        select: '_id nickname'
                     }, {
-                        path: '_belong_d'
-                }])
-                .exec(function(err, activities) {
-                    if (err || !activities) {
-                        var unKonwErr = new Error('未知错误。')
-                            return next(err || unKonwErr);
-                    }
-
-                    var hasmore = false,
-                        anext   = 0;
-                    if (activities[10]) {
-                        hasmore = true;
-                        anext = activities[10]._id;
-                    }
-                    activities = activities.slice(0, 10);
-
-                    resData.tab = "activity";
-                    resData.anext = anext;
-                    resData.hasmore = hasmore;
-                    resData.activities = activities;
-                    resRender(resData);
-                });
-
-                return;
-            }
-
-            resData.tab = "dream";
-            resData.dreams  = account.dreams;
-            resRender(resData);
+                        path: '_belong_d',
+                        select: '_id title description'
+                    }])
+                    .exec(function(err, activities) {
+                        if (err || !activities) {
+                            var unKonwErr = new Error('未知错误。')
+                                return next(err || unKonwErr);
+                        }
+    
+                        var hasmore = false,
+                            anext   = 0;
+                        if (activities[10]) {
+                            hasmore = true;
+                            anext = activities[10]._id;
+                        }
+                        activities = activities.slice(0, 10);
+    
+                        resData.tab = "activity";
+                        resData.anext = anext;
+                        resData.hasmore = hasmore;
+                        resData.activities = activities;
+                        resRender(resData);
+                    });
+    
+                    return;
+                }
+    
+                resData.tab = "dream";
+                resData.dreams  = dreams;
+                resData.count = Math.ceil(count/10);
+                resData.page = page;
+                resRender(resData);
+            });
         }
     });
 });
@@ -1127,7 +1183,7 @@ router.get('/message/view', function(req, res, next) {
 });
 
 // 消息页
-router.get('/message/', function(req, res) {
+router.get('/message', function(req, res) {
     if (!req.user) {
         return res.redirect('/signin');
     }
@@ -1154,6 +1210,70 @@ router.get('/message/', function(req, res) {
             user : req.user,
             data: {
                 msgs: msgs
+            },
+            result: 0
+        }, res));
+    });
+});
+
+// 关注的人
+router.get('/user/:id([a-z0-9]+)/following', function(req, res) {
+    if (!req.user) {
+        return res.redirect('/signin');
+    }
+
+    var curId   = req.params.id;
+
+    var fields = {
+        'fans': curId
+    };
+
+    Account.find(fields)
+    .sort('-date')
+    .exec(function(err, following) {
+        if (err || !following) {
+            var unKnowErr = new Error('未知错误。');
+            return next(err || unKnowErr);
+        }
+
+        res.render('following', makeCommon({
+            title: settings.APP_NAME,
+            notice: getFlash(req, 'notice'),
+            user : req.user,
+            data: {
+                following: following
+            },
+            result: 0
+        }, res));
+    });
+});
+
+// 粉丝页
+router.get('/user/:id([a-z0-9]+)/followers', function(req, res) {
+    if (!req.user) {
+        return res.redirect('/signin');
+    }
+
+    var curId   = req.params.id;
+
+    var fields = {
+        'follows': curId
+    };
+
+    Account.find(fields)
+    .sort('-date')
+    .exec(function(err, followers) {
+        if (err || !followers) {
+            var unKnowErr = new Error('未知错误。');
+            return next(err || unKnowErr);
+        }
+
+        res.render('followers', makeCommon({
+            title: settings.APP_NAME,
+            notice: getFlash(req, 'notice'),
+            user : req.user,
+            data: {
+                followers: followers
             },
             result: 0
         }, res));

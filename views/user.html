@@ -56,6 +56,12 @@
                             <div class="btn-group"><a href="/intro" class="btn btn-big">关于娑婆世界</a><a id="first_cdream_btn" class="btn btn-big">分享想法</a></div>
                         </div>
                         <% } %>
+                        <div>
+                            <a>上一页</a>
+                            <a href="/user/<%= data.id %>?page=1" <% if (data.page == 1) { %>class="cur"<% } %>>1</a>
+                            <a href="/user/<%= data.id %>?page=<%= data.count %>" <% if (data.page == data.count) { %>class="cur"<% } %>><%= data.count %></a>
+                            <a>下一页</a>
+                        </div>
                     </div>
                     <% } else if (data.tab == "activity") { %>
                     <ul id="ac-list" class="activity-list">

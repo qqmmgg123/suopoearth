@@ -1,0 +1,26 @@
+<!DCOTYPE html>
+<html lang="zh-cms-Hans">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title><%= title %></title>
+    <!-- 通用样式 -->
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 9]>
+    <link href="/css/compatible.css" rel="stylesheet" type="text/css" />
+    <![endif]-->
+</head>
+<body>
+    <% include header.html %>
+    <div class="container">
+        <ul id="followers-list">
+            <% if (data.followers) { %>
+            <% data.followers.forEach(function(follower) { %>
+            <li><a href="/user/<%= follower.id %>"><%= follower.nickname %></a> <a rel="user-follow" class="btn">关注</a></li>
+            <% }); %>
+            <% } %>
+        </ul>
+    </div>
+    <% include footer.html %>
+    <% include create.html %>
+</body>
+</html>

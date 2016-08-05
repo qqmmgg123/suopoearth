@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('port', process.env.PORT || 3000)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(cookieParser());
+app.use(cookieParser('suopoearth'));
 app.use(session({keys: ['secretkey1', 'secretkey2', '...']}));
 app.use(flash());
 app.use(passport.initialize());
