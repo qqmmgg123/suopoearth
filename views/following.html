@@ -12,7 +12,11 @@
 <body>
     <% include header.html %>
     <div class="container">
-        
+        <% if (data.following) { %>
+        <% data.following.forEach(function(follower) { %>
+        <li><a href="/user/<%= follower.id %>"><%= follower.nickname %></a> <a rel="user-follow" class="btn">关注</a></li>
+        <% }); %>
+        <% } %>
     </div>
     <% include footer.html %>
     <% include create.html %>

@@ -891,7 +891,7 @@ router.get('/node/:id/comments', function(req, res, next) {
 router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
     var curId = req.params.id;
 
-    var populate = null;
+    var populate = [];
 
     if (req.user) {
         populate = {
@@ -969,14 +969,14 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                     if (uid.equals(curId)) currUser = "我"
                     isfollow = (account.fans && account.fans.length > 0);
                 }
-    
+
                 var resData = {
                     id       : curId,
                     currUser : currUser,
                     name     : account.nickname,
                     bio      : account.bio,
                     isfollow : isfollow,
-                    following: account.followers? account.followers.length:0,
+                    following: account.follows? account.follows.length:0,
                     followers: account.fans? account.fans.length:0,
                     join_date: account.date.toISOString()
                         .replace(/T/, ' ').replace(/\..+/, '')
