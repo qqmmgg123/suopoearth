@@ -905,6 +905,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
     var start = new Date().getTime();
     Account.findOne({_id: curId})
     .lean()
+    .select('fans nickname bio date')
     .populate(populate)
     .exec(function(err, account) {
         var unexisterr = new Error(settings.USER_NOT_EXIST_TIPS);
@@ -953,14 +954,40 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
         
                         cb(null, dreams)
                     });
+                },
+                function(cb) {
+                    Account.count({
+                        fans: curId
+                    }, function(err, count) {
+                        if (err || !count) {
+                            return cb(null, 0);
+                        }
+
+                        cb(null, count);
+                    });
+                },
+                function(cb) {
+                    Account.count({
+                        follows: curId
+                    }, function(err, count) {
+                        if (err || !count) {
+                            if (err || !count) {
+                                return cb(null, 0);
+                            }
+                        }
+
+                        cb(null, count);
+                    });
                 }
-            ], function(err, results) {
-                if (err || !results || results.length !== 2) {
+                ], function(err, results) {
+                if (err || !results || results.length !== 4) {
                     return next(new Error("异常错误。"))
                 }
         
                 var dreams = results[1],
-                    count  = results[0];
+                    count  = results[0],
+                    following = results[2];
+                    followers = results[3];
 
                 var isfollow = false,
                     currUser = account.nickname;
@@ -976,8 +1003,8 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                     name     : account.nickname,
                     bio      : account.bio,
                     isfollow : isfollow,
-                    following: account.follows? account.follows.length:0,
-                    followers: account.fans? account.fans.length:0,
+                    following: following,
+                    followers: followers,
                     join_date: account.date.toISOString()
                         .replace(/T/, ' ').replace(/\..+/, '')
                 };
