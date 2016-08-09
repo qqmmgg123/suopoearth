@@ -920,7 +920,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                 limit = 10;
 
             if (req.query && req.query.page) {
-                page = req.query.page;
+                page = parseInt(req.query.page);
             }
 
             var skip = (page - 1) * 10;
@@ -985,9 +985,11 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                 }
         
                 var dreams = results[1],
-                    count  = results[0],
+                    total  = results[0],
                     following = results[2];
                     followers = results[3];
+
+                var count = Math.ceil(total/10);
 
                 var isfollow = false,
                     currUser = account.nickname;
@@ -1065,11 +1067,26 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
     
                     return;
                 }
+
+                var pstart = 2,
+                    prand  = 3;
+
+                if (count > prand && page > count - prand) {
+                    pstart = count - 3;
+                }
+                
+                if (page > prand && page <= count - prand) {
+                    pstart = page - 1;
+                }
+
+                var pend = pstart + prand;
     
                 resData.tab = "dream";
                 resData.dreams  = dreams;
-                resData.count = Math.ceil(count/10);
+                resData.count = count;
                 resData.page = page;
+                resData.start = pstart;
+                resData.end = pend;
                 resRender(resData);
             });
         }
