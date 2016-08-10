@@ -383,17 +383,12 @@ div.for-signin {
     }
 }
 
-.signup-area, .signin-area, .dream-area {
+.signup-area, .signin-area, .dream-area, .settings-area, .forgot-area {
     div {
         margin-bottom: 10px;
         overflow: hidden;
     }
-    p.label {
-        width: 100px;
-        float: left
-    }
     p.field {
-        float: left;
         input {
             font-size: 14px;
             height: 36px;
@@ -403,9 +398,38 @@ div.for-signin {
         textarea {
             overflow: auto;
             padding: 10px 0 0 5px;
+            resize: none;
         }
     }
 }
+
+.signup-area, .signin-area, .dream-area, .settings-area {
+    p.label {
+        width: 100px;
+        float: left
+    }
+    p.field {
+        float: left;
+    }
+}
+
+.forgot-area {
+    margin: 50px auto;
+    width: 480px;
+    p.label {
+        width: 300px;
+        text-align: left;
+        padding: 10px;
+    }
+    p.field {
+        padding: 10px;
+        text-align: left;
+        input[type='text'] {
+            width: 300px;
+        }
+    }
+}
+
 
 .note-area {
     top: @top;
@@ -504,6 +528,14 @@ i.search-icon {
             float: right;
             .content-area {
                 margin: 0 10px;
+                .profile-form {
+                    input[type='text'], textarea {
+                        width: 300px;
+                    }
+                    textarea {
+                        height: 80px;
+                    }
+                }
             }
         }
     }

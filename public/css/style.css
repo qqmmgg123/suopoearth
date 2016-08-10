@@ -367,24 +367,17 @@ div.for-signin .banner-bg {
 }
 .signup-area div,
 .signin-area div,
-.dream-area div {
+.dream-area div,
+.settings-area div,
+.forgot-area div {
   margin-bottom: 10px;
   overflow: hidden;
 }
-.signup-area p.label,
-.signin-area p.label,
-.dream-area p.label {
-  width: 100px;
-  float: left;
-}
-.signup-area p.field,
-.signin-area p.field,
-.dream-area p.field {
-  float: left;
-}
 .signup-area p.field input,
 .signin-area p.field input,
-.dream-area p.field input {
+.dream-area p.field input,
+.settings-area p.field input,
+.forgot-area p.field input {
   font-size: 14px;
   height: 36px;
   padding-left: 5px;
@@ -392,9 +385,41 @@ div.for-signin .banner-bg {
 }
 .signup-area p.field textarea,
 .signin-area p.field textarea,
-.dream-area p.field textarea {
+.dream-area p.field textarea,
+.settings-area p.field textarea,
+.forgot-area p.field textarea {
   overflow: auto;
   padding: 10px 0 0 5px;
+  resize: none;
+}
+.signup-area p.label,
+.signin-area p.label,
+.dream-area p.label,
+.settings-area p.label {
+  width: 100px;
+  float: left;
+}
+.signup-area p.field,
+.signin-area p.field,
+.dream-area p.field,
+.settings-area p.field {
+  float: left;
+}
+.forgot-area {
+  margin: 50px auto;
+  width: 480px;
+}
+.forgot-area p.label {
+  width: 300px;
+  text-align: left;
+  padding: 10px;
+}
+.forgot-area p.field {
+  padding: 10px;
+  text-align: left;
+}
+.forgot-area p.field input[type='text'] {
+  width: 300px;
 }
 .note-area {
   top: 67px;
@@ -506,6 +531,13 @@ i.search-icon {
 }
 .container .settings-area .settings-content .content-area {
   margin: 0 10px;
+}
+.container .settings-area .settings-content .content-area .profile-form input[type='text'],
+.container .settings-area .settings-content .content-area .profile-form textarea {
+  width: 300px;
+}
+.container .settings-area .settings-content .content-area .profile-form textarea {
+  height: 80px;
 }
 .container .search-area {
   margin-top: 60px;
