@@ -1273,7 +1273,8 @@ a.next-btn {
 .footer .company-area .company-nav a:hover {
   text-decoration: underline;
 }
-.footer .company-area .company-nav a.contact:before {
+.footer .company-area .company-nav a.contact:before,
+.footer .company-area .company-nav a.feedback:before {
   content: '•';
   margin-right: 3px;
   padding: 0 3px;
@@ -1290,7 +1291,8 @@ a.next-btn {
 .r-footer .company-nav a:hover {
   text-decoration: underline;
 }
-.r-footer .company-nav a.contact:before {
+.r-footer .company-nav a.contact:before,
+.r-footer .company-nav a.feedback:before {
   content: '•';
   margin-right: 3px;
   padding: 0 3px;
