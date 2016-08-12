@@ -1239,6 +1239,8 @@ router.get('/message', function(req, res) {
         '_belong_u': uid
     };
 
+    // 查询耗时测试
+    var start = new Date().getTime();
 
     Message.find(fields)
     .sort('-date')
@@ -1257,6 +1259,9 @@ router.get('/message', function(req, res) {
             },
             result: 0
         }, res));
+
+        var end = new Date().getTime();
+        console.log('index spend' + (end - start) + 'ms');
     });
 });
 
