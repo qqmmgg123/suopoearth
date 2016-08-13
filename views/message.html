@@ -17,7 +17,37 @@
             <% data.msgs.forEach(function(msg) { %>
             <li><%= msg.title %> <a href="<%= msg.url %>"><%= msg.content %></a> <a data-mid="<%= msg._id %>" rel="message-remove" class="btn">移除</a></li>
             <% }); %>
+            <% } else { %>
+            <li>您当前没有消息。</li>
             <% } %>
+            <div>
+                <%= data.count %>
+                <% if (data.page > 1) { %>
+                <a href="/message?page=<%= Math.max(1, (data.page - 1)) %>">上一页</a>
+                <% } else { %>
+                <a class="disable">上一页</a>
+                <% } %>
+                <a href="/message?page=1" <% if (data.page == 1) { %>class="cur"<% } %>>1</a>
+                <% if (data.start > 2) { %>
+                ...
+                <% } %>
+                <% for (var p = data.start, l = data.count; p < l && p < data.end; p++) { %>
+                <a href="/message?page=<%= p %>" <% if (data.page == p) { %>class="cur"<% } %>><%= p %></a>
+                <% } %>
+
+                <% if (p < data.count) { %>
+                ...
+                <% } %>
+                <% if (data.count > 1) { %>
+                <a href="/message?page=<%= data.count %>" <% if (data.page == data.count) { %>class="cur"<% } %>><%= data.count %></a>
+                <% } %>
+                <% if (data.page < data.count) { %>
+                <a href="/message?page=<%= Math.min(data.count, (data.page + 1)) %>">下一页</a>
+                <% } else { %>
+                <a class="disable">下一页</a>
+                <% } %>
+            </div>
+
         </ul>
     </div>
     <% include footer.html %>

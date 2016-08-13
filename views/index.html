@@ -57,7 +57,7 @@
                     </div>
                     <div class="tab-item" style="display:none;">
                 <% if (data.fdreams && data.fdreams.length > 0) { %>
-                <ul>
+                <ul id="fdream-list">
                 <% data.fdreams.forEach(function(dream) { %>
                 <li>
                     <h3><a href="/dream/<%= dream._id %>"><%= dream.title %></a></h3>

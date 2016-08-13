@@ -26,11 +26,17 @@
                         <div class="nav-ctrl">
                             <% if (user) { %>
                             <a href="/settings" class="edit-profile btn">编辑个人档</a>
-                            <% } %>
+                            <% if (user.id != data.id) { %>
                             <% if (data.isfollow) { %>
                             <button data-isfollow="<%= data.isfollow %>" data-fid="<%= data.id %>" class="follow btn">
                                 取消关注
                             </button>
+                            <% } else { %>
+                            <button data-isfollow="<%= data.isfollow %>" data-fid="<%= data.id %>" class="follow btn">
+                                关注
+                            </button>
+                            <% } %>
+                            <% } %>
                             <% } else { %>
                             <button data-isfollow="<%= data.isfollow %>" data-fid="<%= data.id %>" class="follow btn">
                                 关注
@@ -123,6 +129,7 @@
     </div>
     <% include create.html %>
     <% include messagepop.html %>
+    <% include signinpop.html %>
 </body>
 <script data-main="/js/user.js" src="/js/require.js"></script>
 </html>

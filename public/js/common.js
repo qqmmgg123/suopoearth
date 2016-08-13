@@ -154,11 +154,12 @@ var common = {
                     method: "POST",
                     dataType: "json",
                     success: function(data) {
-                        alert(data.info);
-                        if (data.result === 0) {
-                            $self.text("取消关注");
-                            $self.data('isfollow', true);
-                        }
+                        common.xhrReponseManage(data, function(data) {
+                            if (data.result === 0) {
+                                $self.text("取消关注");
+                                $self.data('isfollow', true);
+                            }
+                        });
                     },
                     error: function() {
 
@@ -174,10 +175,12 @@ var common = {
                     dataType: "json",
                     success: function(data) {
                         alert(data.info);
-                        if (data.result === 0) {
-                            $self.text("关注");
-                            $self.data('isfollow', false);
-                        }
+                        common.xhrReponseManage(data, function(data) {
+                            if (data.result === 0) {
+                                $self.text("关注");
+                                $self.data('isfollow', false);
+                            }
+                        });
                     },
                     error: function() {
                     }

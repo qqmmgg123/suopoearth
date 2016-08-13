@@ -989,7 +989,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                     following = results[2];
                     followers = results[3];
 
-                var count = Math.ceil(total/10);
+                var count = Math.ceil(total/limit);
 
                 var isfollow = false,
                     currUser = account.nickname;
@@ -997,6 +997,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                     var uid = req.user._id;
                     if (uid.equals(curId)) currUser = "我"
                     isfollow = (account.fans && account.fans.length > 0);
+                    console.log(isfollow);
                 }
 
                 var resData = {
@@ -1239,30 +1240,84 @@ router.get('/message', function(req, res) {
         '_belong_u': uid
     };
 
+    var page  = 1,
+        limit = 10;
+
+    if (req.query && req.query.page) {
+        page = parseInt(req.query.page);
+    }
+
+    var skip = (page - 1) * 10;
+
     // 查询耗时测试
     var start = new Date().getTime();
 
-    Message.find(fields)
-    .sort('-date')
-    .exec(function(err, msgs) {
-        if (err || !msgs) {
-            var unKnowErr = new Error('未知错误。');
-            return next(err || unKnowErr);
+
+    async.parallel([
+        function(cb) {
+            Message.count(fields, function (err, count) {
+                if (err || !count) {
+                    return cb(null, 0);
+                }
+                
+                cb(null, count);
+            });
+        },
+        function(cb) {
+            Message.find(fields)
+            .lean()
+            .sort('-date')
+            .skip(skip)
+            .limit(limit)
+            .exec(function(err, msgs) {
+                if (err || !msgs) {
+                    var unKnowErr = new Error('未知错误。');
+                    return cb(err || unKnowErr, []);
+                }
+                
+                cb(null, msgs);
+            });
+        }], function(err, results) {
+            if (err || !results || results.length !== 2) {
+                return next(err);
+            }
+    
+            var total = results[0],
+                msgs  = results[1];
+
+            var count = Math.ceil(total/limit);
+
+            var pstart = 2,
+                prand  = 3;
+
+            if (count > prand && page > count - prand) {
+                pstart = count - 3;
+            }
+                
+            if (page > prand && page <= count - prand) {
+                pstart = page - 1;
+            }
+
+            var pend = pstart + prand;
+
+            res.render('message', makeCommon({
+                title: settings.APP_NAME,
+                notice: getFlash(req, 'notice'),
+                user : req.user,
+                data: {
+                    msgs  : msgs,
+                    page  : page,
+                    count : count,
+                    start : pstart,
+                    end   : pend
+                },
+                result: 0
+            }, res));
+
+            var end = new Date().getTime();
+            console.log('message spend' + (end - start) + 'ms');
         }
-
-        res.render('message', makeCommon({
-            title: settings.APP_NAME,
-            notice: getFlash(req, 'notice'),
-            user : req.user,
-            data: {
-                msgs: msgs
-            },
-            result: 0
-        }, res));
-
-        var end = new Date().getTime();
-        console.log('index spend' + (end - start) + 'ms');
-    });
+    );
 });
 
 // 关注的人

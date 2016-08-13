@@ -207,7 +207,7 @@ define([
             }
         };
 
-        mdreamList.init();
+        fdreamList.init();
 
     });
 });
