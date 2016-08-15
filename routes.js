@@ -31,6 +31,63 @@ function getFlash(req, name) {
     return '';
 }
 
+// 获取历程评论公共接口
+function getNodeComments(nodeId, page, user, callback) {
+    var curId = nodeId,
+        query = { _belong_n: curId };
+
+    var limit = 10;
+
+    var skip = (page - 1) * 10;
+
+    async.parallel([
+        function(cb) {
+            Comment.count(query, function(err, count) {
+                if (err || !count) {
+                    return cb(null, 0);
+                }
+
+                cb(null, count)
+            });
+        },
+        function(cb) {
+            Comment
+            .find(query)
+            .lean()
+            .populate({
+                path: '_belong_u'
+            })
+            .sort('-date')
+            .skip(skip)
+            .limit(limit)
+            .exec(function(err, comments) {
+                if (err || !comments) {
+                    return cb(null, []);
+                }
+
+                cb(null, comments)
+            });
+        }
+    ], function(err, results) {
+        if (err || !results || results.length !== 2) {
+            return callback(new Error("异常错误。"), null)
+        }
+
+        var comments = results[1],
+            count    = results[0];
+
+        comments.forEach(function(comment) {
+            comment.isowner = user && (comment._belong_u && comment._belong_u._id.equals(user.id));
+        });
+
+        callback(null, {
+            isauthenticated: !!user,
+            count   : count,
+            comments: comments
+        });
+    });
+}
+
 // 主页
 router.get('/', function(req, res, next) {
     var einfo = req.flash('emailinfo');
@@ -2888,14 +2945,17 @@ router.post('/comment/new', function(req, res, next) {
         return next(new Error("您的提议是空内容，创建失败..."));
     }
 
+    // 查询耗时测试
+    var start = new Date().getTime();
+
     var promise = null;
 
     switch(bl) {
         case '0':
-            promise = Dream.findOne({_id: blID}).exec();
+            promise = Dream.findOne({_id: blID}).select('comments').exec();
             break;
         case '1':
-            promise = Node.findOne({_id: blID}).exec();
+            promise = Node.findOne({_id: blID}).select('comments').exec();
             break;
         default:
             return next(new Error("请求参数错误，创建失败..."));
@@ -2941,13 +3001,16 @@ router.post('/comment/new', function(req, res, next) {
             }
             ], function(err, results) {
                 if (err) return next(err);
-                res.json({
-                    info: "发布成功",
-                    isauthenticated: !!req.user,
-                    isowner: req.user && comment._belong_u.equals(req.user.id),
-                    comment: comment,
-                    total: object.comments.length,
-                    result: 0
+
+                getNodeComments(blID, 1, req.user, function(err, data) {
+                    if (err) return next(err);
+
+                    data.info   =  "发布成功";
+                    data.result = 0;
+                    res.json(data);
+
+                    var end = new Date().getTime();
+                    console.log('comment new spend' + (end - start) + 'ms');
                 });
             }
         );
@@ -3242,7 +3305,7 @@ router.post('/comment/delete', function(req, res, next) {
     });
 });
 
-// 移除评论
+// 移除消息
 router.post('/message/remove', function(req, res, next) {
     if (!req.user) {
         return res.json({
