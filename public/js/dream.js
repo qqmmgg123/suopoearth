@@ -607,10 +607,15 @@ define([
                     method: "POST",
                     dataType: "json",
                     success: function(data) {
-                        common.xhrReponseManage(data, function() {
+                        common.xhrReponseManage(data, function(data) {
                             $textarea.val('');
-
-                            nodelist.renderComments();
+                            
+                            opts = {
+                                $commentArea: $commentArea,
+                                $pageCacheEl: $belong.find('a.comment'),
+                                currPage: 1
+                            }
+                            nodelist.renderComments(data, opts);
 
                             $commentArea.find('ul').prepend(tpl);
                             $belong.find('.comment')[0].lastChild.nodeValue = text.COLLAPSE_COMMENT;
