@@ -350,6 +350,53 @@ define([
                     });
                 });
             },
+            renderComments: function(data, opts) {
+                var self = this,
+                    $commentArea = opts.$commentArea,
+                    $pageCacheEl = opts.$pageCacheEl;
+
+                var tpl = "";
+                $commentArea.find('ul').html(tpl);
+                var total = data.count || '0';
+                            
+                // 缓存评论总数
+                $pageCacheEl.data('total', total);
+
+                if (data.comments && data.comments.length > 0) {
+                    for (var i = 0, l = data.comments.length ;i < l; i++) {
+                        var replyTpl = data.comments[i].isreply? '回复<a href="/user/' + data.comments[i]._reply_u + '">' + data.comments[i].other + '</a>':'';
+
+                        tpl += '<li data-cid="' + data.comments[i]._id + '" data-uid="' + (data.comments[i]._belong_u? data.comments[i]._belong_u._id:'') + '">' + 
+                            '<div class="user-info">' +
+                            '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
+                            '<em class="username"><a href="/user/' + data.comments[i]._belong_u._id + '">' + data.comments[i].author + '</a>'
+                            + replyTpl + ' ' + data.comments[i].date + '</em>' +
+                            '</div>' +
+                            '<p class="text">' + data.comments[i].content + '</p>' +
+                            '<div>' +
+                            '<a rel="comment-delete" href="javascript:;">' + (data.comments[i].isowner? '删除':'') + '</a> ' +
+                            '<a class="reply" href="javascript:;">' + (data.comments[i].isowner? '':'回复') + '</a>' +
+                            '</div>';
+                        if (data.isauthenticated) {
+                            tpl += '<div class="reply-area" style="display: none;">' +
+                                '<textarea placeholder="说说你的看法..."></textarea>' +
+                                '<button class="btn btn-reply">回复</button>' +
+                                '</div>';
+                        }
+
+                        tpl += '</li>';
+                    }
+
+                    $commentArea.find('ul').html(tpl);
+
+                    opts.isauthenticated = data.isauthenticated;
+                    self.layoutComments(opts);
+                    
+                    opts.total = total;
+                    opts.currPage = currPage;
+                    self.layoutCommentPage(opts);
+                }
+            },
             loadComments: function(opts, callback) {
                 var self  = this,
                     btype = opts.btype,
@@ -551,6 +598,9 @@ define([
                     content : newcon
                 };
 
+                var loading = '<li>评论加载中...</li>';
+                $commentArea.find('ul.comment-list').html(loading);
+
                 $.ajax({
                     url: "/comment/new",
                     data: data,
@@ -560,14 +610,7 @@ define([
                         common.xhrReponseManage(data, function() {
                             $textarea.val('');
 
-                            var tpl = '<li>' + 
-                                '<div class="user-info">' +
-                                '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
-                                '<em class="username"><a href="javascript:;">' + data.comment.author + '</a> ' + data.comment.date + '</em>' +
-                                '<a class="reply" href="javascript:;">' + (data.isowner? '':'回复') + '</a>' +
-                                '</div>' +
-                                '<p class="text">' + data.comment.content + '</p>' +
-                                '</li>';
+                            nodelist.renderComments();
 
                             $commentArea.find('ul').prepend(tpl);
                             $belong.find('.comment')[0].lastChild.nodeValue = text.COLLAPSE_COMMENT;
