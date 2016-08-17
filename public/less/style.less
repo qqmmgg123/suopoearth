@@ -1029,8 +1029,19 @@ i.search-icon {
                         margin-top: 10px;
                     }
                     .comment-page {
-                        a.curr {
-                            color: #ff335e;
+                        a {
+                            display: inline-block;
+                            height: 24px;
+                            padding: 0 10px;
+                            line-height: 24px;
+                            text-align: center;
+                            border: 1px solid #eaeaea;
+                            &.curr {
+                                color: #ff335e;
+                            }
+                            &.disable {
+                                display: none;
+                            }
                         }
                     }
                 }

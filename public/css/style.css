@@ -1032,8 +1032,19 @@ i.search-icon {
 .container .dream-con .process-area .process-node .comment-area .comment-list {
   margin-top: 10px;
 }
+.container .dream-con .process-area .process-node .comment-area .comment-page a {
+  display: inline-block;
+  height: 24px;
+  padding: 0 10px;
+  line-height: 24px;
+  text-align: center;
+  border: 1px solid #eaeaea;
+}
 .container .dream-con .process-area .process-node .comment-area .comment-page a.curr {
   color: #ff335e;
+}
+.container .dream-con .process-area .process-node .comment-area .comment-page a.disable {
+  display: none;
 }
 .container .dream-con .process-area .process-node .more,
 .container .dream-con .process-area .process-node .result {

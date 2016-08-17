@@ -3060,43 +3060,46 @@ router.post('/reply/new', function(req, res, next) {
 
     switch(bl) {
         case '0':
-            promise = Dream.findOne({_id: blID}).exec();
+            promise = Dream.findOne({_id: blID}).select('comments').exec();
             break;
         case '1':
-            promise = Node.findOne({_id: blID}).exec();
+            promise = Node.findOne({_id: blID}).select('comments').exec();
             break;
         default:
             return next(new Error("请求参数错误，回复失败..."));
             break;
     }
 
+    // 查询耗时测试
+    var start = new Date().getTime();
+
     async.parallel([
-            function(cb) {
-                 promise.then(function(obj) {
-                     if (!obj) {
-                        var err = new Error("回复失败...");
-                        return cb(err, null);
-                     }
+        function(cb) {
+             promise.then(function(obj) {
+                 if (!obj) {
+                    var err = new Error("回复失败...");
+                    return cb(err, null);
+                 }
 
-                     cb(null, obj);
-                 }).catch(function(err) {
-                     if (err) cb(err, null);
-                 });
-            },
-            function(cb) {
-                Account.findById(toid).select('nickname messages').exec(function(err, user) {
-                    if (err) {
-                        return cb(err, null);
-                    }
+                 cb(null, obj);
+             }).catch(function(err) {
+                 if (err) cb(err, null);
+             });
+        },
+        function(cb) {
+            Account.findById(toid).select('nickname messages').exec(function(err, user) {
+                if (err) {
+                    return cb(err, null);
+                }
 
-                    if (!user) {
-                        var err = new Error("您回复的用户不存在...");
-                        return cb(err, null);
-                    }
+                if (!user) {
+                    var err = new Error("您回复的用户不存在...");
+                    return cb(err, null);
+                }
 
-                    cb(null, user);
-                });
-            }
+                cb(null, user);
+            });
+        }
     ], function(err, results) {
         if (err || !results || results.length < 2) {
             var err = new Error("回复失败...");
@@ -3160,28 +3163,30 @@ router.post('/reply/new', function(req, res, next) {
                 var message = new Message(msgfields);
                 other.messages.push(message);
                 async.parallel([
-                        function(cb_3) {
-                            message.save(function(err) {
-                                if (err) return cb_3(err, null);
-                                cb_3(null, null);
-                            });
-                        },
-                        function(cb_3) {
-                            other.save(function(err) {
-                                if (err) return cb_3(err, null);
-                                cb_3(null, null);
-                            });
-                        }
+                    function(cb_3) {
+                        message.save(function(err) {
+                            if (err) return cb_3(err, null);
+                            cb_3(null, null);
+                        });
+                    },
+                    function(cb_3) {
+                        other.save(function(err) {
+                            if (err) return cb_3(err, null);
+                            cb_3(null, null);
+                        });
+                    }
                 ], function(err, results) {
                     if (err) return next(err);
 
-                    res.json({
-                        info: "发布成功",
-                        isauthenticated: !!req.user,
-                        isowner: req.user && comment._belong_u.equals(req.user.id),
-                        comment: comment,
-                        total: object.comments.length,
-                        result: 0
+                    getNodeComments(blID, 1, req.user, function(err, data) {
+                        if (err) return next(err);
+
+                        data.info   =  "回复成功";
+                        data.result = 0;
+                        res.json(data);
+
+                        var end = new Date().getTime();
+                        console.log(req.originalUrl + ' spend' + (end - start) + 'ms');
                     });
                 });
             }
@@ -3269,7 +3274,10 @@ router.post('/comment/delete', function(req, res, next) {
 
     var commentID = req.body.cid;
 
-    Comment.findById(commentID, function(err, comment) {
+    // 查询耗时测试
+    var start = new Date().getTime();
+
+    Comment.findById(commentID, '_belong_u', function(err, comment) {
         if (err) return next(err);
 
         if (!comment) {
@@ -3292,6 +3300,9 @@ router.post('/comment/delete', function(req, res, next) {
                 info: "删除评论成功",
                 result: 0
             });
+
+            var end = new Date().getTime();
+            console.log(req.originalUrl + ' spend' + (end - start) + 'ms');
         });
     });
 }, function(err, req, res, next) {

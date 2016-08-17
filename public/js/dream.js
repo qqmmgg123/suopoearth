@@ -331,17 +331,12 @@ define([
                             $textarea.val('');
 
                             common.xhrReponseManage(data, function() {
-                                var tpl = '<li>' + 
-                                    '<div class="user-info">' +
-                                    '<a class="avatar"><img src="/images/user_mini.png" /></a>' +
-                                    '<em class="username"><a href="/user/'  + data.comment._belong_u +  '">' + data.comment.author + '</a>回复<a href="/user/' + data.comment._reply_u + '">' + data.comment.other + '</a> ' + data.comment.date + '</em>' +
-                                    '<a class="reply" href="javascript:;">' + (data.isowner? '':'回复') + '</a>' +
-                                    '</div>' +
-                                    '<p class="text">' + data.comment.content + '</p>' +
-                                    '</li>';
-
-                                $commentArea.find('ul').prepend(tpl);
-                                $belong.find('.comment')[0].lastChild.nodeValue = text.EXPANSION_COMMENT + " " + data.total;
+                                opts = {
+                                    $commentArea: $commentArea,
+                                    $pageCacheEl: $belong.find('a.comment'),
+                                    currPage: 1
+                                }
+                                nodelist.renderComments(data, opts);
                             });
                         },
                         error: function() {
@@ -353,7 +348,8 @@ define([
             renderComments: function(data, opts) {
                 var self = this,
                     $commentArea = opts.$commentArea,
-                    $pageCacheEl = opts.$pageCacheEl;
+                    $pageCacheEl = opts.$pageCacheEl,
+                    currPage     = opts.currPage;
 
                 var tpl = "";
                 $commentArea.find('ul').html(tpl);
@@ -616,9 +612,6 @@ define([
                                 currPage: 1
                             }
                             nodelist.renderComments(data, opts);
-
-                            $commentArea.find('ul').prepend(tpl);
-                            $belong.find('.comment')[0].lastChild.nodeValue = text.COLLAPSE_COMMENT;
                         });
                     },
                     error: function() {
