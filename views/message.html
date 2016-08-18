@@ -12,26 +12,33 @@
 <body>
     <% include header.html %>
     <div class="container">
+        <div class="msg-area">
         <ul id="msg-list">
             <% if (data.msgs) { %>
             <% data.msgs.forEach(function(msg) { %>
-            <li><%= msg.title %> <a href="<%= msg.url %>"><%= msg.content %></a> <a data-mid="<%= msg._id %>" rel="message-remove" class="btn">移除</a></li>
+            <li>
+                <div class="message-text">
+                    <h3><%= msg.title %></h3>
+                    <p><a href="<%= msg.url %>"><%= msg.content %></a><p>
+                </div>
+                <a data-mid="<%= msg._id %>" rel="message-remove" class="btn message-btn">移除</a>
+            </li>
             <% }); %>
             <% } else { %>
             <li>您当前没有消息。</li>
             <% } %>
-            <div>
+            <div class="pagination">
                 <% if (data.page > 1) { %>
                 <a href="/message?page=<%= Math.max(1, (data.page - 1)) %>">上一页</a>
                 <% } else { %>
                 <a class="disable">上一页</a>
                 <% } %>
-                <a href="/message?page=1" <% if (data.page == 1) { %>class="cur"<% } %>>1</a>
+                <a href="/message?page=1" <% if (data.page == 1) { %>class="curr"<% } %>>1</a>
                 <% if (data.start > 2) { %>
                 ...
                 <% } %>
                 <% for (var p = data.start, l = data.count; p < l && p < data.end; p++) { %>
-                <a href="/message?page=<%= p %>" <% if (data.page == p) { %>class="cur"<% } %>><%= p %></a>
+                <a href="/message?page=<%= p %>" <% if (data.page == p) { %>class="curr"<% } %>><%= p %></a>
                 <% } %>
 
                 <% if (p < data.count) { %>
@@ -48,6 +55,7 @@
             </div>
 
         </ul>
+        </div>
     </div>
     <% include footer.html %>
     <% include create.html %>

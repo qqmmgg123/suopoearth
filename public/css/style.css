@@ -136,6 +136,9 @@ a:hover {
   border-bottom: 1px solid #fff;
   border-radius: 5px 5px 0 0;
 }
+.pagination {
+  margin-top: 10px;
+}
 .pagination a {
   display: inline-block;
   height: 24px;
@@ -513,7 +516,8 @@ i.search-icon {
 .container .team-area,
 .container .note,
 .container .search-area,
-.container .settings-area {
+.container .settings-area,
+.container .msg-area {
   text-align: left;
   width: 1026px;
   margin: 0 auto;
@@ -870,8 +874,9 @@ i.search-icon {
   border-radius: 4px;
 }
 .container .dream-con .process-area .edit-area ul {
-  border: 1px solid #eaeaea;
+  border: 1px solid #ccc;
   overflow: hidden;
+  border-radius: 5px;
 }
 .container .dream-con .process-area .edit-area li {
   float: left;
@@ -1011,6 +1016,8 @@ i.search-icon {
 .container .dream-con .process-area .process-node .comment-area {
   padding: 10px 0;
   overflow: hidden;
+  border: 1px solid #eaeaea;
+  border-radius: 5px;
 }
 .container .dream-con .process-area .process-node .comment-area .user-info {
   font-size: 12px;
@@ -1039,12 +1046,19 @@ i.search-icon {
   margin-top: 10px;
   float: right;
 }
+.container .dream-con .process-area .process-node .comment-area .comment-input {
+  padding: 0 10px;
+}
 .container .dream-con .process-area .process-node .comment-area textarea {
   overflow: auto;
   resize: none;
 }
 .container .dream-con .process-area .process-node .comment-area .comment-list {
   margin-top: 10px;
+  padding: 10px;
+}
+.container .dream-con .process-area .process-node .comment-area .comment-page {
+  padding: 10px;
 }
 .container .dream-con .process-area .process-node .more,
 .container .dream-con .process-area .process-node .result {
@@ -1099,6 +1113,15 @@ i.search-icon {
 }
 .container .dream-con .dream-right .author .achievem a {
   margin-right: 10px;
+}
+#dream-list li h3,
+#fdream-list li h3,
+#dream-list li p,
+#fdream-list li p {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
 }
 a.prev-btn,
 a.next-btn {
@@ -1410,6 +1433,20 @@ ul.activity-list > li div.more a.btn {
 /*}*/
 /*}*/
 /*}*/
+.msg-area #msg-list {
+  padding: 10px;
+}
+.msg-area #msg-list li {
+  padding: 10px;
+  overflow: hidden;
+}
+.msg-area #msg-list li .message-text {
+  float: left;
+}
+.msg-area #msg-list li a.message-btn {
+  float: right;
+  display: block;
+}
 .team-way {
   overflow: hidden;
 }

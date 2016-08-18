@@ -143,6 +143,7 @@ a {
 }
 
 .pagination {
+    margin-top: 10px;
     a {
         display: inline-block;
         height: 24px;
@@ -516,7 +517,7 @@ i.search-icon {
     .content {
         padding: 10px;
     }
-    .store-area, .team-area, .note, .search-area, .settings-area {
+    .store-area, .team-area, .note, .search-area, .settings-area, .msg-area {
         text-align: left;
         width: 1026px;
         margin: 0 auto;
@@ -871,8 +872,9 @@ i.search-icon {
                 position: relative;
                 border-radius: 4px;
                 ul {
-                    border: 1px solid #eaeaea;
+                    border: 1px solid #ccc;
                     overflow: hidden;
+                    border-radius: 5px;
                 }
                 li {
                     a {
@@ -1012,6 +1014,8 @@ i.search-icon {
                 .comment-area {
                     padding: 10px 0;
                     overflow: hidden;
+                    border: 1px solid #eaeaea;
+                    border-radius: 5px;
                     .user-info {
                         font-size: 12px;
                         em {
@@ -1039,12 +1043,19 @@ i.search-icon {
                         margin-top: 10px;
                         float: right;
                     }
+                    .comment-input {
+                        padding: 0 10px;
+                    }
                     textarea {
                         overflow: auto;
                         resize: none;
                     }
                     .comment-list {
                         margin-top: 10px;
+                        padding: 10px;
+                    }
+                    .comment-page {
+                        padding: 10px;
                     }
                 }
                 .more, .result {
@@ -1102,6 +1113,17 @@ i.search-icon {
                     margin-right: 10px;
                 }
             }
+        }
+    }
+}
+
+#dream-list, #fdream-list {
+    li {
+        h3, p {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: block;
         }
     }
 }
@@ -1427,6 +1449,23 @@ ul.activity-list {
         /*}*/
     /*}*/
 /*}*/
+
+.msg-area {
+    #msg-list {
+        padding: 10px;
+        li {
+            padding: 10px;
+            overflow: hidden;
+            .message-text {
+               float: left;
+            }
+            a.message-btn {
+                float: right;
+                display: block;
+            }
+        }
+    }
+}
 
 .team-way {
     overflow: hidden;
