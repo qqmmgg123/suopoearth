@@ -588,7 +588,7 @@ router.get('/dreams', function(req, res, next) {
         limit = 10;
 
     if (req.query && req.query.page) {
-        page = req.query.page;
+        page = parseInt(req.query.page, 10);
     }
 
     var skip = (page - 1) * 10;
@@ -881,7 +881,7 @@ router.get('/node/:id/comments', function(req, res, next) {
         limit = 10;
 
     if (req.query && req.query.page) {
-        page = req.query.page;
+        page = parseInt(req.query.page, 10);
     }
 
     var skip = (page - 1) * 10;
@@ -1137,6 +1137,8 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                     pstart = page - 1;
                 }
 
+                pstart = Math.max(2, pstart);
+
                 var pend = pstart + prand;
     
                 resData.tab = "dream";
@@ -1354,6 +1356,8 @@ router.get('/message', function(req, res) {
             if (page > prand && page <= count - prand) {
                 pstart = page - 1;
             }
+
+            pstart = Math.max(2, pstart);
 
             var pend = pstart + prand;
 

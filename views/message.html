@@ -21,7 +21,6 @@
             <li>您当前没有消息。</li>
             <% } %>
             <div>
-                <%= data.count %>
                 <% if (data.page > 1) { %>
                 <a href="/message?page=<%= Math.max(1, (data.page - 1)) %>">上一页</a>
                 <% } else { %>

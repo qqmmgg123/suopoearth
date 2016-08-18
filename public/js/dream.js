@@ -107,6 +107,8 @@ define([
                     preClass  = 'class="disable"',
                     nextClass = 'class="disable"';
 
+                if (pageCount < 2) return;
+
                 if (currPage > 1) {
                     prePage = Math.max(1, currPage - 1);
                     preData ='data-num="' + prePage + '"';
@@ -137,6 +139,8 @@ define([
                 if (currPage > 3 && currPage <= pageCount - 3) {
                     start = prePage;
                 }
+
+                start = Math.max(2, start);
 
                 if (start > 2) {
                     ptpl += '...'

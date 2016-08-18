@@ -240,7 +240,7 @@ var common = {
 common.Page = Backbone.View.extend({
     tagName: "div",
 
-    className: "page-area",
+    className: "page-area pagination",
 
     events: {
         "click a":          "loadList"
@@ -258,78 +258,82 @@ common.Page = Backbone.View.extend({
 
     render: function() {
         var self  = this,
-                    total    = this.total,
-                    currPage = this.currPage,
-                    limit    = this.limit;
+            total    = this.total,
+            currPage = this.currPage,
+            limit    = this.limit;
 
-                // 显示分页
-                var ptpl      = '',
-                    pageCount = Math.ceil(total / limit),
-                    prePage   = 0,
-                    nextPage  = 0,
-                    preData   = '',
-                    nextData  = '',
-                    preClass  = '',
-                    preClass  = 'class="disable"',
-                    nextClass = 'class="disable"';
+            // 显示分页
+        var ptpl      = '',
+            pageCount = Math.ceil(total / limit),
+            prePage   = 0,
+            nextPage  = 0,
+            preData   = '',
+            nextData  = '',
+            preClass  = '',
+            preClass  = 'class="disable"',
+            nextClass = 'class="disable"';
+        
+        if (pageCount < 2) return;
 
-                if (currPage > 1) {
-                    prePage = Math.max(1, currPage - 1);
-                    preData ='data-num="' + prePage + '"';
-                    preClass = '';
-                }
+        if (currPage > 1) {
+            prePage = Math.max(1, currPage - 1);
+            preData ='data-num="' + prePage + '"';
+            preClass = '';
+        }
 
-                if (currPage < pageCount) {
-                    nextPage = Math.min(pageCount, currPage + 1);
-                    nextData ='data-num="' + nextPage + '"';
-                    nextClass = '';
-                }
+        if (currPage < pageCount) {
+            nextPage = Math.min(pageCount, currPage + 1);
+            nextData ='data-num="' + nextPage + '"';
+            nextClass = '';
+        }
 
-                ptpl += '<a ' + preData + ' ' + preClass + ' href="javascript:;">上一页</a>';
+        ptpl += '<a ' + preData + ' ' + preClass + ' href="javascript:;">上一页</a>';
 
-                var firstClass = '';
-                if (currPage == 1) {
-                    firstClass = 'class="curr"';
-                }
-                ptpl += '<a ' + firstClass + ' data-num="1" href="javascript:;">1</a>';
+        var firstClass = '';
+        if (currPage == 1) {
+            firstClass = 'class="curr"';
+        }
+        ptpl += '<a ' + firstClass + ' data-num="1" href="javascript:;">1</a>';
 
-                var start = 2,
-                    rand  = 3;
+        var start = 2,
+        rand  = 3;
 
-                if (pageCount > 3 && currPage > pageCount - 3) {
-                    start = pageCount - 3;
-                }
+        if (pageCount > 3 && currPage > pageCount - 3) {
+            start = pageCount - 3;
+        }
                 
-                if (currPage > 3 && currPage <= pageCount - 3) {
-                    start = prePage;
-                }
+        if (currPage > 3 && currPage <= pageCount - 3) {
+            start = prePage;
+        }
 
-                if (start > 2) {
-                    ptpl += '...'
-                }
+        start = Math.max(2, start);
 
-                for (var p = start, l = pageCount; p < l && p < start + rand; p++) {
-                    var pageClass = '';
-                    if (p == currPage) {
-                        pageClass = 'class="curr"';
-                    }
-                    ptpl += '<a ' + pageClass + ' data-num="' + p + '" href="javascript:;">' + p + '</a>';
-                }
-                if (p < pageCount) {
-                    ptpl += '...'
-                }
+        if (start > 2) {
+            ptpl += '...'
+        }
+
+        for (var p = start, l = pageCount; p < l && p < start + rand; p++) {
+            var pageClass = '';
+            if (p == currPage) {
+                pageClass = 'class="curr"';
+            }
+            ptpl += '<a ' + pageClass + ' data-num="' + p + '" href="javascript:;">' + p + '</a>';
+        }
+        if (p < pageCount) {
+            ptpl += '...'
+        }
 
 
-                if (pageCount > 1) {
-                    var lastClass = '';
-                    if (currPage == pageCount) {
-                        lastClass = 'class="curr"';
-                    }
-                    ptpl += '<a ' + lastClass + ' data-num="' + pageCount + '" href="javascript:;">' + pageCount + '</a>';
-                }
-                ptpl += '<a ' + nextData + ' ' + nextClass + ' href="javascript:;">下一页</a>';
-                
-                this.$el.html(ptpl);
+        if (pageCount > 1) {
+            var lastClass = '';
+            if (currPage == pageCount) {
+                lastClass = 'class="curr"';
+            }
+            ptpl += '<a ' + lastClass + ' data-num="' + pageCount + '" href="javascript:;">' + pageCount + '</a>';
+        }
+        ptpl += '<a ' + nextData + ' ' + nextClass + ' href="javascript:;">下一页</a>';
+
+        this.$el.html(ptpl);
 
     },
 
