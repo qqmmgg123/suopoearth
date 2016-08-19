@@ -21,6 +21,9 @@ define([
         // 绑定用户操作
         common.bindUserCtrl();
 
+        // 心路故事发布输入框
+        common.bindWordLimitTips($('.textarea-field').find('textarea'), 140);
+
         var text = settings.COMMENT_TEXT;
 
         // 历程列表
@@ -66,6 +69,11 @@ define([
                 }
                 
                 this.bindEvent();
+                
+                // 需要绑定文字限制的输入框
+                var etarget = 'textarea[rel="comment-input"],textarea[rel="reply-input"]'
+
+                common.bindWordLimitTips(this.$el, 140, etarget);
             },
             bindEvent: function() {
                 var selectors = ['.more', '[rel="node-delete"]', '.comment', 'button.btn-comment'],
@@ -379,7 +387,7 @@ define([
                             '</div>';
                         if (data.isauthenticated) {
                             tpl += '<div class="reply-area" style="display: none;">' +
-                                '<textarea placeholder="说说你的看法..."></textarea>' +
+                                '<textarea rel="reply-input" placeholder="说说你的看法..."></textarea>' +
                                 '<button class="btn btn-reply">回复</button>' +
                                 '</div>';
                         }
@@ -441,7 +449,7 @@ define([
                                         '</div>';
                                     if (data.isauthenticated) {
                                         tpl += '<div class="reply-area" style="display: none;">' +
-                                            '<textarea placeholder="说说你的看法..."></textarea>' +
+                                            '<textarea rel="reply-input" placeholder="说说你的看法..."></textarea>' +
                                             '<button class="btn btn-reply">回复</button>' +
                                             '</div>';
                                     }

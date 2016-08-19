@@ -102,6 +102,39 @@ var common = {
             });
         }
     },
+    limitWordFun: function(limit, ev) {
+        var $input = $(ev.target),
+            num    = $.trim($input.val()).length,
+            lave   = limit - num,
+            tips   = $input.data('tips');
+
+        if (lave <= 10) {
+            if (!tips) {
+                $input.after('<p class="lave">0</p>');
+                $input.data('tips', true);
+            }
+            $input.next('.lave').text(lave);
+            if (lave <= 0) {
+                $input.next('.lave').addClass('color-warning');
+            }else{
+                $input.next('.lave').removeClass('color-warning');
+            }
+        }else{
+            if (tips) {
+                $input.next('.lave').remove();
+                $input.data('tips', false);
+            }
+        }
+    },
+    bindWordLimitTips: function($selector, limit) {
+        var self = this;
+        if (arguments && arguments[2]) {
+            var etarget = arguments[2];
+            $selector.on('keydown, input', etarget, $.proxy(self.limitWordFun, self, limit));
+        }else{
+            $selector.on('keydown, input', $.proxy(self.limitWordFun, self, limit));
+        }
+    },
     showSigninPop: function() {
         var pagesize = common.getPageSize();
         var $signin_pop = $('#signin-pop');
@@ -358,6 +391,12 @@ common.dreamPop = {
 
         this.bindCloseCtrl();
         this.bindFinishCtl();
+
+        var $popup = this.$el,
+            $input = $popup.find('input[type="text"]');
+            $textarea = $popup.find('textarea');
+        common.bindWordLimitTips($input, 100);
+        common.bindWordLimitTips($textarea, 150);
     },
     show: function(fields) {
         var pagesize = common.getPageSize();

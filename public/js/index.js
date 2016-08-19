@@ -126,8 +126,7 @@ define([
                                 var dreamsTpl = [
                                     '<% data.dreams.forEach(function(dream) { %>',
                                     '<li>',
-                                    '<h3><a href="/dream/<%- dream._id %>"><%- dream.title %></a></h3>',
-                                    '<p><%- dream.description %></p>',
+                                    '<a href="/dream/<%- dream._id %>"><%- dream.title %></a>',
                                     '</li>',
                                     '<% }); %>'].join('');
 
@@ -183,8 +182,7 @@ define([
                                 var dreamsTpl = [
                                     '<% data.dreams.forEach(function(dream) { %>',
                                     '<li>',
-                                    '<h3><a href="/dream/<%- dream._id %>"><%- dream.title %></a></h3>',
-                                    '<p><%- dream.description %></p>',
+                                    '<a href="/dream/<%- dream._id %>"><%- dream.title %></a>',
                                     '</li>',
                                     '<% }); %>'].join('');
 

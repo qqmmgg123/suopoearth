@@ -145,12 +145,16 @@ a {
 .pagination {
     margin-top: 10px;
     a {
+        font-size: 12px;
         display: inline-block;
         height: 24px;
         padding: 0 10px;
         line-height: 24px;
         text-align: center;
         border: 1px solid #eaeaea;
+        border-radius: 4px;
+        margin: 0 5px;
+        .disable-selection();
         &.curr {
             color: #ff335e !important;
         }
@@ -163,6 +167,10 @@ a {
 
 .none {
     display: none;
+}
+
+.color-warning {
+    color: #ff335e;
 }
 
 .validate-error {
@@ -516,6 +524,8 @@ i.search-icon {
     }
     .content {
         padding: 10px;
+        word-wrap: break-word; 
+        word-break: normal; 
     }
     .store-area, .team-area, .note, .search-area, .settings-area, .msg-area {
         text-align: left;
@@ -1118,8 +1128,12 @@ i.search-icon {
 }
 
 #dream-list, #fdream-list {
+    padding: 10px;
     li {
-        h3, p {
+        a {
+            padding: 10px;
+            font-weight: normal;
+            font-size: 12px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -1528,10 +1542,10 @@ ul.activity-list {
             margin-top: 10px;
         }
         input {
-            width: 360px;
+            width: 580px;
         }
         textarea {
-            width: 360px;
+            width: 580px;
             height: 100px;
             overflow: auto;
         }

@@ -140,12 +140,25 @@ a:hover {
   margin-top: 10px;
 }
 .pagination a {
+  font-size: 12px;
   display: inline-block;
   height: 24px;
   padding: 0 10px;
   line-height: 24px;
   text-align: center;
   border: 1px solid #eaeaea;
+  border-radius: 4px;
+  margin: 0 5px;
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer */
+  -ktml-user-select: none;
+  /* KHTML浏览器（比如：Konqueror） */
+  -webkit-user-select: none;
+  /* Chrome,Safari,and Opera */
+  -webkit-touch-callout: none;
+  /* Disable Android and IOS callout */
 }
 .pagination a.curr {
   color: #ff335e !important;
@@ -155,6 +168,9 @@ a:hover {
 }
 .none {
   display: none;
+}
+.color-warning {
+  color: #ff335e;
 }
 .validate-error {
   text-align: left;
@@ -511,6 +527,8 @@ i.search-icon {
 }
 .container .content {
   padding: 10px;
+  word-wrap: break-word;
+  word-break: normal;
 }
 .container .store-area,
 .container .team-area,
@@ -1114,10 +1132,15 @@ i.search-icon {
 .container .dream-con .dream-right .author .achievem a {
   margin-right: 10px;
 }
-#dream-list li h3,
-#fdream-list li h3,
-#dream-list li p,
-#fdream-list li p {
+#dream-list,
+#fdream-list {
+  padding: 10px;
+}
+#dream-list li a,
+#fdream-list li a {
+  padding: 10px;
+  font-weight: normal;
+  font-size: 12px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1514,10 +1537,10 @@ ul.activity-list > li div.more a.btn {
   margin-top: 10px;
 }
 .dialog#dream-pop input {
-  width: 360px;
+  width: 580px;
 }
 .dialog#dream-pop textarea {
-  width: 360px;
+  width: 580px;
   height: 100px;
   overflow: auto;
 }
