@@ -376,12 +376,6 @@ common.Page = Backbone.View.extend({
     }
 });
 
-common.popup = {
-    el: '.'
-};
-
-common.confirm = $.extend({}, common.popup, {});
-
 common.dreamPop = {
     el: '#dream-pop',
     modal: '.modal',
@@ -466,9 +460,11 @@ $(function() {
     //setInterval($.proxy(common.autoScroll, common, "#reference"), 2000);
 
     // 查看消息列表
-    $('[rel="msg-view"]').data('show', false).click(function() {
-        var $list = $('.message-list'),
-            $this = $(this);
+    var $msgNav = $('#message-nav');
+    $msgNav.find('[rel="msg-view"]').data('show', false).click(function() {
+        var $list   = $msgNav.find('.message-list'),
+            $newTag = $msgNav.find('.message-new'),
+            $this   = $(this);
 
         if (!$this.data('show')) {
             $list.text('加载中...').show();
@@ -509,6 +505,7 @@ $(function() {
                                         }
                                     });
                                 });
+                            $newTag.remove();
                             return;
                         }
                         $list.html("没有消息。").show();
