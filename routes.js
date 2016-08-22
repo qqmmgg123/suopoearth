@@ -317,6 +317,12 @@ router.get('/dream/:id', function(req, res, next) {
             }
         };
 
+        var preMatch = {
+            $match: {
+                _belong_d: _curId
+            }
+        };
+
         if (currCid) {
             return Comment.findById(currCid)
             .exec(function(err, comment) {
@@ -340,6 +346,10 @@ router.get('/dream/:id', function(req, res, next) {
                     }
     
                     var query = { _belong_n: currNid };
+
+                    preMatch.$match._id = {
+                        $gt: currNid
+                    }
         
                     match.$match._id = {
                         $lte: currNid
@@ -387,6 +397,208 @@ router.get('/dream/:id', function(req, res, next) {
         _reponse();
 
         function _reponse() {
+            async.parallel([
+                function(cb) {
+                    Node.aggregate([preMatch, {
+                        $project: {
+                            id        : 1
+                        }
+                    }, {
+                        $sort: { date: -1 }
+                    }, {
+                        $limit: 1
+                    }],
+                    function(err, nodes) {
+                        if (err || !nodes) {
+                            return cb(noExistErr, []);
+                        };
+                        
+                        cb(null, nodes);
+                    });
+                },
+                function(cb) {
+                    Node.aggregate([match, {
+                        $project: {
+                            id        : 1,
+                            content   : 1,
+                            author    : 1,
+                            _belong_u : 1,
+                            _belong_d : 1,
+                            comments  : { $size: '$comments' },
+                            date      : 1
+                        }
+                    }, {
+                        $sort: { date: -1 }
+                    }, {
+                        $limit: 11
+                    }],
+                    function(err, nodes) {
+                        if (err || !nodes) {
+                            return cb(noExistErr, []);
+                        };
+                        
+                        cb(null, nodes);
+                    });
+                }], function(err, results) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (!results || results.length < 2) {
+                        return next(noExistErr);
+                    }
+
+                    var pnodes = results[0],
+                        nodes  = results[1];
+
+                    var hasprev = false,
+                        nprev   = 0;
+                    if (pnodes[0]) {
+                        hasprev = true;
+                        nprev = pnodes[0]._id;
+                    }
+
+                    var hasmore = false,
+                        nnext   = 0;
+                    if (nodes[10]) {
+                        hasmore = true;
+                        nnext = nodes[10]._id;
+                    }
+                    nodes = nodes.slice(0, 10);
+    
+                    Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
+                        if (err) {
+                            return next(err);
+                        }
+    
+                        if (!rnodes) {
+                            return next(noExistErr);
+                        }
+    
+                        rnodes.forEach(function(node) {
+                            node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
+                        });
+    
+                        async.parallel([
+                            function(callback) {
+                                Dream.findById(curId)
+                                .populate({
+                                    path: '_followers_u',
+                                    options: { limit: 6 },
+                                })
+                                .exec(function(err, res) {
+                                    var userNum = 0,
+                                        dfollowers = [];
+                                    if (err || !res) {
+                                        return callback(null, [userNum, dfollowers]);
+                                    }
+                                    
+                                    dfollowers = res._followers_u || dfollowers;
+    
+                                    Dream.aggregate([{
+                                        $match: {
+                                            _id: res._id
+                                        }
+                                    }, {
+                                        $project: {
+                                            _followers_u: {$size: '$_followers_u'}
+                                        }
+                                    }],
+                                    function(err, docs) {
+                                        if (err) return callback(null, [userNum, dfollowers]);
+                                            
+                                        if (docs && docs.length > 0) {
+                                            userNum = docs[0]._followers_u;
+                                        }
+                                        callback(null, [userNum, dfollowers])
+                                    });
+                                });
+                            },
+                            function(callback){
+                                Dream
+                                .find({
+                                    _id:{$gt: curId}
+                                })
+                                .limit(1)
+                                .exec(function(err, result){
+                                    if (err) {
+                                        return callback(err, null);
+                                    }
+    
+                                    var dreams = result;
+                                    callback(null, dreams);
+                                });
+                            },
+                            function(callback){
+                                Dream
+                                .find({
+                                    _id:{$lte: curId}
+                                })
+                                .sort('-date')
+                                .limit(2)
+                                .exec(function(err, result){
+                                    if (err) {
+                                        return callback(err, null);
+                                    }
+    
+                                    var dreams = result;
+                                    callback(null, dreams);
+                                });
+                            }],
+                            function(err, results){
+                                if (err) return next(err);
+    
+                                if (!results || results.length < 3) {
+                                    return next(noExistErr);
+                                }
+    
+                                var accounts = results[0][1]? results[0][1]:[];
+                        
+                                if (req.user) {
+                                    var uid = req.user.id;
+                                    var _uid = mongoose.Types.ObjectId(uid);
+                            
+                                    accounts.forEach(function(account) {
+                                        account.isfollow = (account.fans.indexOf(_uid)!== -1);
+                                    });
+                                }
+    
+                                var resData = {
+                                    author     : dream._belong_u,
+                                    membercount: results[0][0]? results[0][0]:0,
+                                    members    : accounts,
+                                    prev       : results[1][0],
+                                    nodes      : rnodes,
+                                    hasprev    : hasprev,
+                                    hasmore    : hasmore,
+                                    nprev      : nprev,
+                                    nnext      : nnext,
+                                    current    : results[2][0],
+                                    next       : results[2][1],
+                                    isFollow   : isfollow,
+                                    text       : settings.COMMENT_TEXT,
+                                    viewType   : viewType,
+                                    currNid    : currNid,
+                                    currCid    : currCid,
+                                    currComments: currComments,
+                                    isauthenticated: !!req.user
+                                };
+    
+                                res.render('dream', makeCommon({
+                                    user  : req.user,
+                                    title : settings.APP_NAME,
+                                    notice: getFlash(req, 'notice'),
+                                    data  : resData,
+                                    success: 1
+                                }, res));
+                                var end = new Date().getTime();
+                                console.log('dream spend' + (end - start) + 'ms');
+                            }
+                        );
+                    });
+                }
+            );
+
             Node.aggregate([match, {
                 $project: {
                     id        : 1,
@@ -407,142 +619,6 @@ router.get('/dream/:id', function(req, res, next) {
                     return next(noExistErr);
                 };
                 
-                var hasmore = false,
-                    nnext   = 0;
-                if (nodes[10]) {
-                    hasmore = true;
-                    nnext = nodes[10]._id;
-                }
-                nodes = nodes.slice(0, 10);
-
-                Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    if (!rnodes) {
-                        return next(noExistErr);
-                    }
-
-                    rnodes.forEach(function(node) {
-                        node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
-                    });
-
-                    async.parallel([
-                        function(callback) {
-                            Dream.findById(curId)
-                            .populate({
-                                path: '_followers_u',
-                                options: { limit: 6 },
-                            })
-                            .exec(function(err, res) {
-                                var userNum = 0,
-                                    dfollowers = [];
-                                if (err || !res) {
-                                    return callback(null, [userNum, dfollowers]);
-                                }
-                                
-                                dfollowers = res._followers_u || dfollowers;
-
-                                Dream.aggregate([{
-                                    $match: {
-                                        _id: res._id
-                                    }
-                                }, {
-                                    $project: {
-                                        _followers_u: {$size: '$_followers_u'}
-                                    }
-                                }],
-                                function(err, docs) {
-                                    if (err) return callback(null, [userNum, dfollowers]);
-                                        
-                                    if (docs && docs.length > 0) {
-                                        userNum = docs[0]._followers_u;
-                                    }
-                                    callback(null, [userNum, dfollowers])
-                                });
-                            });
-                        },
-                        function(callback){
-                            Dream
-                            .find({
-                                _id:{$gt: curId}
-                            })
-                            .limit(1)
-                            .exec(function(err, result){
-                                if (err) {
-                                    return callback(err, null);
-                                }
-
-                                var dreams = result;
-                                callback(null, dreams);
-                            });
-                        },
-                        function(callback){
-                            Dream
-                            .find({
-                                _id:{$lte: curId}
-                            })
-                            .sort('-date')
-                            .limit(2)
-                            .exec(function(err, result){
-                                if (err) {
-                                    return callback(err, null);
-                                }
-
-                                var dreams = result;
-                                callback(null, dreams);
-                            });
-                        }],
-                        function(err, results){
-                            if (err) return next(err);
-
-                            if (!results || results.length < 3) {
-                                return next(noExistErr);
-                            }
-
-                            var accounts = results[0][1]? results[0][1]:[];
-                    
-                            if (req.user) {
-                                var uid = req.user.id;
-                                var _uid = mongoose.Types.ObjectId(uid);
-                        
-                                accounts.forEach(function(account) {
-                                    account.isfollow = (account.fans.indexOf(_uid)!== -1);
-                                });
-                            }
-
-                            var resData = {
-                                author     : dream._belong_u,
-                                membercount: results[0][0]? results[0][0]:0,
-                                members    : accounts,
-                                prev       : results[1][0],
-                                nodes      : rnodes,
-                                hasmore    : hasmore,
-                                nnext      : nnext,
-                                current    : results[2][0],
-                                next       : results[2][1],
-                                isFollow   : isfollow,
-                                text       : settings.COMMENT_TEXT,
-                                viewType   : viewType,
-                                currNid    : currNid,
-                                currCid    : currCid,
-                                currComments: currComments,
-                                isauthenticated: !!req.user
-                            };
-
-                            res.render('dream', makeCommon({
-                                user  : req.user,
-                                title : settings.APP_NAME,
-                                notice: getFlash(req, 'notice'),
-                                data  : resData,
-                                success: 1
-                            }, res));
-                            var end = new Date().getTime();
-                            console.log('dream spend' + (end - start) + 'ms');
-                        }
-                    );
-                });
             });
         }
     });
@@ -825,6 +901,88 @@ router.get('/dream/:id/nodes', function(req, res, next) {
                     nodes: rnodes,
                     hasmore: hasmore,
                     nnext: nnext
+                }
+            });
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 获取更晚的历程信息
+router.get('/dream/:id/pnodes', function(req, res, next) {
+    var curId  = req.params.id,
+        defaultErr = new Error("获取更多历程失败。"),
+        _curId = mongoose.Types.ObjectId(curId);
+
+    if (!req.query || !req.query.nprev) {
+        return next(defaultErr);
+    }
+
+    var _current = mongoose.Types.ObjectId(req.query.nprev);
+
+    Node.aggregate([{
+        $match: {
+            _belong_d: _curId,
+            _id: {
+                $gte: _current
+            }
+        }
+    }, {
+        $project: {
+            id        : 1,
+            content   : 1,
+            author    : 1,
+            _belong_u : 1,
+            _belong_d : 1,
+            comments  : { $size: '$comments' },
+            date      : 1
+        }
+    }, {
+        $sort: { date: -1 }
+    }, {
+        $limit: 11
+    }],
+    function(err, nodes) {
+        if (err || !nodes) {
+            return next(defaultErr);
+        };
+
+        var hasprev = false,
+            nprev   = 0;
+        if (nodes[10]) {
+            hasprev = true;
+            nprev = nodes[10]._id;
+        }
+
+        nodes = nodes.slice(0, 10);
+
+        Account.populate(nodes, { 
+            path: '_belong_u',
+            select: 'nickname _id'
+        }, function(err, rnodes) {
+            if (err || !rnodes) {
+                return next(defaultErr);
+            }
+
+            rnodes.forEach(function(node) {
+                node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
+            });
+
+            return res.json({
+                info: "ok",
+                result: 0,
+                data: {
+                    nodes: rnodes,
+                    hasprev: hasprev,
+                    nprev: nprev
                 }
             });
         });

@@ -1,4 +1,9 @@
 <% if (data.nodes.length > 0) { %>
+<% if (data.hasprev) { %>
+<div class="process-node">
+    <div data-did="<%= data.current.id %>" data-nprev="<%= data.nprev %>" id="load-nodes-prev" class="more"><a class="btn">查看更多 ></a></div>
+</div>
+<% } %>
 <% data.nodes.forEach(function(node) { %>
 <% if (data.viewType == 2 && (node._id.equals && node._id.equals(data.currNid))) { %>
 <div id="currView" data-isauthenticated="<%= data.isauthenticated %>" class="process-node">
@@ -98,7 +103,7 @@
 <% }); %>
 <% if (data.hasmore) { %>
 <div class="process-node">
-    <div data-did="<%= data.current.id %>" data-nnext="<%= data.nnext %>" class="more"><a class="btn">查看更多 ></a></div>
+    <div data-did="<%= data.current.id %>" data-nnext="<%= data.nnext %>" id="load-nodes-next" class="more"><a class="btn">查看更多 ></a></div>
 </div>
 <% } %>
 <% } else { %>

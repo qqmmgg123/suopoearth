@@ -76,8 +76,9 @@ define([
                 common.bindWordLimitTips(this.$el, 140, etarget);
             },
             bindEvent: function() {
-                var selectors = ['.more', '[rel="node-delete"]', '.comment', 'button.btn-comment'],
+                var selectors = ['#load-nodes-prev', '#load-nodes-next', '[rel="node-delete"]', '.comment', 'button.btn-comment'],
                     handles   = [
+                        this.loadMorePrevNodes,
                         this.loadMoreNodes,
                         this.nodeDelete,
                         this.showComments,
@@ -228,6 +229,46 @@ define([
 
                                 var template = _.template(nodesTpl);
                                 $('#node-list').append(template(data));
+                                $this.closest('.process-node').remove();
+                            }
+                        });
+                    },
+                    error: function() {
+
+                    }
+                });
+            },
+            loadMorePrevNodes: function() {
+                // 加载更多历程
+                var $this = $(this),
+                    did   = $this.data('did'),
+                    nprev = $this.data('nprev');
+
+                $.ajax({
+                    url: "/dream/" + did + "/pnodes",
+                    data: {
+                        nprev: nprev
+                    },
+                    method: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        common.xhrReponseManage(data, function() {
+                            if (data) {
+                                data.data.current = {
+                                    id: did
+                                };
+
+                                data.data.text = text;
+
+                                data = _.extend(data, { 
+                                    timeFormat: function(date) {
+                                        var date = (new Date(date));
+                                        return date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                                    }
+                                });
+
+                                var template = _.template(nodesTpl);
+                                $('#node-list').prepend(template(data));
                                 $this.closest('.process-node').remove();
                             }
                         });
