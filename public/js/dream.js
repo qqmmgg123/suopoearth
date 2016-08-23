@@ -260,6 +260,8 @@ define([
 
                                 data.data.text = text;
 
+                                data.data.nodes.reverse();
+
                                 data = _.extend(data, { 
                                     timeFormat: function(date) {
                                         var date = (new Date(date));

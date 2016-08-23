@@ -173,56 +173,60 @@ var common = {
             });
         });
     },
-    bindUserCtrl: function() {
-        // 关注
-        $('.follow').click(function() {
-            var isFollow = $(this).data('isfollow');
-            var $self = $(this);
-            if (!isFollow) {
-                $.ajax({
-                    url: "/user/follow",
-                    data: {
-                        fid: $(this).data('fid')
-                    },
-                    method: "POST",
-                    dataType: "json",
-                    success: function(data) {
-                        common.xhrReponseManage(data, function(data) {
-                            if (data.result === 0) {
-                                $self.text("取消关注");
-                                $self.data('isfollow', true);
-                            }
-                        });
-                    },
-                    error: function() {
+    followManager: function() {
+        var isFollow = $(this).data('isfollow');
+        var $self = $(this);
+        if (!isFollow) {
+            $.ajax({
+                url: "/user/follow",
+                data: {
+                    fid: $(this).data('fid')
+                },
+                method: "POST",
+                dataType: "json",
+                success: function(data) {
+                    common.xhrReponseManage(data, function(data) {
+                        if (data.result === 0) {
+                            $self.text("取消关注");
+                            $self.data('isfollow', true);
+                        }
+                    });
+                },
+                error: function() {
 
-                    }
-                });
-            }else{
-                $.ajax({
-                    url: "/user/cfollow",
-                    data: {
-                        fid: $(this).data('fid')
-                    },
-                    method: "POST",
-                    dataType: "json",
-                    success: function(data) {
-                        alert(data.info);
-                        common.xhrReponseManage(data, function(data) {
-                            if (data.result === 0) {
-                                $self.text("关注");
-                                $self.data('isfollow', false);
-                            }
-                        });
-                    },
-                    error: function() {
-                    }
-                });
-            }
+                }
+            });
+        }else{
+            $.ajax({
+                url: "/user/cfollow",
+                data: {
+                    fid: $(this).data('fid')
+                },
+                method: "POST",
+                dataType: "json",
+                success: function(data) {
+                    common.xhrReponseManage(data, function(data) {
+                        if (data.result === 0) {
+                            $self.text("关注");
+                            $self.data('isfollow', false);
+                        }
+                    });
+                },
+                error: function() {
+                }
+            });
+        }
+    },
+    bindUserCtrl: function() {
+        var self = this;
+
+        // 关注
+        $('.follow').click(function(ev) {
+            self.followManager.call(this, ev);
         });
 
         // 打招呼
-        $('.message-add').click(function() {
+        /*$('.message-add').click(function() {
             var pagesize = common.getPageSize();
             var $message_pop = $('#message-pop');
             $('.modal').show();
@@ -240,7 +244,7 @@ var common = {
                 $('.modal').hide();
                 $message_pop.hide();
             });
-        });
+        });*/
 
     },
     autoScroll: function(obj) {

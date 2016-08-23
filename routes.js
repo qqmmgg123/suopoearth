@@ -389,6 +389,10 @@ router.get('/dream/:id', function(req, res, next) {
         }
         
         if (currNid) {
+            preMatch.$match._id = {
+                $gt: currNid
+            }
+
             match.$match._id = {
                 $lte: currNid
             };
@@ -412,6 +416,7 @@ router.get('/dream/:id', function(req, res, next) {
                         if (err || !nodes) {
                             return cb(noExistErr, []);
                         };
+                        console.log(nodes);
                         
                         cb(null, nodes);
                     });
@@ -928,6 +933,8 @@ router.get('/dream/:id/pnodes', function(req, res, next) {
 
     var _current = mongoose.Types.ObjectId(req.query.nprev);
 
+    console.log(_current);
+
     Node.aggregate([{
         $match: {
             _belong_d: _curId,
@@ -946,7 +953,7 @@ router.get('/dream/:id/pnodes', function(req, res, next) {
             date      : 1
         }
     }, {
-        $sort: { date: -1 }
+        $sort: { date: 1 }
     }, {
         $limit: 11
     }],
@@ -1157,7 +1164,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                     .find({
                         _belong_u: curId
                     })
-                    .select('title description')
+                    .select('_id title description')
                     .lean()
                     .sort('-date')
                     .skip(skip)
@@ -1212,7 +1219,6 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                     var uid = req.user._id;
                     if (uid.equals(curId)) currUser = "我"
                     isfollow = (account.fans && account.fans.length > 0);
-                    console.log(isfollow);
                 }
 
                 var resData = {
@@ -1265,6 +1271,8 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                             var unKonwErr = new Error('未知错误。')
                                 return next(err || unKonwErr);
                         }
+
+                        console.log(activities[0]);
     
                         var hasmore = false,
                             anext   = 0;
@@ -1551,8 +1559,19 @@ router.get('/user/:id([a-z0-9]+)/following', function(req, res) {
         'fans': curId
     };
 
+    // 查询耗时测试
+    var start = new Date().getTime();
+
     Account.find(fields)
+    .lean()
+    .select('_id nickname fans')
     .sort('-date')
+    .populate({
+        path  : 'fans',
+        match : { _id: req.user.id},
+        select: "_id",
+        model : Account
+    })
     .exec(function(err, following) {
         if (err || !following) {
             var unKnowErr = new Error('未知错误。');
@@ -1568,6 +1587,9 @@ router.get('/user/:id([a-z0-9]+)/following', function(req, res) {
             },
             result: 0
         }, res));
+
+        var end = new Date().getTime();
+        console.log(req.originalUrl + ' spend' + (end - start) + 'ms');
     });
 });
 
@@ -1583,8 +1605,19 @@ router.get('/user/:id([a-z0-9]+)/followers', function(req, res) {
         'follows': curId
     };
 
+    // 查询耗时测试
+    var start = new Date().getTime();
+
     Account.find(fields)
+    .lean()
+    .select('_id nickname fans')
     .sort('-date')
+    .populate({
+        path  : 'fans',
+        match : { _id: req.user.id},
+        select: "_id",
+        model : Account
+    })
     .exec(function(err, followers) {
         if (err || !followers) {
             var unKnowErr = new Error('未知错误。');
@@ -1600,6 +1633,9 @@ router.get('/user/:id([a-z0-9]+)/followers', function(req, res) {
             },
             result: 0
         }, res));
+
+        var end = new Date().getTime();
+        console.log(req.originalUrl + ' spend' + (end - start) + 'ms');
     });
 });
 

@@ -527,7 +527,8 @@ i.search-icon {
         word-wrap: break-word; 
         word-break: normal; 
     }
-    .store-area, .team-area, .note, .search-area, .settings-area, .msg-area {
+    .store-area, .team-area, .note, .search-area, .settings-area, .msg-area
+    , .following-area, .followers-area {
         text-align: left;
         width: 1026px;
         margin: 0 auto;
@@ -1139,6 +1140,17 @@ i.search-icon {
             text-overflow: ellipsis;
             display: block;
         }
+    }
+}
+
+#followers-list, #following-list {
+    overflow: hidden;
+    margin-top: 20px;
+    padding: 10px;
+    li {
+        float: left;
+        margin: 0 5px;
+        width: 30%;
     }
 }
 

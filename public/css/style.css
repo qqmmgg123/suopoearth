@@ -535,7 +535,9 @@ i.search-icon {
 .container .note,
 .container .search-area,
 .container .settings-area,
-.container .msg-area {
+.container .msg-area,
+.container .following-area,
+.container .followers-area {
   text-align: left;
   width: 1026px;
   margin: 0 auto;
@@ -1145,6 +1147,18 @@ i.search-icon {
   white-space: nowrap;
   text-overflow: ellipsis;
   display: block;
+}
+#followers-list,
+#following-list {
+  overflow: hidden;
+  margin-top: 20px;
+  padding: 10px;
+}
+#followers-list li,
+#following-list li {
+  float: left;
+  margin: 0 5px;
+  width: 30%;
 }
 a.prev-btn,
 a.next-btn {

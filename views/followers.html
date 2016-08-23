@@ -12,15 +12,38 @@
 <body>
     <% include header.html %>
     <div class="container">
+        <div class="followers-area">
         <ul id="followers-list">
             <% if (data.followers) { %>
             <% data.followers.forEach(function(follower) { %>
-            <li><a href="/user/<%= follower.id %>"><%= follower.nickname %></a> <a rel="user-follow" class="btn">关注</a></li>
+            <li>
+                <a href="/user/<%= follower._id %>"><%= follower.nickname %></a>
+                <% if (user) { %>
+                <% if (!follower._id.equals(user._id)) { %>
+                <% if (follower.fans.length > 0) { %>
+                <button data-isfollow="<%= follower.fans.length > 0 %>" data-fid="<%= follower._id %>" class="follow btn">
+                    取消关注
+                </button>
+                <% } else { %>
+                <button data-isfollow="<%= follower.fans.length > 0 %>" data-fid="<%= follower._id %>" class="follow btn">
+                    关注
+                </button>
+                <% } %>
+                <% } %>
+                <% } else { %>
+                <button data-isfollow="<%= follower.fans.length > 0 %>" data-fid="<%= follower._id %>" class="follow btn">
+                    关注
+                </button>
+                <% } %>
+                <!--<a rel="user-follow" class="btn">关注</a>-->
+            </li>
             <% }); %>
             <% } %>
         </ul>
+        </div>
     </div>
     <% include footer.html %>
     <% include create.html %>
 </body>
+<script data-main="/js/followers.js" src="/js/require.js"></script>
 </html>

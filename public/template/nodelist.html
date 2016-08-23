@@ -1,10 +1,10 @@
 <% if (data.nodes.length > 0) { %>
-<% data.nodes.forEach(function(node) { %>
 <% if (data.hasprev) { %>
 <div class="process-node">
     <div data-did="<%= data.current.id %>" id="load-nodes-prev" data-nprev="<%= data.nprev %>" class="more"><a class="btn">查看更多 ></a></div>
 </div>
 <% } %>
+<% data.nodes.forEach(function(node) { %>
 <div class="process-node">
     <div>
         <p class="user-info">
