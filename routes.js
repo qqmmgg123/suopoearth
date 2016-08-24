@@ -1889,11 +1889,12 @@ router.get('/query', function(req, res, next) {
 
 // 搜索结果
 router.get('/result', function(req, res, next) {
-    if (!req.query || !req.query.query) {
-        return reponse(0, []);
+    if (!req.query) {
+        return reponse('content', []);
     }
 
     function reponse(type, data) {
+        console.log(data);
         res.render('result', makeCommon({
             title: settings.APP_NAME,
             notice: getFlash(req, 'notice'),
@@ -1907,15 +1908,18 @@ router.get('/result', function(req, res, next) {
         }, res));
     }
 
-    var query = req.query.query;
+    var query = req.query.query,
+        type  = req.query.type || 'content';
 
-    if (typeof query == "string") {
-        query = query.trim();
-    }else{
-        return reponse(0, []);
+    if (typeof query != "string") {
+        return reponse(type, []);
     }
 
-    var type = req.query.type || "content";
+    query = query.trim();
+
+    if (!query) {
+        return reponse(type, []);
+    }
 
     switch(type) {
         case 'content':
@@ -1923,13 +1927,15 @@ router.get('/result', function(req, res, next) {
             .find({
                 title: new RegExp(quote(query), 'i')
             })
+            .lean()
+            .select('_id title description')
             .limit(9)
             .exec(function(err, results) {
                 if (err) {
                     return next(err);
                 }
 
-                reponse(0, results);
+                reponse(type, results);
             });
             break;
         case 'user':
@@ -1937,13 +1943,15 @@ router.get('/result', function(req, res, next) {
             .find({
                 nickname: new RegExp(quote(query), 'i')
             })
+            .lean()
+            .select('_id nickname')
             .limit(9)
             .exec(function(err, results) {
                 if (err) {
                     return next(err);
                 }
 
-                reponse(1, results);
+                reponse(type, results);
             });
             break;
         default:

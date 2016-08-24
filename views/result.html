@@ -15,22 +15,22 @@
         <div class="search-area">
             <div class="tab-nav">
                 <ul>
-                    <li><a class="tab" href="/result?query=<%= data.query %>&type=content">想法</a></li>
-                    <li><a class="tab" href="/result?query=<%= data.query %>&type=user">用户</a></li>
+                    <li><a class="tab<% if (data.type === 'content') { %> cur<% } %>" href="/result?query=<%= data.query %>&type=content">想法</a></li>
+                    <li><a class="tab<% if (data.type === 'user') { %> cur<% } %>" href="/result?query=<%= data.query %>&type=user">用户</a></li>
                 </ul>
             </div>
             <% if (data.results.length > 0) { %>
             <ul>
             <% data.results.forEach(function(result) { %>
-            <% if (data.type === 0) { %>
+            <% if (data.type === 'content') { %>
             <li>
-                <h3><a href="/dream/<%= result.id %>"><%= result.title %></a></h3>
+                <h3><a href="/dream/<%= result._id %>"><%= result.title %></a></h3>
                 <p><%= result.description %></p>
             </li>
             <% } %>
-            <% if (data.type === 1) { %>
+            <% if (data.type === 'user') { %>
             <li>
-                <h3><a href="/user/<%= result.id %>"><%= result.nickname %></a></h3>
+                <h3><a href="/user/<%= result._id %>"><%= result.nickname %></a></h3>
             </li>
             <% } %>
             <% }); %>
