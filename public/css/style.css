@@ -1148,6 +1148,16 @@ i.search-icon {
   text-overflow: ellipsis;
   display: block;
 }
+.mydream-list ul a {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+}
+.mydream-list ul p {
+  word-wrap: break-word;
+  word-break: normal;
+}
 #followers-list,
 #following-list {
   overflow: hidden;

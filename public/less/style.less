@@ -8,6 +8,18 @@
     -webkit-touch-callout:none; /* Disable Android and IOS callout */
 }
 
+.wrap() {
+    word-wrap: break-word; 
+    word-break: normal; 
+}
+
+.ellipsis() {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block
+}
+
 @font-face {
     font-family: Microsoft YaHei Font;
     src: url('/font/msyh/msyh.eot');
@@ -524,8 +536,7 @@ i.search-icon {
     }
     .content {
         padding: 10px;
-        word-wrap: break-word; 
-        word-break: normal; 
+        .wrap();
     }
     .store-area, .team-area, .note, .search-area, .settings-area, .msg-area
     , .following-area, .followers-area {
@@ -1135,11 +1146,17 @@ i.search-icon {
             padding: 10px;
             font-weight: normal;
             font-size: 12px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            display: block;
+            .ellipsis();
         }
+    }
+}
+
+.mydream-list ul {
+    a {
+        .ellipsis();
+    }
+    p {
+        .wrap();
     }
 }
 
