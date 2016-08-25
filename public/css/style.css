@@ -520,10 +520,12 @@ i.search-icon {
   top: 67px;
   position: relative;
 }
-.container h1 {
+.container h1.title {
   text-align: center;
   font-size: 24px;
   font-weight: 100;
+  word-wrap: break-word;
+  word-break: normal;
 }
 .container .content {
   padding: 10px;

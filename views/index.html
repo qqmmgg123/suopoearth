@@ -43,7 +43,7 @@
                 <ul id="dream-list" data-total="<%= data.mdcount %>">
                 <% data.mdreams.forEach(function(dream) { %>
                 <li>
-                    <a href="/dream/<%= dream._id %>"><%= dream.title %></a>
+                    <a title="<%= dream.title %>" alt="<%= dream.title %>" href="/dream/<%= dream._id %>"><%= dream.title %></a>
                 </li>
                 <% }); %>
                 </ul>
@@ -59,7 +59,7 @@
                 <ul id="fdream-list" data-total="<%= data.fdcount %>">
                 <% data.fdreams.forEach(function(dream) { %>
                 <li>
-                    <a href="/dream/<%= dream._id %>"><%= dream.title %></a>
+                    <a title="<%= dream.title %>" alt="<%= dream.title %>" href="/dream/<%= dream._id %>"><%= dream.title %></a>
                 </li>
                 <% }); %>
                 </ul>
