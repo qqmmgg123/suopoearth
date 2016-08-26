@@ -2,6 +2,7 @@ requirejs.config({
     paths   : {
         'underscore': 'underscore-min',
         'jquery': 'jquery.min',
+        'jplaceholder': 'jquery.placeholder.min',
         'common': 'common',
         'backbone' : 'backbone-min'
     }

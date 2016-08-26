@@ -1,8 +1,9 @@
 requirejs.config({
     paths   : {
         'const': '../const',
-        'underscore': 'underscore-min',
+        'underscore': 'underscore.min',
         'jquery': 'jquery.min',
+        'jplaceholder': 'jquery.placeholder.min',
         'backbone' : 'backbone-min',
         'common': 'common',
         'text'  : 'text',
@@ -222,8 +223,8 @@ define([
 
                                 data = _.extend(data, { 
                                     timeFormat: function(date) {
-                                        var date = (new Date(date));
-                                        return date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                                        var date = new Date(date);
+                                        return common.dateBeautify(date);
                                     }
                                 });
 
@@ -264,8 +265,8 @@ define([
 
                                 data = _.extend(data, { 
                                     timeFormat: function(date) {
-                                        var date = (new Date(date));
-                                        return date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                                        var date = new Date(date);
+                                        return common.dateBeautify(date);
                                     }
                                 });
 

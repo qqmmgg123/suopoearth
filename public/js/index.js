@@ -2,6 +2,7 @@ requirejs.config({
     paths   : {
         'underscore': 'underscore-min',
         'jquery': 'jquery.min',
+        'jplaceholder': 'jquery.placeholder.min',
         'text'  : 'text',
         'backbone' : 'backbone-min',
         'template' : '../template',
@@ -75,8 +76,8 @@ define([
                             if (data) {
                                 data = _.extend(data, {
                                     timeFormat: function(date) {
-                                        var date = (new Date(date));
-                                        return date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                                        var date = new Date(date);
+                                        return common.dateBeautify(date);
                                     }
                                 });
 

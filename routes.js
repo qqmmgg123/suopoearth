@@ -983,6 +983,7 @@ router.get('/dream/:id/pnodes', function(req, res, next) {
                 node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
             });
 
+            console.log(rnodes)
             return res.json({
                 info: "ok",
                 result: 0,

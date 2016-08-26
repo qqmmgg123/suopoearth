@@ -13,6 +13,51 @@ var path = require('path')
   , log = require('util').log
   , Message = require("./models/Message");
 
+var common = {
+    dateBeautify: function(date) {
+        var hour      = 60 * 60 * 1000,
+            day       = 24 * hour,
+            currDate  = this.dateFormat(new Date, 'yyyy-MM-dd'),
+            today     = new Date(currDate + ' 00:00:00').getTime(),
+            yesterday = today - day,
+            currTime  = date.getTime(),
+            cHStr     = this.dateFormat(date, 'hh:mm:ss');
+
+        if (currTime >= today) {
+            var time    = (currTime - today) / hour;
+            var cHour   = date.getHours();
+            var amCHour = cHour - 12;
+            var cMStr   = this.dateFormat(date, 'mm:ss');
+            var str     = time <= 12? '上午 ' + cstr:'下午 ' + (amCHour < 10? amCHour: '0' + amCHour) + ':' + cMStr;
+            return str;
+        }else if (currTime < today && currTime >= yesterday) {
+            return "昨天 " + cHStr;
+        }else {
+            return this.dateFormat(date, 'yyyy-MM-dd hh:mm:ss');
+        }
+    },
+    dateFormat: function(date, format){
+        var o = {
+            "M+" : date.getMonth()+1, //month
+            "d+" : date.getDate(),    //day
+            "h+" : date.getHours(),   //hour
+            "m+" : date.getMinutes(), //minute
+            "s+" : date.getSeconds(), //second
+            "q+" : Math.floor((date.getMonth()+3)/3),  //quarter
+            "S" : date.getMilliseconds() //millisecond
+        }
+
+        if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+                (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+        for(var k in o) if(new RegExp("("+ k +")").test(format))
+            format = format.replace(RegExp.$1,
+                    RegExp.$1.length==1 ? o[k] :
+                    ("00"+ o[k]).substr((""+ o[k]).length));
+
+        return format;
+    }
+};
+
 // browser refresh
 var reload = require('reload')
   , http = require('http');
@@ -22,10 +67,20 @@ var app = express();
 app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
 
+// 设置js返回时间格式
+app.set('json replacer', function (key, value) {
+  if (this[key] instanceof Date) {
+    // Your own custom date serialization
+    value = this[key].getTime();
+  }
+
+  return value;
+});
+
 // 定义ejs函数
 app.locals = {
     timeFormat : function(date) {
-        return date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        return common.dateBeautify(date);
     }
 };
 

@@ -1,4 +1,4 @@
-define(['jquery', 'backbone'], function ($, Backbone) {
+define(['jquery', 'jplaceholder', 'backbone'], function ($, jplaceholder, Backbone) {
 
     var _d = document;
 
@@ -60,47 +60,54 @@ var common = {
     },
     checkBrowser: function() {
         if (document.all && !document.querySelector) {
-            alert('您使用的是ie浏览器，但版本过低，请使用chrome、firefox、或用ie7以上版本，或者携带以上内核的浏览器，如QQ，搜狗等。');
+            alert('您使用的是ie浏览器，但版本过低，请使用chrome、firefox、或用ie8或ie更高版本，或者携带以上内核的浏览器，如QQ，搜狗等。');
         }
-    },
-    isSupportPh: function() {
-        var i = document.createElement("input");
-        return "placeholder" in i;
     },
     // 增加输入框提示（主要是为了兼容ie）
     placeholder: function() {
-        var va; // value
-        var ph; // placeholder
-        if (!this.isSupportPh()) {
-            $('input[type=text]').each(function() {
-                va = $(this).val();
-                ph = $(this).attr('placeholder');
-                // if the value is empty, put the placeholder value in it's place
-                if (!va || va == '') {
-                    $(this).val(ph);
-                }
-            });
+        $('input, textarea').placeholder();
+    },
+    dateBeautify: function(date) {
+        var hour      = 60 * 60 * 1000,
+            day       = 24 * hour,
+            currDate  = this.dateFormat(new Date, 'yyyy-MM-dd'),
+            today     = new Date(currDate + ' 00:00:00').getTime(),
+            yesterday = today - day,
+            currTime  = date.getTime(),
+            cHStr     = this.dateFormat(date, 'hh:mm:ss');
 
-            $('input[type=text]').unbind("focus");
-            $('input[type=text]').unbind("blur");
-
-            // replaceing the placeholder type effect
-            $('input[type=text]').focus(function() {
-                va = $(this).val();
-                ph = $(this).attr('placeholder');
-                if (va == ph) {
-                    $(this).val('');
-                    $(this).css('color', '#333')
-                }
-            }).blur(function() {
-                va = $(this).val();
-                ph = $(this).attr('placeholder');
-                if (va == '') {
-                    $(this).val(ph);
-                    $(this).css('color', '#999')
-                }
-            });
+        if (currTime >= today) {
+            var time    = (currTime - today) / hour;
+            var cHour   = date.getHours();
+            var amCHour = cHour - 12;
+            var cMStr   = this.dateFormat(date, 'mm:ss');
+            var str     = time <= 12? 'pm:' + cstr:'am:' + (amCHour < 10? amCHour: '0' + amCHour) + ':' + cMStr;
+            return str;
+        }else if (currTime < today && currTime >= yesterday) {
+            return "昨天 " + cHStr;
+        }else {
+            return this.dateFormat(date, 'yyyy-MM-dd hh:mm:ss');
         }
+    },
+    dateFormat: function(date, format){
+        var o = {
+            "M+" : date.getMonth()+1, //month
+            "d+" : date.getDate(),    //day
+            "h+" : date.getHours(),   //hour
+            "m+" : date.getMinutes(), //minute
+            "s+" : date.getSeconds(), //second
+            "q+" : Math.floor((date.getMonth()+3)/3),  //quarter
+            "S" : date.getMilliseconds() //millisecond
+        }
+
+        if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+                (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+        for(var k in o) if(new RegExp("("+ k +")").test(format))
+            format = format.replace(RegExp.$1,
+                    RegExp.$1.length==1 ? o[k] :
+                    ("00"+ o[k]).substr((""+ o[k]).length));
+
+        return format;
     },
     limitWordFun: function(limit, ev) {
         var $input = $(ev.target),
