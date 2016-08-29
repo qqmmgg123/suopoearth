@@ -10,10 +10,48 @@
     <![endif]-->
 </head>
 <body>
-    <% include header.html %>
+    <div class="header t-fixed">
+    <div class="head-con">
+        <ul class="h-left">
+            <li><a href="http://www.suopoearth.com" class="logo"><span class="version">alpha</span></a></li>
+        </ul>
+        <ul class="h-right">
+            <li><a href="/">首页</a></li>
+            <li><a href="/found">看看</a></li>
+            <li><a href="/intro">关于我们</a></li>
+            <% if (user) { %>
+            <li id="message-nav">
+                <div class="message-opt">
+                    <a rel="msg-view" href="javascript:;">消息</a>
+                    <% if (data.messages && data.messages > 0) { %>
+                    <span class="message-new"><%= data.messages %></span>
+                    <% } %>
+                </div>
+                <ul class="dropDown message-list" style="display: none;">
+                </ul>
+            </li>
+            <li>
+                <div class="user-nav">
+                    <a class="user-pic" href="/user/<%= user.id %>"><img src="/images/user_mini.png" /></a>
+                    <a class="user-name" href="/user/<%= user.id %>"><%= user.nickname %></a>
+                    <a href="javascript:;" class="list-arrow">
+                        <i class="arrow-icon"></i>
+                    </a>
+                </div>
+                <ul class="dropDown config-list" style="display: none;">
+                    <li><a href="/settings">设置</a></li>
+                    <li><a href="/signout">退出</a></li>
+                </ul>
+            </li>
+            <% } %>
+        </ul>
+    </div>
+</div>
+
     <div class="container">
         <div class="signup-area">
             <form id="signup-form" action="/signup" autocomplete="off" method="post" novalidate>
+                <h2>用户注册</h2>
                 <div class="signup-error"><%= info %></div>
                 <!--<div>-->
                     <!--<p class="label"><label for="email">邮箱</label></p>-->

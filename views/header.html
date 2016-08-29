@@ -4,7 +4,7 @@
     <!--<button id="next_dream_btn">></button>-->
     <div class="head-con">
         <ul class="h-left">
-            <li><a href="http://www.suopoearth.com" class="logo"></a></li>
+            <li><a href="http://www.suopoearth.com" class="logo"><span class="version">alpha</span></a></li>
             <li><button class="none" id="confirm_btn">写完了 ></button></li>
             <li>
             <div class="create-area">
@@ -25,9 +25,7 @@
         </ul>
         <ul class="h-right">
             <li><a href="/">首页</a></li>
-            <% if (user) { %>
             <li><a href="/found">看看</a></li>
-            <% } %>
             <li><a href="/intro">关于我们</a></li>
             <% if (user) { %>
             <li id="message-nav">

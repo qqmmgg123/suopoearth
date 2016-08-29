@@ -97,7 +97,20 @@ router.get('/', function(req, res, next) {
     }
 
     if (!req.user) {
-        return res.redirect('/found');
+        /*return res.render('recommand', makeCommon({
+            title: settings.APP_NAME,
+            notice: getFlash(req, 'notice'),
+            user : req.user,
+            data: {
+            },
+            success: 1
+        }, res));*/
+        res.render('signin', makeCommon({
+            title : settings.APP_NAME,
+            notice: getFlash(req, 'notice'),
+            error:  getFlash(req, 'info'),
+            user : req.user
+        }, res));
     }
 
     // 查询耗时测试
@@ -403,23 +416,26 @@ router.get('/dream/:id', function(req, res, next) {
         function _reponse() {
             async.parallel([
                 function(cb) {
-                    Node.aggregate([preMatch, {
-                        $project: {
-                            id        : 1
-                        }
-                    }, {
-                        $sort: { date: -1 }
-                    }, {
-                        $limit: 1
-                    }],
-                    function(err, nodes) {
-                        if (err || !nodes) {
-                            return cb(noExistErr, []);
-                        };
-                        console.log(nodes);
-                        
-                        cb(null, nodes);
-                    });
+                    if (currNid) {
+                        Node.aggregate([preMatch, {
+                            $project: {
+                                id        : 1
+                            }
+                        }, {
+                            $sort: { date: -1 }
+                        }, {
+                            $limit: 1
+                        }],
+                        function(err, nodes) {
+                            if (err || !nodes) {
+                                return cb(noExistErr, []);
+                            };
+
+                            cb(null, nodes);
+                        });
+                    } else {
+                        cb(null, [])
+                    }
                 },
                 function(cb) {
                     Node.aggregate([match, {
@@ -933,8 +949,6 @@ router.get('/dream/:id/pnodes', function(req, res, next) {
 
     var _current = mongoose.Types.ObjectId(req.query.nprev);
 
-    console.log(_current);
-
     Node.aggregate([{
         $match: {
             _belong_d: _curId,
@@ -983,7 +997,6 @@ router.get('/dream/:id/pnodes', function(req, res, next) {
                 node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
             });
 
-            console.log(rnodes)
             return res.json({
                 info: "ok",
                 result: 0,
@@ -1273,8 +1286,6 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                                 return next(err || unKonwErr);
                         }
 
-                        console.log(activities[0]);
-    
                         var hasmore = false,
                             anext   = 0;
                         if (activities[10]) {
