@@ -537,6 +537,21 @@ i.search-icon {
 .container.canvas-bg canvas {
   background-color: white;
 }
+.container.canvas-bg .tools {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  padding: 10px;
+}
+.container.canvas-bg .tools .color-bg {
+  width: 25px;
+  height: 25px;
+}
+.container.canvas-bg .tools .color-bg .color {
+  width: 25px;
+  height: 25px;
+  background-color: #000;
+}
 .container h1.title {
   text-align: center;
   font-size: 24px;

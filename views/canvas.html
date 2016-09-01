@@ -12,6 +12,12 @@
 <body>
     <% include header.html %>
     <div class="container canvas-bg">
+        <div class="tools">
+            <h3>色板</h3>
+            <div class="color-bg">
+                <div id="brush-color" class="color"></div>
+            </div>
+        </div>
         <canvas id="sketch" width="960" height="960"></canvas>
     </div>
     <% include footer.html %>
@@ -21,7 +27,11 @@
 <script src="/js/jquery.mousewheel.min.js" type="text/javascript"></script>
 <script src="/js/common.js" type="text/javascript"></script>
 <script type="text/javascript">
+    var KEY_W = 87;
+    var KEY_S = 83;
+
     var canvas = document.getElementById('sketch');
+    var brushColor = document.getElementById('brush-color');
     var context = canvas.getContext("2d");
     var x = 0;
     var y = 0;
@@ -35,7 +45,7 @@
     function draw() {
         if (canvas.getContext) {
             var ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, 1024, 640);
+            ctx.clearRect(0, 0, 960, 960);
 
             for (var i=0;i<container.length;i++) {
                 var child= container[i];
@@ -46,25 +56,36 @@
     }
 
     $(canvas).on('mousewheel', function(e) {
-        if (e.deltaY > 0) {
-            var na = a + 0.1;
-            a = Math.min(1, na);
-        }
-        if (e.deltaY < 0) {
-            var na = a - 0.1;
-            a = Math.max(0, na);
+        
+    });
+
+    $(document).on('keydown', function(e) {
+        var key = e.keyCode;
+        switch(key) {
+            case KEY_S:
+                var na = a - 0.1;
+                a = Math.max(0, na);
+                break;
+            case KEY_W:
+                var na = a + 0.1;
+                a = Math.min(1, na);
+                break;
         }
 
-        draw();
-    });
+        $(brushColor).css('opacity', a);
+    })
 
     $(canvas).on('mousemove', function(e) {
         if (!clear) {
             var ofTop  = $('body').scrollTop(),
             ofLeft = $(canvas).offset().left;
-            x = Math.floor((e.clientX - ofLeft - B_W * .5)/B_W) * B_W;
-            y = Math.floor((e.clientY + ofTop - 67 - B_W * .5)/B_W) * B_W;
-            addChild();
+            var nx = Math.floor((e.clientX - ofLeft - B_W * .5)/B_W) * B_W;
+            var ny = Math.floor((e.clientY + ofTop - 67 - B_W * .5)/B_W) * B_W;
+            if (Math.abs(nx - x) >= 10 || Math.abs(ny - y) >= 10) {
+                x = nx;
+                y = ny;
+                addChild();
+            }
         }
     });
 
