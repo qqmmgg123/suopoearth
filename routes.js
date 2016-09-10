@@ -1,4 +1,9 @@
 var async = require("async")
+    , crypto = require('crypto')
+    , fs = require("fs")
+    , path = require("path")
+    , multer  = require('multer')
+    , mime = require("mime")
     , settings = require("./public/const/settings")
     , mongoose = require('mongoose')
     , passport = require('passport')
@@ -10,6 +15,19 @@ var async = require("async")
     , Message = require("./models/Message")
     , log = require('util').log
     , router = require('express').Router();
+
+var storage = multer.diskStorage({
+    destination: './uploads/',
+    filename: function (req, file, cb) {
+        crypto.pseudoRandomBytes(16, function (err, raw) {
+            if (err) return cb(err)
+
+            cb(null, raw.toString('hex') + Date.now() + '.' + mime.extension(file.mimetype));
+        });
+    }
+});
+
+var upload = multer({ storage: storage });
 
 function makeCommon(data, res) {
     if (!data.data) {
@@ -3585,6 +3603,23 @@ router.post('/message/remove', function(req, res, next) {
         info: message,
         result: 1
     });
+});
+
+// File input field name is simply 'file'
+router.post('/avatar/upload', upload.single('avatar'), function(req, res) {
+    console.log(req.file);
+    /*var file = __dirname + '/' + req.file.filename;
+    fs.rename(req.file.path, file, function(err) {
+        if (err) {
+            console.log(err);
+            res.send(500);
+        } else {
+            res.json({
+                message: 'File uploaded successfully',
+                filename: req.file.filename
+            });
+        }
+    });*/
 });
 
 module.exports = router;

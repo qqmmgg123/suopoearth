@@ -13,9 +13,18 @@
     <% include header.html %>
     <div class="container canvas-bg">
         <div class="tools">
-            <h3>色板</h3>
-            <div class="color-bg">
-                <div id="brush-color" class="color"></div>
+            <div>
+                <h3>色板</h3>
+                <div class="color-bg">
+                    <div id="brush-color" class="color"></div>
+                </div>
+            </div>
+            <div>
+                <a id="avatar-save" class="btn">使用这张图</a>
+                <form id="file-form" action="/avatar/upload" enctype="multipart/form-data" method="POST">
+                    <input type="file" id="file-select" name="avatar" />
+                    <input type="submit" value="Upload" />
+                </form>
             </div>
         </div>
         <canvas id="sketch" width="960" height="960"></canvas>
@@ -118,5 +127,41 @@
         requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
+
+    function dataURItoBlob(dataURI) {
+        var byteString;
+        if (dataURI.split(',')[0].indexOf('base64') >= 0)
+            byteString = atob(dataURI.split(',')[1]);
+        else
+            byteString = unescape(dataURI.split(',')[1]);
+
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+        var ia = new Uint8Array(byteString.length);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([ia], {type:mimeString});
+    }
+
+    $('#avatar-save').on('click', function() {
+        var dataURL = canvas.toDataURL(),
+            blob = dataURItoBlob(dataURL);
+
+        var data = new FormData(document.forms[0]);
+        data.append('avatar', blob);
+
+        $.ajax({
+            url: "/avatar/upload",
+            type: "POST",
+            data: data,
+            async: false,
+            cache: false,
+            processData: false,
+            contentType: false,
+        }).done(function(data) {
+        }).fail(function() {});
+    });
 </script>
 </html>
