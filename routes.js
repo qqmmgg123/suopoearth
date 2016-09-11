@@ -219,7 +219,7 @@ router.get('/', function(req, res, next) {
                     select: '_id content'
                 }, {
                     path: '_belong_u',
-                    select: '_id nickname'
+                    select: '_id nickname avatar'
                 }, {
                     path: '_belong_d',
                     select: '_id title description'
@@ -923,7 +923,7 @@ router.get('/dream/:id/nodes', function(req, res, next) {
 
         Account.populate(nodes, { 
             path: '_belong_u',
-            select: 'nickname _id'
+            select: 'nickname _id avatar'
         }, function(err, rnodes) {
             if (err || !rnodes) {
                 return next(defaultErr);
@@ -1005,7 +1005,7 @@ router.get('/dream/:id/pnodes', function(req, res, next) {
 
         Account.populate(nodes, { 
             path: '_belong_u',
-            select: 'nickname _id'
+            select: 'nickname _id avatar'
         }, function(err, rnodes) {
             if (err || !rnodes) {
                 return next(defaultErr);
@@ -1159,7 +1159,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
     var start = new Date().getTime();
     Account.findOne({_id: curId})
     .lean()
-    .select('fans nickname bio date')
+    .select('fans avatar nickname bio date')
     .populate(populate)
     .exec(function(err, account) {
         var unexisterr = new Error(settings.USER_NOT_EXIST_TIPS);
@@ -1257,6 +1257,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                     id       : curId,
                     currUser : currUser,
                     name     : account.nickname,
+                    avatar   : account.avatar,
                     bio      : account.bio,
                     isfollow : isfollow,
                     following: following,
@@ -1293,7 +1294,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                         select: '_id content'
                     }, {
                         path: '_belong_u',
-                        select: '_id nickname'
+                        select: '_id nickname avatar'
                     }, {
                         path: '_belong_d',
                         select: '_id title description'
@@ -1594,7 +1595,7 @@ router.get('/user/:id([a-z0-9]+)/following', function(req, res) {
 
     Account.find(fields)
     .lean()
-    .select('_id nickname fans')
+    .select('_id nickname avatar fans')
     .sort('-date')
     .populate({
         path  : 'fans',
@@ -1640,7 +1641,7 @@ router.get('/user/:id([a-z0-9]+)/followers', function(req, res) {
 
     Account.find(fields)
     .lean()
-    .select('_id nickname fans')
+    .select('_id avatar nickname fans')
     .sort('-date')
     .populate({
         path  : 'fans',
@@ -1731,23 +1732,12 @@ router.get('/settings/profile', function(req, res, next) {
     if (!req.user) {
         res.redirect('/signin');
     } else {
-        Account.findOne({_id: req.user.id}, function(err, account) {
-            if (err) {
-                return next(err);
-            };
-            res.render('profile', makeCommon({
-                title: settings.APP_NAME,
-                notice: getFlash(req, 'notice'),
-                user : req.user,
-                data: {
-                    error: getFlash(req, 'error'),
-                    uid: account.id,
-                    name: account.nickname,
-                    bio: account.bio? account.bio:''
-                },
-                success: 1
-            }, res));
-        });
+        res.render('profile', makeCommon({
+            title: settings.APP_NAME,
+            notice: getFlash(req, 'notice'),
+            user : req.user,
+            success: 1
+        }, res));
     }
 });
 
@@ -1974,7 +1964,7 @@ router.get('/result', function(req, res, next) {
                 nickname: new RegExp(quote(query), 'i')
             })
             .lean()
-            .select('_id nickname')
+            .select('_id nickname avatar')
             .limit(9)
             .exec(function(err, results) {
                 if (err) {
@@ -3606,20 +3596,50 @@ router.post('/message/remove', function(req, res, next) {
 });
 
 // File input field name is simply 'file'
-router.post('/avatar/upload', upload.single('avatar'), function(req, res) {
-    console.log(req.file);
-    /*var file = __dirname + '/' + req.file.filename;
+router.post('/avatar/upload', upload.single('avatar'), function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    var uid = req.user.id;
+
+    var file = __dirname + '/public/avatar/' + req.file.filename;
     fs.rename(req.file.path, file, function(err) {
         if (err) {
-            console.log(err);
-            res.send(500);
+            fs.unlink(req.file.path, function(err) {
+                if (err) {
+                    return next(err);
+                }else{
+                    return next(new Error("保存图片失败."));
+                };
+            });
         } else {
-            res.json({
-                message: 'File uploaded successfully',
-                filename: req.file.filename
+            req.user.update({
+                avatar : '/avatar/' + req.file.filename
+            }, function(err, course) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.json({
+                    info: 'img save successfully',
+                    result: 1
+                });
             });
         }
-    });*/
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
 });
 
 module.exports = router;

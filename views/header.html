@@ -40,7 +40,7 @@
             </li>
             <li>
                 <div class="user-nav">
-                    <a class="user-pic" href="/user/<%= user.id %>"><img src="/images/user_mini.png" /></a>
+                    <a class="user-pic" href="/user/<%= user.id %>"><img width="25" height="25" src="<%= (user.avatar || '/images/user_mini.png') %>" /></a>
                     <a class="user-name" href="/user/<%= user.id %>"><%= user.nickname %></a>
                     <a href="javascript:;" class="list-arrow">
                         <i class="arrow-icon"></i>

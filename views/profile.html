@@ -21,16 +21,16 @@
                         <form accept-charset="UTF-8" action="/settings/profile/update" method="post">
                             <div class="photo-area">
                                 <p class="label"><label for="nickname">头像</label></p>
-                                <p class="field"><img src="/images/user_pic.png" /></p>
+                                <p class="field"><img width="96" height="96" src="<%= (user.avatar || '/images/user_pic.png') %>" /></p>
                                 <!--<button type="botton" class="btn btn-primary">编辑头像</button>-->
                             </div>
                             <div>
                                 <p class="label"><label for="nickname">昵称</label></p>
-                                <p class="field"><input name="nickname" id="nickname" type="text" placeholder="输入您的昵称" value="<%= data.name %>" /></p>
+                                <p class="field"><input name="nickname" id="nickname" type="text" placeholder="输入您的昵称" value="<%= user.nickname %>" /></p>
                             </div>
                             <div>
                                 <p class="label"><label for="bio">个人签名</label></p>
-                                <p class="field"><textarea type="text" name="bio" id="bio" placeholder="输入您的个性签名"><%= data.bio %></textarea></p>
+                                <p class="field"><textarea type="text" name="bio" id="bio" placeholder="输入您的个性签名"><%= user.bio %></textarea></p>
                             </div>
                             <button type="submit" class="btn btn-primary">更新</button>
                         </form>
