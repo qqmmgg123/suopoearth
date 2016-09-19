@@ -3,7 +3,7 @@
                 <li>
                     <div>
                         <p class="user-info">
-                            <a class="avatar" href="/user/<%= ac._belong_u? ac._belong_u._id:ac._belong_u %>"><img src="/images/user_mini.png" /></a>
+                            <a class="avatar" href="/user/<%= ac._belong_u? ac._belong_u._id:ac._belong_u %>"><img width="25" height="25" src="<%= ac._belong_u.avatar %>" /></a>
                             <em class="user-desc">
                             <% if (ac._belong_u) { %>
                             <a href="/user/<%= ac._belong_u._id %>">

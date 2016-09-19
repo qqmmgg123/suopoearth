@@ -12,7 +12,7 @@
 <% } %>
     <div>
         <p class="user-info">
-        <a class="avatar" href="/user/<%= node._belong_u? node._belong_u.id:node._belong_u %>"><img src="/images/user_mini.png" /></a>
+        <a class="avatar" href="/user/<%= node._belong_u? node._belong_u.id:node._belong_u %>"><img width="25" height="25" src="<%= node._belong_u.avatar %>" /></a>
         <em class="username">
             <% if (node._belong_u) { %>
             <a href="/user/<%= node._belong_u.id %>">

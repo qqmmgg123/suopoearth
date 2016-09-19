@@ -3,7 +3,8 @@ var mongoose = require('mongoose')
 , register = require('./register');
 
 var Account = new Schema({
-    avatar        : { type: String, maxlength: 150 },
+    avatar        : { type: String, maxlength: 150, default: '/images/avatar.png' },
+    avatar_mini   : { type: String, maxlength: 150, default: '/images/avatar_mini.png' },
     nickname      : { type: String, required: true, trim: true, minlength: 2, maxlength: 12 },
     bio           : { type: String, trim: true, maxlength: 140 },
     follows       : [{ type: Schema.Types.ObjectId, ref: 'Account', unique: true }],
@@ -23,4 +24,5 @@ Account.index({'dreams':1});
 Account.index({'messages':1});
 Account.index({'_following_d':1});
 Account.plugin(register);
+
 module.exports = mongoose.model('Account', Account);
