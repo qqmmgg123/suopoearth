@@ -1,0 +1,36 @@
+<!DCOTYPE html>
+<html lang="zh-cms-Hans">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title><%= title %></title>
+    <!-- 通用样式 -->
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 9]>
+    <link href="/css/compatible.css" rel="stylesheet" type="text/css" />
+    <![endif]-->
+</head>
+<body>
+    <% include ../partials/header.html %>
+    <div class="container">
+        <div class="settings-area">
+            <% include ../partials/settingsider.html %>
+            <div class="settings-content">
+                <div class="content-area">
+                    <div class="account-form">
+                        <h1>邮箱认证</h1>
+                        <form accept-charset="UTF-8" action="/settings/emails/reverification" method="post">
+                            <div><%= data.error %></div>
+                            <div>您的邮箱地址：<%= user.username %></div>
+                            <button type="submit" class="btn btn-primary">发送认证邮件</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% include ../partials/footer.html %>
+    <% include ../partials/create.html %>
+</body>
+<script data-main="/js/default.js" src="/js/require.js"></script>
+</html>

@@ -1,0 +1,97 @@
+<!DCOTYPE html>
+<html lang="zh-cms-Hans">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title><%= title %></title>
+    <!-- 通用样式 -->
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 9]>
+    <link href="/css/compatible.css" rel="stylesheet" type="text/css" />
+    <![endif]-->
+</head>
+<body>
+    <div class="header t-fixed">
+    <div class="head-con">
+        <ul class="h-left">
+            <li><a href="http://www.suopoearth.com" class="logo"><span class="version">alpha</span></a></li>
+        </ul>
+        <ul class="h-right">
+            <li><a href="/">首页</a></li>
+            <li><a href="/found">看看</a></li>
+            <li><a href="/intro">关于我们</a></li>
+            <% if (user) { %>
+            <li id="message-nav">
+                <div class="message-opt">
+                    <a rel="msg-view" href="javascript:;">消息</a>
+                    <% if (data.messages && data.messages > 0) { %>
+                    <span class="message-new"><%= data.messages %></span>
+                    <% } %>
+                </div>
+                <ul class="dropDown message-list" style="display: none;">
+                </ul>
+            </li>
+            <li>
+                <div class="user-nav">
+                    <a class="user-pic" href="/user/<%= user.id %>"><img src="/images/user_mini.png" /></a>
+                    <a class="user-name" href="/user/<%= user.id %>"><%= user.nickname %></a>
+                    <a href="javascript:;" class="list-arrow">
+                        <i class="arrow-icon"></i>
+                    </a>
+                </div>
+                <ul class="dropDown config-list" style="display: none;">
+                    <li><a href="/settings">设置</a></li>
+                    <li><a href="/signout">退出</a></li>
+                </ul>
+            </li>
+            <% } %>
+        </ul>
+    </div>
+</div>
+<% if (user) { %>
+        <% if (!user.isAuthenticated ) { %>
+        <div class="note-area">
+            <div class="note">注：您的帐号没有经过认证，请确认认证邮件并认证账号以免帐号过期，<a href="/settings/emails">未收到认证邮件点击-></a>。
+            </div>
+        </div>
+        <% } %>
+        <% if (notice) { %>
+        <div class="note-area">
+            <div class="note"><%= notice %></div>
+        </div>
+        <% } %>
+    </div>
+<% } %>
+    <div class="banner for-signin">
+        <div class="banner-bg">
+            <div class="signin-area">
+                <form action="/signin" method="post">
+                    <div><%= error %></div>
+                    <h2>用户登录</h2>
+                    <div>
+                        <p class="label"><label for="username">邮箱</label></p>
+                        <p class="field"><input type="text" id="username" name="username" placeholder="输入用户名" required></p>
+                    </div>
+                    <div>
+                        <p class="label"><label for="password">密码</label></p>
+                        <p class="field"><input type="password" id="password" name="password" placeholder="输入用密码" required autocomplete="off"></p>
+                    </div>
+                    <div class="other-ctrl">
+                        <a class="forget-pwd" href="/forgot">忘记密码 ?</a>
+                        <a class="sign-up" href="/signup" role="button">注册 ></a>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">登录</button>
+                    </div>
+                    <!--<div class="slogan">-->
+                    <!--<p>地球很小，我们的内心很大，我们的内心地球已不够容纳，释放我们内心的想法，让我们的梦想从心起航!！！</p>-->
+                <!--</div>-->
+                </form>
+            </div>
+        </div>
+    </div>
+    <% include ../partials/footer.html %>
+    <% include ../partials/create.html %>
+</body>
+<script data-main="/js/default.js" src="/js/require.js"></script>
+</html>
