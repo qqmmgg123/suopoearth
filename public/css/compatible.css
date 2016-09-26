@@ -1,5 +1,9 @@
 body {
-  font: 14px/1.8 Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.8;
+  word-wrap: break-word;
+  color: #333;
 }
 .clearfix:after {
   clear: both;
@@ -49,4 +53,7 @@ ul.h-right li {
 .banner .signin-area p.field input {
   color: #999;
   width: 210px;
+}
+.container h1.title {
+  font-family: '黑体';
 }

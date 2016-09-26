@@ -155,7 +155,7 @@ function makeCommon(data, res) {
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
-        res.render('error', makeCommon({
+        res.render('pages/error', makeCommon({
             notice: '',
             title: settings.APP_NAME,
             user : req.user,
@@ -169,9 +169,9 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+/*app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', makeCommon({
+    res.render('pages/error', makeCommon({
         notice: '',
         title: settings.APP_NAME,
         user : req.user,
@@ -180,7 +180,7 @@ app.use(function(err, req, res, next) {
         data: {
         }
     }, res));
-});
+});*/
 
 var server = http.createServer(app);
 

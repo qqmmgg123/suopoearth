@@ -115,7 +115,7 @@ router.get('/', function(req, res, next) {
     }
 
     if (!req.user) {
-        /*return res.render('recommand', makeCommon({
+        /*return res.render('pages/recommand', makeCommon({
             title: settings.APP_NAME,
             notice: getFlash(req, 'notice'),
             user : req.user,
@@ -123,7 +123,7 @@ router.get('/', function(req, res, next) {
             },
             success: 1
         }, res));*/
-        res.render('signin', makeCommon({
+        res.render('pages/signin', makeCommon({
             title : settings.APP_NAME,
             notice: getFlash(req, 'notice'),
             error:  getFlash(req, 'info'),
@@ -249,7 +249,7 @@ router.get('/', function(req, res, next) {
                 }
                 activities = activities.slice(0, 10);
 
-                res.render('index', makeCommon({
+                res.render('pages/index', makeCommon({
                     user: req.user,
                     title: settings.APP_NAME,
                     notice: getFlash(req, 'notice'),
@@ -272,7 +272,7 @@ router.get('/', function(req, res, next) {
 }, function(req, res, next) {
     var einfo = req.flash('emailinfo');
 
-    res.render('authenticate', makeCommon({
+    res.render('pages/authenticate', makeCommon({
         title : settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         message: einfo,
@@ -623,7 +623,7 @@ router.get('/dream/:id', function(req, res, next) {
                                     isauthenticated: !!req.user
                                 };
     
-                                res.render('dream', makeCommon({
+                                res.render('pages/dream', makeCommon({
                                     user  : req.user,
                                     title : settings.APP_NAME,
                                     notice: getFlash(req, 'notice'),
@@ -1267,7 +1267,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                 };
     
                 var resRender = function(data) {
-                    res.render('user', makeCommon({
+                    res.render('pages/user', makeCommon({
                         title: settings.APP_NAME,
                         notice: getFlash(req, 'notice'),
                         user : req.user,
@@ -1558,7 +1558,7 @@ router.get('/message', function(req, res) {
 
             var pend = pstart + prand;
 
-            res.render('message', makeCommon({
+            res.render('pages/message', makeCommon({
                 title: settings.APP_NAME,
                 notice: getFlash(req, 'notice'),
                 user : req.user,
@@ -1609,7 +1609,7 @@ router.get('/user/:id([a-z0-9]+)/following', function(req, res) {
             return next(err || unKnowErr);
         }
 
-        res.render('following', makeCommon({
+        res.render('pages/following', makeCommon({
             title: settings.APP_NAME,
             notice: getFlash(req, 'notice'),
             user : req.user,
@@ -1655,7 +1655,7 @@ router.get('/user/:id([a-z0-9]+)/followers', function(req, res) {
             return next(err || unKnowErr);
         }
 
-        res.render('followers', makeCommon({
+        res.render('pages/followers', makeCommon({
             title: settings.APP_NAME,
             notice: getFlash(req, 'notice'),
             user : req.user,
@@ -1732,7 +1732,7 @@ router.get('/settings/profile', function(req, res, next) {
     if (!req.user) {
         res.redirect('/signin');
     } else {
-        res.render('profile', makeCommon({
+        res.render('pages/profile', makeCommon({
             title: settings.APP_NAME,
             notice: getFlash(req, 'notice'),
             user : req.user,
@@ -1751,7 +1751,7 @@ router.get('/settings/account', function(req, res, next) {
                 return next(err);
             };
 
-            res.render('account', makeCommon({
+            res.render('pages/account', makeCommon({
                 title: settings.APP_NAME,
                 notice: getFlash(req, 'notice'),
                 user : req.user,
@@ -1778,7 +1778,7 @@ router.get('/settings/emails', function(req, res, next) {
                 return next(err);
             };
 
-            res.render('emails', makeCommon({
+            res.render('pages/emails', makeCommon({
                 title: settings.APP_NAME,
                 notice: getFlash(req, 'notice'),
                 user : req.user,
@@ -1915,7 +1915,7 @@ router.get('/result', function(req, res, next) {
 
     function reponse(type, data) {
         console.log(data);
-        res.render('result', makeCommon({
+        res.render('pages/result', makeCommon({
             title: settings.APP_NAME,
             notice: getFlash(req, 'notice'),
             user : req.user,
@@ -1982,7 +1982,7 @@ router.get('/result', function(req, res, next) {
 
 // 资源仓库
 /*router.get('/store', function(req, res) {
-    res.render('store', {
+    res.render('pages/store', {
         title: settings.APP_NAME,
         user : req.user,
         data: {
@@ -1994,7 +1994,7 @@ router.get('/result', function(req, res, next) {
 
 // 简介
 router.get('/intro', function(req, res) {
-    res.render('intro', makeCommon({
+    res.render('pages/intro', makeCommon({
         title: settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         user : req.user,
@@ -2006,7 +2006,7 @@ router.get('/intro', function(req, res) {
 
 // 联系我们
 router.get('/contact', function(req, res) {
-    res.render('contact', makeCommon({
+    res.render('pages/contact', makeCommon({
         title: settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         user : req.user,
@@ -2018,7 +2018,7 @@ router.get('/contact', function(req, res) {
 
 // 登录页面
 router.get('/signin', function(req, res) {
-    res.render('signin', makeCommon({
+    res.render('pages/signin', makeCommon({
         title : settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         error:  getFlash(req, 'info'),
@@ -2108,7 +2108,7 @@ router.post('/settings/account/pwdupdate', function(req, res, next) {
 
 // 忘记密码
 router.get('/forgot', function(req, res) {
-    res.render('forgot', makeCommon({
+    res.render('pages/forgot', makeCommon({
         error:  getFlash(req, 'error'),
         title : settings.APP_NAME,
         user: req.user
@@ -2142,7 +2142,7 @@ router.get('/reset/:token([A-Za-z0-9]+)', function(req, res) {
             return res.redirect('/forgot');
         }
 
-        res.render('reset', makeCommon({
+        res.render('pages/reset', makeCommon({
             token : token,
             notice: getFlash(req, 'notice'),
             title : settings.APP_NAME,
@@ -2189,7 +2189,7 @@ router.get('/email-verification/:token([A-Za-z0-9]+)', function(req, res, next) 
 
 // 注册页面
 router.get('/signup', function(req, res) {
-    res.render('signup', makeCommon({
+    res.render('pages/signup', makeCommon({
         info : getFlash(req, 'signuperror'),
         notice: getFlash(req, 'notice'),
         title : settings.APP_NAME,
@@ -2205,7 +2205,7 @@ router.get('/signout', function(req, res) {
 
 // 建设中
 router.get('/building', function(req, res) {
-    res.render('building', makeCommon({
+    res.render('pages/building', makeCommon({
         title: settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         user : req.user
@@ -2214,11 +2214,11 @@ router.get('/building', function(req, res) {
 
 // 建设中
 router.get('/canvas', function(req, res) {
-    res.render('canvas', makeCommon({
+    res.render('pages/canvas', makeCommon({
         title: settings.APP_NAME,
         notice: getFlash(req, 'notice'),
         user : req.user
-     }, res));
+    }, res));
 });
 
 // 创建一个想法
