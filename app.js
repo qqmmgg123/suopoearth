@@ -11,7 +11,7 @@ var path = require('path')
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , log = require('util').log
-  , Message = require("./models/Message");
+  , Message = require("./models/message");
 
 var common = {
     dateBeautify: function(date) {
@@ -85,7 +85,7 @@ app.locals = {
 };
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.set('port', process.env.PORT || 3000)
+app.set('port', process.env.PORT || 8080)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser('suopoearth'));
@@ -189,5 +189,5 @@ reload(server, app)
 //app.listen(3000);
 
 server.listen(app.get('port'), function(){
-    log('express server running on ' + 3000);
+    log('express server running on ' + 8080);
 });
