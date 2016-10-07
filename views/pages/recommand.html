@@ -38,6 +38,14 @@
                 </a>
                 <a href="/user/<%= user._id %>"><%= user.nickname %></a>
                 <p><%= user.bio %></p>
+                <% if (user.dreams[0]) { %>
+                <h4><%= user.dreams[0].title %></h4>
+                <ul>
+                    <% user.dreams[0].nodes.forEach(function(node) { %>
+                        <li><%= node.content %></li>
+                    <% }); %>
+                </ul>
+                <% } %>
             </li>
             <% }); %>
         </ul>

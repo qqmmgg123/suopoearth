@@ -1,5 +1,6 @@
 requirejs.config({
     paths   : {
+        'underscore': 'underscore-min',
         'jquery': 'jquery.min',
         'jplaceholder': 'jquery.placeholder.min',
         'backbone' : 'backbone-min',
@@ -132,6 +133,11 @@ define([
         
                 return new Blob([ia], {type:mimeString});
             }
+
+            $('#avatar-clear').on('click', function() {
+                container = [];
+                draw();
+            });
         
             $('#avatar-save').on('click', function() {
                 var dataURL = canvas.toDataURL(),
@@ -192,6 +198,8 @@ define([
                 $(brushColor).css('opacity', a);
                 thisMovie("flash").changeAlpha(a);
             });
+
+            // TODO 清除画板
 
             $('#avatar-save').on('click', function() {
                 thisMovie("flash").saveImg('/avatar/upload');

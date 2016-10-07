@@ -279,58 +279,36 @@ router.get('/', function(req, res, next) {
 router.get('/recommand', function(req, res) {
     Account
     .find({}, '_id nickname bio avatar dreams')
+    .lean()
     .populate({
         path  : 'dreams',
-        select: "_id title description",
-        options: { limit: 3 },
+        select: "_id title description nodes",
+        options: { 
+            limit: 3,
+            populate: {
+                path: 'nodes',
+                select: "_id content date",
+                option: { limit: 6, lean: true },
+                model: Node
+            },
+            lean: true
+        },
         model : Dream
     })
-    //.lean()
     .exec(function(err, users) {
-        console.log(users);
-
         if (err || !users) {
             users = [];
         }
 
-        var queue = [];
-
-        users.forEach(function(user) {
-            var fun = function(cb) {
-                var dreams = user.dreams || [];
-
-                Node.populate(dreams, { 
-                    path: 'nodes',
-                    select: "_id content date",
-                    option: { limit: 6 },
-                    model: Node
-                }, function(err, nodes) {
-                    if (err || !nodes) {
-                        dreams.forEach(function(dream) {
-                            dream.nodes = [];
-                        });
-                    }
-
-                    console.log(nodes);
-                });
-            }
-
-            queue.push(fun);
-        });
-
-        async.parallel(queue, function(err) {
-            if (err) return next(err);
-
-            res.render('pages/recommand', makeCommon({
-                title: settings.APP_NAME,
-                notice: getFlash(req, 'notice'),
-                user : req.user,
-                data: {
-                    users: users
-                },
-                success: 1
-            }, res));
-        });
+        res.render('pages/recommand', makeCommon({
+            title: settings.APP_NAME,
+            notice: getFlash(req, 'notice'),
+            user : req.user,
+            data: {
+                users: users
+            },
+            success: 1
+        }, res));
     });
 });
 

@@ -15,16 +15,27 @@
     <div class="container canvas-bg">
         <div class="tools">
             <div>
+                <a class="btn">绘制</a>
+                <a class="btn">擦除</a>
+                <div style="display: none;">
+                <form>
+                    <input type="radio" name="mode" value="1" checked>
+                    <input type="radio" name="mode" value="2" checked>
+                </form>
+                </div>
+            </div>
+            <div>
                 <h3>色板</h3>
                 <div class="color-bg">
                     <div id="brush-color" class="color"></div>
                 </div>
             </div>
             <div>
+                <a id="avatar-clear" class="btn">清空画板</a>
                 <a id="avatar-save" class="btn">使用这张图</a>
             </div>
         </div>
-        <div id="canvas" style="width: 960px; height: 960px;">
+        <div id="canvas" class="canvas">
         </div>
     </div>
     <% include ../partials/footer.html %>
