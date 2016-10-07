@@ -1,0 +1,62 @@
+<!DCOTYPE html>
+<html lang="zh-cms-Hans">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title><%= title %></title>
+    <!-- 通用样式 -->
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 9]>
+    <link href="/css/compatible.css" rel="stylesheet" type="text/css" />
+    <![endif]-->
+</head>
+<body>
+    <div class="header t-fixed">
+    <div class="head-con">
+        <ul class="h-left">
+            <li><a href="http://www.suopoearth.com" class="logo"><span class="version">alpha</span></a></li>
+        </ul>
+        <ul class="h-right">
+            <li><a href="/">首页</a></li>
+            <li><a href="/found">看看</a></li>
+            <li><a href="/intro">关于我们</a></li>
+            <li><a href="/signin">登录</a> | <a href="/signup">注册</a></li>
+        </ul>
+    </div>
+    </div>
+
+    <div class="container">
+        我们丢弃了我们的吉他，我们抛弃了我们很多想法。
+        我们需要和自己的内心对话，寻找早已经迷失的自我。
+        分享内心所想、所往、所念
+        <a class="btn">分享</a>
+        <h3>最新加入</h3>
+        <ul class="h-right">
+            <% data.users.forEach(function(user) { %>
+            <li>
+                <a href="/user/<%= user._id %>">
+                    <img width="96" height="96" src="<%= user.avatar %>" />
+                </a>
+                <a href="/user/<%= user._id %>"><%= user.nickname %></a>
+                <p><%= user.bio %></p>
+            </li>
+            <% }); %>
+        </ul>
+    </div>
+    <div class="footer">
+    <div class="company-area">
+        <p class="company-ver">
+        © 2016 深圳娑婆诃科技有限公司 粤ICP备16089330号-1　suopoearth.com 版权所有<br>
+        </p>
+        <div class="company-nav">
+            <a href="/intro">关于我们</a>
+            <a class="contact" href="/contact">联系我们</a>
+            <a class="feedback" href="mailto:290448666@qq.com">反馈建议</a>
+        </div>
+    </div>
+</div>
+    <% include ../partials/signinpop.html %>
+    <% include ../partials/create.html %>
+</body>
+<script data-main="/js/default.js" src="/js/require.js"></script>
+</html>
+
