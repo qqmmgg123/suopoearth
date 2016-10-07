@@ -12,7 +12,7 @@
     <![endif]-->
 </head>
 <body>
-    <% include header.html %>
+    <% include ../partials/header.html %>
     <div class="container">
         <div class="dream-con">
             <div class="dream-left">
@@ -52,7 +52,7 @@
                 <!--<div class="blue-print">-->
                     <!--<h2>蓝图</h2>-->
                     <!--<div>-->
-                        <!--<% include blueprint.html %>-->
+                        <!--<% include ../partials/blueprint.html %>-->
                     <!--</div>-->
                 <!--</div>-->
                 <div class="process-area">
@@ -99,7 +99,7 @@
                         <!--</div>-->
                         <% } %>
                         <div id="node-list">
-                            <% include nodelist.html %>
+                            <% include ../partials/nodelist.html %>
                         </div>
                     </div>
                     <div class="tab-content" style="display: none;">
@@ -209,10 +209,10 @@
     <% if (data.next && data.next.id) {%>
     <a href="/dream/<%= data.next.id %>" class="next-btn">下一个想法</a>
     <% } %>
-    <% include signinpop.html %>
-    <% include create.html %>
-    <% include messagepop.html %>
-    <% include face.html %>
+    <% include ../partials/signinpop.html %>
+    <% include ../partials/create.html %>
+    <% include ../partials/messagepop.html %>
+    <% include ../partials/face.html %>
 </body>
 <script data-main="/js/dream.js" src="/js/require.js"></script>
 </html>

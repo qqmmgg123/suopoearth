@@ -12,9 +12,11 @@ var async = require("async")
     , Node = require("./models/node")
     , Activity = require("./models/activity")
     , Comment = require("./models/comment")
-    , Message = require("./models/Message")
+    , Message = require("./models/message")
     , log = require('util').log
     , router = require('express').Router();
+
+var maxtime = 1500;
 
 var storage = multer.diskStorage({
     destination: './uploads/',
@@ -115,20 +117,7 @@ router.get('/', function(req, res, next) {
     }
 
     if (!req.user) {
-        /*return res.render('pages/recommand', makeCommon({
-            title: settings.APP_NAME,
-            notice: getFlash(req, 'notice'),
-            user : req.user,
-            data: {
-            },
-            success: 1
-        }, res));*/
-        res.render('pages/signin', makeCommon({
-            title : settings.APP_NAME,
-            notice: getFlash(req, 'notice'),
-            error:  getFlash(req, 'info'),
-            user : req.user
-        }, res));
+        return res.redirect('/recommand');
     }
 
     // 查询耗时测试
@@ -266,8 +255,11 @@ router.get('/', function(req, res, next) {
                     success: 1
                 }, res));
 
-                var end = new Date().getTime();
-                console.log('index spend' + (end - start) + 'ms');
+                var spend = end - start;
+                if (spend > maxtime) {
+                    var end = new Date().getTime();
+                    console.log(req.originalUrl + ' spend' + spend + 'ms');
+                }
             });
 }, function(req, res, next) {
     var einfo = req.flash('emailinfo');
@@ -280,6 +272,74 @@ router.get('/', function(req, res, next) {
         data : {
              messages : res.msgs,
         }
+    }, res));
+});
+
+// 推荐页
+router.get('/recommand', function(req, res) {
+    Account
+    .find({}, '_id nickname bio avatar dreams')
+    .populate({
+        path  : 'dreams',
+        select: "_id title description",
+        options: { limit: 3 },
+        model : Dream
+    })
+    //.lean()
+    .exec(function(err, users) {
+        console.log(users);
+
+        if (err || !users) {
+            users = [];
+        }
+
+        var queue = [];
+
+        users.forEach(function(user) {
+            var fun = function(cb) {
+                var dreams = user.dreams || [];
+
+                Node.populate(dreams, { 
+                    path: 'nodes',
+                    select: "_id content date",
+                    option: { limit: 6 },
+                    model: Node
+                }, function(err, nodes) {
+                    if (err || !nodes) {
+                        dreams.forEach(function(dream) {
+                            dream.nodes = [];
+                        });
+                    }
+
+                    console.log(nodes);
+                });
+            }
+
+            queue.push(fun);
+        });
+
+        async.parallel(queue, function(err) {
+            if (err) return next(err);
+
+            res.render('pages/recommand', makeCommon({
+                title: settings.APP_NAME,
+                notice: getFlash(req, 'notice'),
+                user : req.user,
+                data: {
+                    users: users
+                },
+                success: 1
+            }, res));
+        });
+    });
+});
+
+// 建设中
+router.get('/canvas', function(req, res) {
+    res.render('pages/canvas', makeCommon({
+        title: settings.APP_NAME,
+        notice: getFlash(req, 'notice'),
+        user : req.user
     }, res));
 });
 
@@ -630,8 +690,11 @@ router.get('/dream/:id', function(req, res, next) {
                                     data  : resData,
                                     success: 1
                                 }, res));
-                                var end = new Date().getTime();
-                                console.log('dream spend' + (end - start) + 'ms');
+                                var spend = end - start;
+                                if (spend > maxtime) {
+                                    var end = new Date().getTime();
+                                    console.log(req.originalUrl + ' spend' + spend + 'ms');
+                                }
                             }
                         );
                     });
@@ -1275,8 +1338,11 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                         success: 1
                     }, res));
     
-                    var end = new Date().getTime();
-                    console.log('user spend' + (end - start) + 'ms');
+                    var spend = end - start;
+                    if (spend > maxtime) {
+                        var end = new Date().getTime();
+                        console.log(req.originalUrl + ' spend' + spend + 'ms');
+                    }
                 }
     
                 if (req.query && req.query.tab == "activity") {
@@ -1572,8 +1638,12 @@ router.get('/message', function(req, res) {
                 result: 0
             }, res));
 
-            var end = new Date().getTime();
-            console.log('message spend' + (end - start) + 'ms');
+            var spend = end - start;
+            if (spend > maxtime) {
+                var end = new Date().getTime();
+                console.log(req.originalUrl + ' spend' + spend + 'ms');
+            }
+ 
         }
     );
 });
@@ -1619,8 +1689,12 @@ router.get('/user/:id([a-z0-9]+)/following', function(req, res) {
             result: 0
         }, res));
 
-        var end = new Date().getTime();
-        console.log(req.originalUrl + ' spend' + (end - start) + 'ms');
+        var spend = end - start;
+        if (spend > maxtime) {
+            var end = new Date().getTime();
+            console.log(req.originalUrl + ' spend' + spend + 'ms');
+        }
+
     });
 });
 
@@ -1665,8 +1739,12 @@ router.get('/user/:id([a-z0-9]+)/followers', function(req, res) {
             result: 0
         }, res));
 
-        var end = new Date().getTime();
-        console.log(req.originalUrl + ' spend' + (end - start) + 'ms');
+        var spend = end - start;
+        if (spend > maxtime) {
+            var end = new Date().getTime();
+            console.log(req.originalUrl + ' spend' + spend + 'ms');
+        }
+
     });
 });
 
@@ -3235,8 +3313,11 @@ router.post('/comment/new', function(req, res, next) {
                     data.result = 0;
                     res.json(data);
 
-                    var end = new Date().getTime();
-                    console.log('comment new spend' + (end - start) + 'ms');
+                    var spend = end - start;
+                    if (spend > maxtime) {
+                        var end = new Date().getTime();
+                        console.log(req.originalUrl + ' spend' + spend + 'ms');
+                    }
                 });
             }
         );
@@ -3411,8 +3492,11 @@ router.post('/reply/new', function(req, res, next) {
                         data.result = 0;
                         res.json(data);
 
-                        var end = new Date().getTime();
-                        console.log(req.originalUrl + ' spend' + (end - start) + 'ms');
+                        var spend = end - start;
+                        if (spend > maxtime) {
+                            var end = new Date().getTime();
+                            console.log(req.originalUrl + ' spend' + spend + 'ms');
+                        }
                     });
                 });
             }
@@ -3527,8 +3611,11 @@ router.post('/comment/delete', function(req, res, next) {
                 result: 0
             });
 
-            var end = new Date().getTime();
-            console.log(req.originalUrl + ' spend' + (end - start) + 'ms');
+            var spend = end - start;
+            if (spend > maxtime) {
+                var end = new Date().getTime();
+                console.log(req.originalUrl + ' spend' + spend + 'ms');
+            }
         });
     });
 }, function(err, req, res, next) {
