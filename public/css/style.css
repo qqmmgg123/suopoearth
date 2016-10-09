@@ -478,6 +478,15 @@ div.for-signin .banner-bg {
   text-align: center;
   color: #999;
 }
+.recommand-area .wording h2 {
+  text-align: center;
+  font-weight: normal;
+}
+.recommand-area .wording a.btn-big {
+  display: block;
+  width: 100px;
+  margin: 0 auto;
+}
 i.approval-icon,
 i.favrioute-icon,
 i.opposition-icon,
@@ -559,6 +568,11 @@ i.search-icon {
   height: 25px;
   background-color: #000;
 }
+.container.canvas-bg .tools .mode-choose a.on {
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
 .container h1.title {
   text-align: center;
   font-size: 24px;
@@ -578,7 +592,8 @@ i.search-icon {
 .container .settings-area,
 .container .msg-area,
 .container .following-area,
-.container .followers-area {
+.container .followers-area,
+.container .recommand-area {
   text-align: left;
   width: 1026px;
   margin: 0 auto;
@@ -1396,7 +1411,8 @@ a.next-btn {
   text-decoration: underline;
 }
 .footer .company-area .company-nav a.contact:before,
-.footer .company-area .company-nav a.feedback:before {
+.footer .company-area .company-nav a.feedback:before,
+.footer .company-area .company-nav a.feedback:after {
   content: '•';
   margin-right: 3px;
   padding: 0 3px;
@@ -1414,7 +1430,8 @@ a.next-btn {
   text-decoration: underline;
 }
 .r-footer .company-nav a.contact:before,
-.r-footer .company-nav a.feedback:before {
+.r-footer .company-nav a.feedback:before,
+.r-footer .company-nav a.feedback:after {
   content: '•';
   margin-right: 3px;
   padding: 0 3px;

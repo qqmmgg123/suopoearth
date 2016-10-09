@@ -14,18 +14,11 @@
     <% include ../partials/header.html %>
     <div class="container canvas-bg">
         <div class="tools">
-            <div>
-                <a class="btn">绘制</a>
-                <a class="btn">擦除</a>
-                <div style="display: none;">
-                <form>
-                    <input type="radio" name="mode" value="1" checked>
-                    <input type="radio" name="mode" value="2" checked>
-                </form>
-                </div>
+            <div id="mode-choose" class="mode-choose">
+                <a data-ctrl="1" class="btn on">绘制</a>
+                <a data-ctrl="2" class="btn">擦除</a>
             </div>
             <div>
-                <h3>色板</h3>
                 <div class="color-bg">
                     <div id="brush-color" class="color"></div>
                 </div>
@@ -38,8 +31,8 @@
         <div id="canvas" class="canvas">
         </div>
     </div>
-    <% include ../partials/footer.html %>
     <% include ../partials/create.html %>
+    <script data-main="/js/canvas.js" src="/js/require.js"></script>
+    <% include ../partials/footer.html %>
 </body>
-<script data-main="/js/canvas.js" src="/js/require.js"></script>
 </html>

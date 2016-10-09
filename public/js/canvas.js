@@ -13,26 +13,38 @@ define([
    'common',
 ], function ($, common) {
     $(function() {
-        var canvas = document.createElement('canvas'),
+        var KEY_W = 87,
+            KEY_S = 83,
+            B_W = 10;
+
+        var MODE_DRAW = 1,
+            MODE_ERASE = 2;
+
+        var mode = MODE_DRAW;
+
+        var brushColor = document.getElementById('brush-color'),
+            canvas = document.createElement('canvas'),
             gctx = canvas.getContext;
 
         if (gctx && window.FormData) {
             var ctx = canvas.getContext('2d');
 
             if (!ctx) return;
-
-            var KEY_W = 87,
-                KEY_S = 83,
-                B_W = 10;
     
             canvas.width = 960;
             canvas.height = 960;
             document.getElementById('canvas').appendChild(canvas);
 
-            var brushColor = document.getElementById('brush-color'),
-                x = 0,
+            var x = 0,
                 y = 0,
+                r = 0,
+                g = 0,
+                b = 0,
                 a = 1,
+                br = 255,
+                bg = 255,
+                bb = 255,
+                ba = 1,
                 clear = true,
                 container = [];
     
@@ -40,7 +52,7 @@ define([
                 ctx.clearRect(0, 0, 960, 960);
                 for (var i=0;i<container.length;i++) {
                     var child= container[i];
-                    ctx.fillStyle = "rgba(0, 0, 0, " + child.a + ")";
+                    ctx.fillStyle = child.color;
                     ctx.fillRect(child.x, child.y, B_W, B_W);
                 }
             }
@@ -101,12 +113,21 @@ define([
             });
         
             function addChild() {
-                var brush = {
+                var rgba = [r, g, b, a ];
+                switch (mode) {
+                    case 2:
+                        rgba = [br, bg, bb, ba];
+                        break;
+                    default:
+                        break;
+                }
+                var color = 'rgba(' + rgba.join(',') + ')',
+                    brush = {
                     width: B_W,
                     height: B_W,
                     x: x,
                     y: y,
-                    a: a
+                    color: color
                 };
                 container.push(brush);
             }
@@ -133,6 +154,12 @@ define([
         
                 return new Blob([ia], {type:mimeString});
             }
+
+            var $mchoose = $('#mode-choose');
+            $mchoose.on('click', 'a', function() {
+                $mchoose.find('a').removeClass('on');
+                mode = parseInt($(this).addClass('on').data('ctrl'));
+            });
 
             $('#avatar-clear').on('click', function() {
                 container = [];
@@ -182,6 +209,11 @@ define([
                 '<embed type="application/x-shockwave-flash" width="960" height="960" src="/media/canvas.swf" pluginspage="http://www.macromedia.com/go/getflashplayer" name="Web" bgcolor="#ffffff" quality="high" wmode="transparent" scale="noscale" allowScriptAccess="always"></embed>' +
                 '</object>';
 
+            window.jsChangeAlpha = function(ra) {
+                $(brushColor).css('opacity', ra);
+                a = ra;
+            };
+
             $(document).on('keydown', function(e) {
                 var key = e.keyCode;
                 switch(key) {
@@ -194,12 +226,21 @@ define([
                         a = Math.min(1, na);
                         break;
                 }
-        
                 $(brushColor).css('opacity', a);
                 thisMovie("flash").changeAlpha(a);
             });
 
+            var $mchoose = $('#mode-choose');
+            $mchoose.on('click', 'a', function() {
+                $mchoose.find('a').removeClass('on');
+                mode = parseInt($(this).addClass('on').data('ctrl'));
+                thisMovie("flash").changeMode(mode);
+            });
+
             // TODO 清除画板
+            $('#avatar-clear').on('click', function() {
+                thisMovie("flash").clearCanvas();
+            });
 
             $('#avatar-save').on('click', function() {
                 thisMovie("flash").saveImg('/avatar/upload');

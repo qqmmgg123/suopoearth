@@ -12,5 +12,4 @@ define([
    'jquery',
    'common',
 ], function ($, common) {
-    
 });
