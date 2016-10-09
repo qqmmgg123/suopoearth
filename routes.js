@@ -278,42 +278,79 @@ router.get('/', function(req, res, next) {
 
 // 推荐页
 router.get('/recommand', function(req, res) {
-    Dream
-    .find({}, '_id title description nodes _belong_u')
-    .populate({
-
-    Account
-    .find({}, '_id nickname bio avatar dreams')
-    .lean()
-    .populate({
-        path  : 'dreams',
-        select: "_id title description nodes",
-        options: { 
-            limit: 3,
-            populate: {
-                path: 'nodes',
-                select: "_id content date",
-                option: { limit: 6, lean: true },
-                model: Node
-            },
-            lean: true
-        },
-        model : Dream
-    })
-    .exec(function(err, users) {
-        if (err || !users) {
-            users = [];
-        }
-
+    function resData(users, dreams) {
+        console.log(arguments);
         res.render('pages/recommand', makeCommon({
             title: settings.APP_NAME,
             notice: getFlash(req, 'notice'),
             user : req.user,
             data: {
-                users: users
+                users: users,
+                dreams: dreams
             },
             success: 1
         }, res));
+    }
+
+    async.parallel([
+        function(cb) {
+            Dream
+            .find({}, '_id title description nodes _belong_u')
+            .populate([{
+                path: 'nodes',
+                select: "_id content date",
+                option: { limit: 6, lean: true },
+                model: Node
+            }, {
+                path: '_belong_u',
+                select: "_id nickname avatar",
+                option: { lean: true },
+                model: Account
+            }])
+            .exec(function(err, dreams) {
+                if (err || !dreams) {
+                    dreams = [];
+                }
+                cb(dreams);
+            });
+        },
+        function(cb) {
+            Account
+            .find({}, '_id nickname bio avatar dreams')
+            .lean()
+            .populate({
+                path  : 'dreams',
+                select: "_id title description nodes",
+                options: { 
+                    limit: 3,
+                    populate: {
+                        path: 'nodes',
+                        select: "_id content date",
+                        option: { limit: 6, lean: true },
+                        model: Node
+                    },
+                    lean: true
+                },
+                model : Dream
+            })
+            .exec(function(err, users) {
+                if (err || !users) {
+                    users = [];
+                }
+                cb(users);
+            });
+        }
+    ], function(results) {
+        var dreams = [],
+            users  = [];
+
+        console.log(results.length, results);
+        if (results && results.length === 2) {
+            dreams = results[0];
+            users = results[1];
+        }
+        
+        resData(users, dreams);
     });
 });
 
