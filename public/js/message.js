@@ -47,4 +47,6 @@ define([
     };
 
     msgList.init();
+
+    common.statistics();
 });

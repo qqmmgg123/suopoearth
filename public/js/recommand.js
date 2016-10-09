@@ -12,5 +12,7 @@ define([
    'jquery',
    'common',
 ], function ($, common) {
+    
+
     common.statistics();
 });

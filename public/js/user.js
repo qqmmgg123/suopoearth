@@ -87,5 +87,7 @@ define([
 
             aclist.init();
         }
+
+        common.statistics();
     });
 });

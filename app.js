@@ -67,6 +67,9 @@ var app = express();
 app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
 
+// Test directory
+//app.set('views', __dirname + '/mini/html');
+
 // 设置js返回时间格式
 app.set('json replacer', function (key, value) {
   if (this[key] instanceof Date) {
@@ -154,6 +157,7 @@ function makeCommon(data, res) {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
+    console.log(err);
     res.render('pages/error', makeCommon({
         notice: '',
         title: settings.APP_NAME,

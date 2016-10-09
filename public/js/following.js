@@ -50,5 +50,7 @@ define([
 
             followingList.init();
         }
+
+        common.statistics();
     });
 });

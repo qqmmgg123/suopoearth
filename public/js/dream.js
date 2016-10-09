@@ -893,5 +893,7 @@ define([
         $('.team-way').find('a').removeClass('cur');
         $(this).addClass('cur');
     });
+    
+    common.statistics();
 });
 });

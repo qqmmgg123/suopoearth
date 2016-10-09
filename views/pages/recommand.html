@@ -19,44 +19,46 @@
             <li><a href="/">首页</a></li>
             <li><a href="/found">看看</a></li>
             <li><a href="/intro">关于我们</a></li>
-            <li><a href="/signin">登录</a> | <a href="/signup">注册</a></li>
+            <li><a href="/signin">登录</a>&nbsp;|&nbsp;<a href="/signup">注册</a></li>
         </ul>
     </div>
     </div>
 
     <div class="container">
-        <div class="recommand-area">
+        <div id="recommand-area">
             <!--我们丢弃了我们的吉他，我们抛弃了我们很多想法。
             我们需要和自己的内心对话，寻找早已经迷失的自我。-->
-            <div class="wording">
+            <div id="wording">
                 <h2>生活不止苟且，还有远方， 时刻自省，找回迷失的自我，找回我们自己的节奏，和大家一起分享鉴证内心的所想、所往、所念。</h2>
-                <a class="btn btn-big">分享</a>
+                <a id="create_dream_btn" class="btn btn-big">分享</a>
             </div>
-            <h3>最新加入</h3>
-            <ul class="h-right">
-                <% data.users.forEach(function(user) { %>
-                <li>
-                <a href="/user/<%= user._id %>">
-                    <img width="96" height="96" src="<%= user.avatar %>" />
-                </a>
-                <a href="/user/<%= user._id %>"><%= user.nickname %></a>
-                <p><%= user.bio %></p>
-                <% if (user.dreams[0]) { %>
-                <h4><%= user.dreams[0].title %></h4>
-                <ul>
-                    <% user.dreams[0].nodes.forEach(function(node) { %>
-                    <li><%= node.content %></li>
+            <div id="new-users">
+                <h3>最新加入</h3>
+                <ul class="h-right">
+                    <% data.users.forEach(function(user) { %>
+                    <li>
+                    <a href="/user/<%= user._id %>">
+                        <img width="96" height="96" src="<%= user.avatar %>" />
+                    </a>
+                    <a href="/user/<%= user._id %>"><%= user.nickname %></a>
+                    <p><%= user.bio %></p>
+                    <% if (user.dreams[0]) { %>
+                    <h4><%= user.dreams[0].title %></h4>
+                    <ul>
+                        <% user.dreams[0].nodes.forEach(function(node) { %>
+                        <li><%= node.content %></li>
+                        <% }); %>
+                    </ul>
+                    <% } %>
+                    </li>
                     <% }); %>
                 </ul>
-                <% } %>
-                </li>
-                <% }); %>
-            </ul>
+            </div>
+            <div id="new-dreams">
+                <h3>最新</h3>
+            </div>
         </div>
     </div>
-    <% include ../partials/signinpop.html %>
-    <% include ../partials/create.html %>
-    <script data-main="/js/default.js" src="/js/require.js"></script>
     <div class="footer">
         <div class="company-area">
             <p class="company-ver">
@@ -66,10 +68,12 @@
                 <a href="/intro">关于我们</a>
                 <a class="contact" href="/contact">联系我们</a>
                 <a class="feedback" href="mailto:290448666@qq.com">反馈建议</a>
-                <% include ../partials/statistics.html %>
             </div>
         </div>
     </div>
+    <% include ../partials/signinpop.html %>
+    <% include ../partials/create.html %>
+    <script data-main="/js/recommand.js" src="/js/require.js"></script>
 </body>
 </html>
 

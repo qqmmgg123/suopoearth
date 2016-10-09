@@ -74,5 +74,7 @@ define([
             }
             return validate;
         });
+
+        common.statistics();
     });   
 });

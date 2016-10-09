@@ -14,7 +14,8 @@ var async = require("async")
     , Comment = require("./models/comment")
     , Message = require("./models/message")
     , log = require('util').log
-    , router = require('express').Router();
+    , router = require('express').Router()
+    , Promise = require('mpromise');
 
 var maxtime = 1500;
 
@@ -277,6 +278,10 @@ router.get('/', function(req, res, next) {
 
 // 推荐页
 router.get('/recommand', function(req, res) {
+    Dream
+    .find({}, '_id title description nodes _belong_u')
+    .populate({
+
     Account
     .find({}, '_id nickname bio avatar dreams')
     .lean()
@@ -1970,7 +1975,6 @@ router.get('/result', function(req, res, next) {
     }
 
     function reponse(type, data) {
-        console.log(data);
         res.render('pages/result', makeCommon({
             title: settings.APP_NAME,
             notice: getFlash(req, 'notice'),

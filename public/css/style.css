@@ -478,14 +478,20 @@ div.for-signin .banner-bg {
   text-align: center;
   color: #999;
 }
-.recommand-area .wording h2 {
+#wording {
+  padding: 10px;
+}
+#wording h2 {
   text-align: center;
   font-weight: normal;
 }
-.recommand-area .wording a.btn-big {
+#wording a.btn-big {
   display: block;
   width: 100px;
   margin: 0 auto;
+}
+#new-users {
+  padding: 10px;
 }
 i.approval-icon,
 i.favrioute-icon,
@@ -593,7 +599,7 @@ i.search-icon {
 .container .msg-area,
 .container .following-area,
 .container .followers-area,
-.container .recommand-area {
+.container #recommand-area {
   text-align: left;
   width: 1026px;
   margin: 0 auto;
@@ -1411,8 +1417,7 @@ a.next-btn {
   text-decoration: underline;
 }
 .footer .company-area .company-nav a.contact:before,
-.footer .company-area .company-nav a.feedback:before,
-.footer .company-area .company-nav a.feedback:after {
+.footer .company-area .company-nav a.feedback:before {
   content: '•';
   margin-right: 3px;
   padding: 0 3px;
@@ -1430,8 +1435,7 @@ a.next-btn {
   text-decoration: underline;
 }
 .r-footer .company-nav a.contact:before,
-.r-footer .company-nav a.feedback:before,
-.r-footer .company-nav a.feedback:after {
+.r-footer .company-nav a.feedback:before {
   content: '•';
   margin-right: 3px;
   padding: 0 3px;

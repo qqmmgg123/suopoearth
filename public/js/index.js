@@ -207,5 +207,7 @@ define([
         };
 
         fdreamList.init();
+
+        common.statistics();
     });
 });

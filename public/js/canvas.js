@@ -246,5 +246,7 @@ define([
                 thisMovie("flash").saveImg('/avatar/upload');
             });
         }
+
+        common.statistics();
     });
 });

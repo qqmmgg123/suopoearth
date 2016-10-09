@@ -495,18 +495,20 @@ div.for-signin {
     }
 }
 
-.recommand-area {
-    .wording {
-        h2 {
-            text-align: center;
-            font-weight: normal;
-        }
-        a.btn-big {
-            display: block;
-            width: 100px;
-            margin: 0 auto;
-        }
+#wording {
+    padding: 10px;
+    h2 {
+        text-align: center;
+        font-weight: normal;
     }
+    a.btn-big {
+        display: block;
+        width: 100px;
+        margin: 0 auto;
+    }
+}
+#new-users {
+    padding: 10px;
 }
 
 i.approval-icon, i.favrioute-icon, i.opposition-icon, i.comment-icon, i.support-icon, i.config-icon, i.arrow-icon, i.remove-icon, i.search-icon {
@@ -600,7 +602,7 @@ i.search-icon {
         .wrap();
     }
     .store-area, .team-area, .note, .search-area, .settings-area, .msg-area
-    , .following-area, .followers-area, .recommand-area {
+    , .following-area, .followers-area, #recommand-area {
         text-align: left;
         width: 1026px;
         margin: 0 auto;
@@ -1421,7 +1423,7 @@ a.next-btn {
                     text-decoration: underline;
                 }
             }
-            a.contact:before, a.feedback:before, a.feedback:after {
+            a.contact:before, a.feedback:before {
                 content: '•';
                 margin-right: 3px;
                 padding: 0 3px;
@@ -1443,7 +1445,7 @@ a.next-btn {
                 text-decoration: underline;
             }
         }
-        a.contact:before, a.feedback:before, a.feedback:after {
+        a.contact:before, a.feedback:before {
             content: '•';
             margin-right: 3px;
             padding: 0 3px;
