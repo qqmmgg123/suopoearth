@@ -311,7 +311,7 @@ router.get('/recommand', function(req, res) {
                 if (err || !dreams) {
                     dreams = [];
                 }
-                cb(dreams);
+                cb(null, dreams);
             });
         },
         function(cb) {
@@ -337,14 +337,13 @@ router.get('/recommand', function(req, res) {
                 if (err || !users) {
                     users = [];
                 }
-                cb(users);
+                cb(null, users);
             });
         }
-    ], function(results) {
+    ], function(err, results) {
         var dreams = [],
             users  = [];
 
-        console.log(results.length, results);
         if (results && results.length === 2) {
             dreams = results[0];
             users = results[1];

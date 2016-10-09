@@ -490,7 +490,8 @@ div.for-signin .banner-bg {
   width: 100px;
   margin: 0 auto;
 }
-#new-users {
+#new-users,
+#new-dreams {
   padding: 10px;
 }
 i.approval-icon,
