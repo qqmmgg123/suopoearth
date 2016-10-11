@@ -35,7 +35,7 @@ body {
     text-align: center;
 }
 
-body, ol, ul, li, h1, p, form, button {
+body, ol, ul, li, h1, h4, p, form, button {
     margin: 0;
     padding: 0;
 }
@@ -509,6 +509,53 @@ div.for-signin {
 }
 #new-users, #new-dreams {
     padding: 10px;
+}
+#new-users {
+    > ul {
+        overflow: hidden;
+        > li {
+            div.new-user {
+                border: 1px solid #eaeaea;
+                border-radius: 5px;
+                padding: 10px;
+                margin-right: 10px;
+            }
+            width: 30%;
+            float: left;
+        }
+    }
+
+    .user-info {
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eaeaea;
+        overflow: hidden;
+        .user-avatar {
+            float: left;
+        }
+        .user-name {
+            padding: 10px 0;
+            margin-left: 10px;
+            width: 160px;
+            float: left;
+            .user-bio {
+                color: #808080;
+                font-size: 12px;
+            }
+        }
+    }
+
+    .user-dream {
+        h4 {
+            padding: 10px 0;
+        }
+        .dream-nodes {
+            color: #808080;
+            font-size: 12px;
+            li {
+                padding-bottom: 5px;
+            }
+        }
+    }
 }
 
 i.approval-icon, i.favrioute-icon, i.opposition-icon, i.comment-icon, i.support-icon, i.config-icon, i.arrow-icon, i.remove-icon, i.search-icon {

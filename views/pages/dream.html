@@ -24,9 +24,9 @@
                     <!--<a href="javascript:;" class="tag-add"></a>-->
                 <!--</div>-->
                 <div class="content-area">
-                    <h1 class="title"><%= data.current.title %></h1>
+                    <h1 id="sharetitle" class="title"><%= data.current.title %></h1>
                     <% if (data.current.description) { %>
-                    <p class="content"><%= data.current.description %></p>
+                    <p id="shareintro" class="content"><%= data.current.description %></p>
                     <% } %>
                 </div>
                 <div data-did="<%= data.current.id %>" data-blid="<%= data.current.id %>" data-bl="0" class="dream-ctrl ctrl-area">
@@ -38,6 +38,16 @@
                             <!--<li>-->
                                 <!--<a class="comment" href="javascript:;"><i class="comment-icon"></i>提议 <%= data.current.comments.length %></a>-->
                             <!--</li>-->
+                            <li>
+                                <a href="javascript:;" class="share-btn">分享到</a>
+                                <ul class="share-ctrl">
+                                    <li><a id="xlwb_share" href="javascript:;" class="sina-icon">新浪微博</a></li>
+                                    <li><a id="qqwb_share" href="javascript:;" class="qq-icon">腾讯微博</a></li>
+                                    <li><a id="db_share" href="javascript:;" class="dou-icon">豆瓣</a></li>
+                                    <li><a href="javascript:;" class="ren-icon">人人</a></li>
+                                    <li><a href="javascript:;" class="wei-icon">微信</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                     <div class="comment-area" style="display: none;">

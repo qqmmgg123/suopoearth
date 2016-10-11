@@ -13,6 +13,7 @@ ol,
 ul,
 li,
 h1,
+h4,
 p,
 form,
 button {
@@ -493,6 +494,47 @@ div.for-signin .banner-bg {
 #new-users,
 #new-dreams {
   padding: 10px;
+}
+#new-users > ul {
+  overflow: hidden;
+}
+#new-users > ul > li {
+  width: 30%;
+  float: left;
+}
+#new-users > ul > li div.new-user {
+  border: 1px solid #eaeaea;
+  border-radius: 5px;
+  padding: 10px;
+  margin-right: 10px;
+}
+#new-users .user-info {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eaeaea;
+  overflow: hidden;
+}
+#new-users .user-info .user-avatar {
+  float: left;
+}
+#new-users .user-info .user-name {
+  padding: 10px 0;
+  margin-left: 10px;
+  width: 160px;
+  float: left;
+}
+#new-users .user-info .user-name .user-bio {
+  color: #808080;
+  font-size: 12px;
+}
+#new-users .user-dream h4 {
+  padding: 10px 0;
+}
+#new-users .user-dream .dream-nodes {
+  color: #808080;
+  font-size: 12px;
+}
+#new-users .user-dream .dream-nodes li {
+  padding-bottom: 5px;
 }
 i.approval-icon,
 i.favrioute-icon,

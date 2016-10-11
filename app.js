@@ -157,7 +157,6 @@ function makeCommon(data, res) {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    console.log(err);
     res.render('pages/error', makeCommon({
         notice: '',
         title: settings.APP_NAME,

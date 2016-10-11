@@ -279,7 +279,6 @@ router.get('/', function(req, res, next) {
 // 推荐页
 router.get('/recommand', function(req, res) {
     function resData(users, dreams) {
-        console.log(arguments);
         res.render('pages/recommand', makeCommon({
             title: settings.APP_NAME,
             notice: getFlash(req, 'notice'),
