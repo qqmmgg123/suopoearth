@@ -298,7 +298,7 @@ router.get('/recommand', function(req, res) {
             .populate([{
                 path: 'nodes',
                 select: "_id content date",
-                option: { limit: 6, lean: true },
+                option: { limit: 6, lean: true, sort: "-date" },
                 model: Node
             }, {
                 path: '_belong_u',
@@ -306,6 +306,7 @@ router.get('/recommand', function(req, res) {
                 option: { lean: true },
                 model: Account
             }])
+            .sort("-date")
             .exec(function(err, dreams) {
                 if (err || !dreams) {
                     dreams = [];
@@ -325,13 +326,14 @@ router.get('/recommand', function(req, res) {
                     populate: {
                         path: 'nodes',
                         select: "_id content date",
-                        option: { limit: 6, lean: true },
+                        option: { limit: 6, lean: true, sort: "-date" },
                         model: Node
                     },
                     lean: true
                 },
                 model : Dream
             })
+            .sort("-date")
             .exec(function(err, users) {
                 if (err || !users) {
                     users = [];

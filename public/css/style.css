@@ -1,10 +1,5 @@
-@font-face {
-  font-family: Microsoft YaHei Font;
-  src: url('/font/msyh/msyh.eot');
-  src: url('/font/msyh/msyh.eot?#iefix') format('embedded-opentype'), url('/font/msyh/msyh.woff') format('woff'), url('/font/msyh/msyh.ttf') format('truetype'), url('/font/msyh/msyh.svg#msyh') format('svg');
-}
 body {
-  font: 14px/1.8 Microsoft YaHei, Microsoft YaHei Font, Helvetica, Arial, sans-serif;
+  font: 14px/1.8 Microsoft YaHei, Helvetica, Arial, sans-serif;
   width: 100%;
   text-align: center;
 }
@@ -28,7 +23,7 @@ button {
 }
 input,
 textarea {
-  font: 12px/1.5 Microsoft YaHei;
+  font: 12px/1.5 Microsoft YaHei, Helvetica, Arial, sans-serif;
   padding: 2px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -499,8 +494,11 @@ div.for-signin .banner-bg {
   overflow: hidden;
 }
 #new-users > ul > li {
-  width: 30%;
+  width: 33%;
   float: left;
+}
+#new-users > ul > li.last div.new-user {
+  margin-right: 0;
 }
 #new-users > ul > li div.new-user {
   border: 1px solid #eaeaea;
@@ -535,6 +533,37 @@ div.for-signin .banner-bg {
 }
 #new-users .user-dream .dream-nodes li {
   padding-bottom: 5px;
+}
+#new-dreams .dream-head {
+  overflow: hidden;
+}
+#new-dreams .dream-title {
+  float: left;
+}
+#new-dreams .dream-desc {
+  padding: 10px 0;
+}
+#new-dreams .user-info {
+  float: right;
+  overflow: hidden;
+}
+#new-dreams .user-info .user-name {
+  color: #808080;
+  margin-right: 5px;
+}
+#new-dreams .user-info .user-name,
+#new-dreams .user-info .user-avatar {
+  float: right;
+}
+#new-dreams .dream-story {
+  color: #808080;
+  font-size: 12px;
+}
+#new-dreams .dream-story > li {
+  padding: 5px 0;
+}
+#new-dreams .dream-story > li .story-date {
+  color: #999;
 }
 i.approval-icon,
 i.favrioute-icon,

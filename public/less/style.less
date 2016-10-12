@@ -20,17 +20,8 @@
     display: block
 }
 
-@font-face {
-    font-family: Microsoft YaHei Font;
-    src: url('/font/msyh/msyh.eot');
-    src: url('/font/msyh/msyh.eot?#iefix') format('embedded-opentype'),
-    url('/font/msyh/msyh.woff') format('woff'),
-    url('/font/msyh/msyh.ttf')  format('truetype'),
-    url('/font/msyh/msyh.svg#msyh') format('svg');
-}
-
 body {
-    font:14px/1.8 Microsoft YaHei, Microsoft YaHei Font, Helvetica,Arial,sans-serif;
+    font:14px/1.8 Microsoft YaHei, Helvetica, Arial, sans-serif;
     width:100%;
     text-align: center;
 }
@@ -49,7 +40,7 @@ button {
 }
 
 input, textarea {
-    font:12px/1.5 Microsoft YaHei;
+    font:12px/1.5 Microsoft YaHei, Helvetica, Arial, sans-serif;
     padding: 2px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -514,13 +505,18 @@ div.for-signin {
     > ul {
         overflow: hidden;
         > li {
+            &.last {
+                div.new-user {
+                    margin-right: 0;
+                }
+            }
             div.new-user {
                 border: 1px solid #eaeaea;
                 border-radius: 5px;
                 padding: 10px;
                 margin-right: 10px;
             }
-            width: 30%;
+            width: 33%;
             float: left;
         }
     }
@@ -553,6 +549,39 @@ div.for-signin {
             font-size: 12px;
             li {
                 padding-bottom: 5px;
+            }
+        }
+    }
+}
+
+#new-dreams {
+    .dream-head {
+        overflow: hidden;
+    }
+    .dream-title {
+        float: left;
+    }
+    .dream-desc {
+        padding: 10px 0;
+    }
+    .user-info {
+        float: right;
+        overflow: hidden;
+        .user-name {
+            color: #808080;
+            margin-right: 5px;
+        }
+        .user-name, .user-avatar {
+            float: right;
+        }
+    }
+    .dream-story {
+        color: #808080;
+        font-size: 12px;
+        > li {
+            padding: 5px 0;
+            .story-date {
+                color: #999;
             }
         }
     }

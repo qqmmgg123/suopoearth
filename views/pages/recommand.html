@@ -2,6 +2,9 @@
 <html lang="zh-cms-Hans">
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="生活不止苟且，还有远方， 时刻自省，找回迷失的自我，找回我们自己的节奏，和大家一起分享鉴证内心的所想、所往、所念。">
+    <meta name="keywords" content="娑婆世界,做自己,分享想法,梦想">
     <title><%= title %></title>
     <!-- 通用样式 -->
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
@@ -36,8 +39,8 @@
                 <h3>最新加入</h3>
                 <ul>
                     <% if (data.users && data.users.length > 0) { %>
-                    <% data.users.forEach(function(user) { %>
-                    <li>
+                    <% data.users.forEach(function(user, i) { %>
+                    <li <% if (i == (data.users.length - 1)) { %> class="last"<% } %>>
                     <div class="new-user">
                         <div class="user-info">
                             <div class="user-avatar">
@@ -54,6 +57,7 @@
                             <% if (user.dreams && user.dreams.length > 0) { %>
                             <% if (user.dreams[0]) { %>
                             <h4><a href="/dream/<%= user.dreams[0]._id %>"><%= user.dreams[0].title %></a></h4>
+                            <p><%= user.dreams[0].description %></p>
                             <ul class="dream-nodes">
                                 <% if (user.dreams[0].nodes && user.dreams[0].nodes.length > 0) { %>
                                 <% user.dreams[0].nodes.forEach(function(node) { %>
@@ -72,23 +76,33 @@
             </div>
             <div id="new-dreams">
                 <h3>最新分享</h3>
-                <ul class="h-right">
+                <ul>
                     <% if (data.dreams && data.dreams.length > 0) { %>
                     <% data.dreams.forEach(function(dream) { %>
                     <li>
-                    <a href="/user/<%= dream._belong_u._id %>">
-                        <img width="25" height="25" src="<%= dream._belong_u.avatar %>" />
-                    </a>
-                    <a href="/user/<%= dream._belong_u._id %>"><%= dream._belong_u.nickname %></a>
-                    <h4><a href="/dream/<%= dream._id %>"><%= dream.title %></a></h4>
-                    <p><%= dream.description %></p>
-                    <ul>
-                        <% if (dream.nodes && dream.nodes.length > 0) { %>
-                        <% dream.nodes.forEach(function(node) { %>
-                        <li><%= node.content %></li>
-                        <% }); %>
-                        <% } %>
-                    </ul>
+                        <div class="dream-head">
+                            <div class="dream-title">
+                                <h4><a href="/dream/<%= dream._id %>"><%= dream.title %></a></h4>
+                            </div>
+                            <div class="user-info">
+                                <a class="user-avatar" href="/user/<%= dream._belong_u._id %>">
+                                    <img width="25" height="25" src="<%= dream._belong_u.avatar %>" />
+                                </a>
+                                <a class="user-name" href="/user/<%= dream._belong_u._id %>"><%= dream._belong_u.nickname %></a>
+                            </div>
+                        </div>
+                        <p class="dream-desc"><%= dream.description %></p>
+                        <ul class="dream-story">
+                            <% if (dream.nodes && dream.nodes.length > 0) { %>
+                            <% dream.nodes.forEach(function(node) { %>
+                            <li>
+                                <p>
+                                <span class="story-date"><%= timeFormat(node.date) %>&nbsp;--•--&nbsp;</span><%= node.content %>
+                                </p>
+                            </li>
+                            <% }); %>
+                            <% } %>
+                        </ul>
                     </li>
                     <% }); %>
                     <% } %>
