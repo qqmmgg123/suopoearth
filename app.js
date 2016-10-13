@@ -28,7 +28,7 @@ var common = {
             var cHour   = date.getHours();
             var amCHour = cHour - 12;
             var cMStr   = this.dateFormat(date, 'mm:ss');
-            var str     = time <= 12? '上午 ' + cstr:'下午 ' + (amCHour < 10? amCHour: '0' + amCHour) + ':' + cMStr;
+            var str     = time <= 12? '上午 ' + cHStr:'下午 ' + (amCHour < 10? amCHour: '0' + amCHour) + ':' + cMStr;
             return str;
         }else if (currTime < today && currTime >= yesterday) {
             return "昨天 " + cHStr;

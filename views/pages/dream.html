@@ -140,8 +140,11 @@
                         </a>
                         <a class="author-name" href="/user/<%= data.author.id %>"><%= data.author.nickname %></a>
                         <p class="admonition"><%= data.author.bio %></p>
+
                     </div>
-                    <!--<p class="author-ctrl">
+                    <p class="author-ctrl">
+                        <% if (user) { %>
+                        <% if (!data.author._id.equals(user._id)) { %>
                         <% if (data.author.isfollow) { %>
                         <button data-isfollow="<%= data.author.isfollow %>" data-fid="<%= data.author.id %>" class="follow btn">
                             取消关注
@@ -151,8 +154,14 @@
                             关注
                         </button>
                         <% } %>
-                        <button class="message-add btn">打招呼</button>
-                    </p>-->
+                        <% } %>
+                        <% } else { %>
+                        <button data-isfollow="<%= data.author.isfollow %>" data-fid="<%= data.author.id %>" class="follow btn">
+                            关注
+                        </button>
+                        <% } %>
+                        <!--<button class="message-add btn">打招呼</button>-->
+                    </p>
                 </div>
                 <div class="member">
                     <h2><%= data.membercount %>人关注了该想法</h2>
@@ -161,14 +170,22 @@
                             <% data.members.forEach(function(member) { %>
                             <li>
                                 <div class="friend">
-                                    <a href="/user/<%= member.id %>"><img width="48" height="48" src="<%= data.author.avatar %>" /></a>
+                                    <a href="/user/<%= member.id %>"><img width="48" height="48" src="<%= member.avatar %>" /></a>
                                     <div class="tips" style="display: none;">
                                         <div><%= member.nickname %></div>
                                         <p>
+                                            <% if (user) { %>
+                                            <% if (!member._id.equals(user._id)) { %>
                                             <% if (member.isfollow) { %>
                                             <button data-isfollow="<%= member.isfollow %>" data-fid="<%= member.id %>" class="follow btn">
                                                 取消关注
                                             </button>
+                                            <% } else { %>
+                                            <button data-isfollow="<%= member.isfollow %>" data-fid="<%= member.id %>" class="follow btn">
+                                                关注
+                                            </button>
+                                            <% } %>
+                                            <% } %>
                                             <% } else { %>
                                             <button data-isfollow="<%= member.isfollow %>" data-fid="<%= member.id %>" class="follow btn">
                                                 关注

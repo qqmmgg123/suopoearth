@@ -15,9 +15,10 @@
     <div class="container">
         <div class="following-area">
         <ul id="following-list">
-        <% if (data.following) { %>
+            <% if (data.following && data.following.length > 0) { %>
         <% data.following.forEach(function(follow) { %>
         <li>
+            <a href="/user/<%= follow._id %>"><img width="48" height="48" src="<%= follow.avatar %>"></a>
             <a href="/user/<%= follow._id %>"><%= follow.nickname %></a>
             <% if (user) { %>
             <% if (!follow._id.equals(user._id)) { %>
@@ -39,11 +40,14 @@
             <!--<a rel="user-follow" class="btn">关注</a>-->
         </li>
         <% }); %>
+        <% } else { %>
+        <li><%= (data.isme? "您":"他") %>还没有关注任何人&nbsp;<a href="/found" class="btn">去看看</a></li>
         <% } %>
         </ul>
         </div>
     </div>
     <% include ../partials/footer.html %>
+    <% include ../partials/signinpop.html %>
     <% include ../partials/create.html %>
     <script data-main="/js/following.js" src="/js/require.js"></script>
 </body>

@@ -375,6 +375,7 @@ router.get('/dream/:id', function(req, res, next) {
 
     var populate = [{
         path: '_belong_u',
+        select: '_id nickname avatar bio fans'
     }];
 
     if (req.user) {
@@ -671,7 +672,8 @@ router.get('/dream/:id', function(req, res, next) {
                                     return next(noExistErr);
                                 }
     
-                                var accounts = results[0][1]? results[0][1]:[];
+                                var accounts = results[0][1]? results[0][1]:[],
+                                    author   = dream._belong_u;
                         
                                 if (req.user) {
                                     var uid = req.user.id;
@@ -680,10 +682,12 @@ router.get('/dream/:id', function(req, res, next) {
                                     accounts.forEach(function(account) {
                                         account.isfollow = (account.fans.indexOf(_uid)!== -1);
                                     });
+
+                                    author.isfollow = (author.fans.indexOf(_uid)!== -1)
                                 }
     
                                 var resData = {
-                                    author     : dream._belong_u,
+                                    author     : author,
                                     membercount: results[0][0]? results[0][0]:0,
                                     members    : accounts,
                                     prev       : results[1][0],
@@ -1670,15 +1674,25 @@ router.get('/message', function(req, res) {
 
 // 关注的人
 router.get('/user/:id([a-z0-9]+)/following', function(req, res) {
-    if (!req.user) {
-        return res.redirect('/signin');
-    }
-
     var curId   = req.params.id;
+    
+    var isMe    = false;
 
     var fields = {
         'fans': curId
     };
+
+    var populate = [];
+
+    if (req.user) {
+        isMe    = curId === req.user.id;
+        populate = {
+           path  : 'fans',
+           match : { _id: req.user.id},
+           select: "_id",
+           model : Account
+        };
+    }
 
     // 查询耗时测试
     var start = new Date().getTime();
@@ -1687,12 +1701,7 @@ router.get('/user/:id([a-z0-9]+)/following', function(req, res) {
     .lean()
     .select('_id nickname avatar fans')
     .sort('-date')
-    .populate({
-        path  : 'fans',
-        match : { _id: req.user.id},
-        select: "_id",
-        model : Account
-    })
+    .populate(populate)
     .exec(function(err, following) {
         if (err || !following) {
             var unKnowErr = new Error('未知错误。');
@@ -1704,7 +1713,8 @@ router.get('/user/:id([a-z0-9]+)/following', function(req, res) {
             notice: getFlash(req, 'notice'),
             user : req.user,
             data: {
-                following: following
+                following: following,
+                isme: isMe
             },
             result: 0
         }, res));
@@ -1720,15 +1730,26 @@ router.get('/user/:id([a-z0-9]+)/following', function(req, res) {
 
 // 粉丝页
 router.get('/user/:id([a-z0-9]+)/followers', function(req, res) {
-    if (!req.user) {
-        return res.redirect('/signin');
-    }
-
     var curId   = req.params.id;
+
+    var isMe    = false;
 
     var fields = {
         'follows': curId
     };
+
+    var populate = [];
+
+    if (req.user) {
+        isMe    = curId === req.user.id;
+
+        populate = {
+           path  : 'fans',
+           match : { _id: req.user.id},
+           select: "_id",
+           model : Account
+        };
+    }
 
     // 查询耗时测试
     var start = new Date().getTime();
@@ -1737,12 +1758,7 @@ router.get('/user/:id([a-z0-9]+)/followers', function(req, res) {
     .lean()
     .select('_id avatar nickname fans')
     .sort('-date')
-    .populate({
-        path  : 'fans',
-        match : { _id: req.user.id},
-        select: "_id",
-        model : Account
-    })
+    .populate(populate)
     .exec(function(err, followers) {
         if (err || !followers) {
             var unKnowErr = new Error('未知错误。');
@@ -1754,7 +1770,8 @@ router.get('/user/:id([a-z0-9]+)/followers', function(req, res) {
             notice: getFlash(req, 'notice'),
             user : req.user,
             data: {
-                followers: followers
+                followers: followers,
+                isme: isMe
             },
             result: 0
         }, res));
@@ -2391,7 +2408,7 @@ router.post('/dream/new', function(req, res, next) {
         ], function(err, results) {
             if (err) return next(err);
 
-            res.redirect('/');
+            res.redirect('/dream/' + dream._id);
         });
     });
 });
