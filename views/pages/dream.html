@@ -93,7 +93,7 @@
                                     <!--<li><a href="javascript:;" class="pic-add"><i class="pic-icon"></i>添加图片</a></li>-->
                                     <!--<li><a href="javascript:;" class="video-add"><i class="video-icon"></i>添加视频</a></li>-->
                                     <!--<li><a href="/store" class="more-add"><i class="more-icon"></i>更多资源</a></li>-->
-                                    <li class="textarea-field"><textarea placeholder="分享一下你的心路故事..." name="content"></textarea></li>
+                                    <li class="textarea-field"><textarea id="story-editor" placeholder="分享一下你的心路故事..." name="content"></textarea></li>
                                     <li style="display: none;"><input name="did" type="hidden" value="<%= data.current.id %>" /></li>
                                 </ul>
                                 <div class="edit-ctrl">
@@ -239,7 +239,6 @@
     <% include ../partials/signinpop.html %>
     <% include ../partials/create.html %>
     <% include ../partials/messagepop.html %>
-    <% include ../partials/face.html %>
     <script data-main="/js/dream.js" src="/js/require.js"></script>
 </body>
 </html>

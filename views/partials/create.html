@@ -15,7 +15,11 @@
         <div class="dream-area">
             <form action="/dream/new" method="post">
                 <div><p class="field"><input type="text" name="title" placeholder="想法标题..." /></p></div>
-                <div><p class="field"><textarea name="description" placeholder="想法概要..."></textarea></p></div>
+                <div class="desc-head">
+                    <a href="javascript:;" title="表情" alt="表情" class="desc-face">(∩＿∩)</a>
+                    想法概要（可选）
+                </div>
+                <div><p class="field"><textarea id="dream-desc" name="description" placeholder="想法概要..."></textarea></p></div>
                 <!--<div>
                     <p class="field"><input id="public" name="sharestate" type="radio" value="0" /></p>
                     <p class="label"><label for="public">共享</label></p>
@@ -32,3 +36,4 @@
         </div>
     </div>
 </div>
+<% include ../partials/face.html %>
