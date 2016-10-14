@@ -122,10 +122,6 @@ var share1= new shareaside({
 });
 share1.init();
 
-
-/*  |xGv00|4decdb7701326b7988bfc91295157161 */
-
-
     $(function() {
         // 绑定用户操作
         common.bindUserCtrl();
@@ -846,27 +842,7 @@ share1.init();
             }
         });
 
-        // 添加表情
-        var $face_tips = $('.face-tips');
-        var $curFaceEdit = null;
-        $('.face').mouseenter(function() {
-            var pos = $(this).offset();
-            $curFaceEdit = $(this).closest('.edit-area').find('textarea');
-            $face_tips.css({
-                left: pos.left,
-                top: pos.top + $(this).height()
-            }).show();
-        }).mouseleave(function(e) {
-            if (e.toElement !== $face_tips[0] && !$.contains($face_tips[0], e.toElement)) {
-                $face_tips.hide();
-            }
-        });
-        $face_tips.mouseleave(function() {
-            $(this).hide();
-        }).on('click', 'a', function() {
-            $curFaceEdit.val($curFaceEdit.val() + $(this).text());
-            $face_tips.hide();
-        });
+        common.bindFaceCtrl($('.face'), $('#story-editor'));
 
     // 显示用户信息tips
     $('.friend').hover(

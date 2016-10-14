@@ -590,11 +590,18 @@ div.for-signin {
 .dream-release {
     padding: 10px;
     margin: 10px 0;
+    overflow: hidden;
     .dream-user {
         float: left;
+        margin-right: 20px;
     }
     .dream-ctrl {
         float: left;
+        padding: 10px;
+        border: 1px solid #eaeaea;
+        border-radius: 5px;
+        width: 500px;
+        text-align: center;
     }
 }
 
@@ -1719,6 +1726,13 @@ ul.activity-list {
         }
         .dream-area {
             margin-top: 10px;
+            .desc-head {
+                overflow: hidden;
+                text-align: left;
+                .desc-face {
+                    float: right;
+                }
+            }
         }
         input {
             width: 580px;
@@ -1801,7 +1815,7 @@ ul.activity-list {
 }
 
 .face-tips {
-    z-index: 1;
+    z-index: 2;
     position: absolute;
     width: 250px;
     border: 2px solid #ddd;

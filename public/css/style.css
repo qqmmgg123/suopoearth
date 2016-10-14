@@ -568,12 +568,19 @@ div.for-signin .banner-bg {
 .dream-release {
   padding: 10px;
   margin: 10px 0;
+  overflow: hidden;
 }
 .dream-release .dream-user {
   float: left;
+  margin-right: 20px;
 }
 .dream-release .dream-ctrl {
   float: left;
+  padding: 10px;
+  border: 1px solid #eaeaea;
+  border-radius: 5px;
+  width: 500px;
+  text-align: center;
 }
 i.approval-icon,
 i.favrioute-icon,
@@ -1704,6 +1711,13 @@ ul.activity-list > li div.more a.btn {
 .dialog#dream-pop .dream-area {
   margin-top: 10px;
 }
+.dialog#dream-pop .dream-area .desc-head {
+  overflow: hidden;
+  text-align: left;
+}
+.dialog#dream-pop .dream-area .desc-head .desc-face {
+  float: right;
+}
 .dialog#dream-pop input {
   width: 580px;
 }
@@ -1764,7 +1778,7 @@ ul.activity-list > li div.more a.btn {
   transition: opacity 5s ease-in-out;
 }
 .face-tips {
-  z-index: 1;
+  z-index: 2;
   position: absolute;
   width: 250px;
   border: 2px solid #ddd;

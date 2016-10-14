@@ -18,7 +18,7 @@ define([
    'text!template/aclist.html'
 ], function (_, $, backbone, common, acTpl) {
     $(function() {
-        common.bindCreatCtrl($('#first_cdream_btn'));
+        common.bindCreatCtrl($('#first_cdream_btn, #dream-release'));
 
         // 想法列表
         var $tabNav = $('.dream-right-inner').find('.tab-nav'),
