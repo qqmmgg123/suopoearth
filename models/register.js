@@ -26,26 +26,27 @@ module.exports = function(schema, options) {
     // email verification options
     options.verificationURL = options.verificationURL || 'http://www.suopoerath.com/email-verification/${URL}';
     options.transportOptions =  options.transportOptions || {
-        host: 'smtp.gmail.com',
+        host: 'smtp.mxhichina.com',
         port: 465,
-        service: 'Gmail',
+        service: 'Aliyun',
         auth: {
-            user: 'qqmmgg123@gmail.com',
-            pass: 'Suopoearth123'
+            user: 'postmaster@suopoearth.com',
+            pass: 'Qnmdwbd0000'
         }
         //proxy: 'http://dev-proxy.oa.com:8080/'
         //proxy: 'http://127.0.0.1:8087'
     };
+
     options.verifyMailOptions = options.verifyMailOptions || {
-        from: '娑婆世界<qqmmgg123@gmail.com>',
+        from: '娑婆世界<postmaster@suopoearth.com>',
         subject: '娑婆世界邮箱认证邮件',
         html: '<p> 请点击 <a href="${URL}"> 这里 </a> 激活您的账号. 如果以上点击无效, 请拷贝以下链接，然后 ' +
-            '黏贴该链接到您的浏览器地址栏，然后访问该链接，用以通过认证:</p><p>${URL}</p> <p>请再一周内认证您的账号，否则将会过期。我们使用邮箱认证原因是为了以后能方便联系您，以便给您提供更多服务和帮助。</p>',
+            '黏贴该链接到您的浏览器地址栏，然后访问该链接，用以通过认证:</p><p>${URL}</p> <p>请在一周内认证您的账号，否则将会过期。我们使用邮箱认证原因是为了以后能方便联系您，以便给您提供更多服务和帮助。</p>',
         text: '请点击提供给您链接的认证通过您的账号，或者将链接拷贝至您的浏览器黏贴并访问，以便通过认证: ${URL}'
     };
     options.shouldSendConfirmation = true,
     options.confirmMailOptions = options.confirmMailOptions || {
-        from: '娑婆世界 <qqmmgg123@gmail.com>',
+        from: '娑婆世界 <postmaster@suopoearth.com>',
         subject: '邮箱认证成果',
         html: '<p>您的账号认证成功，感谢您的支持!</p>',
         text: '您的账号认证成功，感谢您的支持!'
@@ -460,15 +461,14 @@ module.exports = function(schema, options) {
 
                     var mailOptions = {
                         to: user.username,
-                        from: '娑婆世界 <qqmmgg123@gmail.com>',
+                        from: '娑婆世界 <postmaster@suopoearth.com>',
                         subject: '娑婆世界密码重置邮件',
                         html: '<p>该邮件用于为您的账号提供重置密码的请求链接.</p>' +
-                              '<p>请点击 <a href="http://' + domain + '/reset/' + token + '">这里 </a>发送请求进行密码重置操作, 若点击无效请将以下链接拷贝黏贴到您浏览器的地址栏，并访问，以便完成密码重置操作:</p>' +
-                              '<p>http://' + domain + '/reset/' + token + '</p>' +
+                              '<p>请点击 <a href="' + domain + '/reset/' + token + '">这里 </a>发送请求进行密码重置操作, 若点击无效请将以下链接拷贝黏贴到您浏览器的地址栏，并访问，以便完成密码重置操作:</p>' +
+                              '<p>' + domain + '/reset/' + token + '</p>' +
                               '<p>如果您不做当前这一步操作，请忽略该邮件，您的密码不会有任何改变。</p>',
                         text: '该邮件用于为您的账号提供重置密码的请求链接.\n\n' +
-                              '请点击提供给您的链接, 或者将该链接黏贴到您浏览器的地址栏，并访问，以便完成密码重置:\n\n' +
-                              'http://' + domain + '/reset/' + token + '\n\n' +
+                              '请点击提供给您的链接, 或者将该链接黏贴到您浏览器的地址栏，并访问，以便完成密码重置:\n\n' + domain + '/reset/' + token + '\n\n' +
                               '如果您不做当前这一步操作，请忽略该邮件，您的密码不会有任何改变。\n'
                     };
 

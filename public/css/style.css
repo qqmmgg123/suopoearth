@@ -80,6 +80,10 @@ a:hover {
   background-color: #e6e6e6;
   border-color: #adadad;
 }
+.btn.disabled {
+  pointer-events: none;
+  opacity: .65;
+}
 .btn-small {
   padding: 2px 5px;
 }
@@ -982,22 +986,22 @@ i.search-icon {
 .container .dream-con a.qq-icon:hover {
   background-position: -23px -22px;
 }
-.container .dream-con a.dou-icon {
+.container .dream-con a.qzone-icon {
   background-position: -45px 0;
 }
-.container .dream-con a.dou-icon:hover {
+.container .dream-con a.qzone-icon:hover {
   background-position: -45px -22px;
 }
-.container .dream-con a.ren-icon {
+.container .dream-con a.dou-icon {
   background-position: -67px 0;
 }
-.container .dream-con a.ren-icon:hover {
+.container .dream-con a.dou-icon:hover {
   background-position: -67px -22px;
 }
-.container .dream-con a.wei-icon {
+.container .dream-con a.ren-icon {
   background-position: -90px 0;
 }
-.container .dream-con a.wei-icon:hover {
+.container .dream-con a.ren-icon:hover {
   background-position: -90px -22px;
 }
 .container .dream-con .process-area {

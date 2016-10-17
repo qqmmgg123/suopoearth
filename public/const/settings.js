@@ -1,5 +1,6 @@
 var settings = {
     APP_NAME: "娑婆世界",
+    DOMAIN: 'www.suopoearth.com',
     USER_EXISTS_TIPS: "对不起，该用户已经存在，请重新尝试",
     PAGE_NOT_FOND_TIPS: "该页面不存在",
     USER_NOT_EXIST_TIPS: "该用户不存在",

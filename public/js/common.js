@@ -598,6 +598,10 @@ $(function() {
     }, function() {
         common.isScroll = true;
     });
+
+    $('[type="submit"]').closest('form').submit(function(){
+        $(this).find('[type=submit]').prop('disabled', true).addClass('disabled');
+    });
 });
 
 return common;

@@ -109,6 +109,94 @@ function getNodeComments(nodeId, page, user, callback) {
     });
 }
 
+// 展示推荐页
+// 推荐页
+function renderRecommand(req, res) {
+    function resData(users, dreams) {
+        res.render('pages/recommand', makeCommon({
+            title: settings.APP_NAME,
+            notice: getFlash(req, 'notice'),
+            user : req.user,
+            data: {
+                users: users,
+                dreams: dreams
+            },
+            success: 1
+        }, res));
+    }
+
+    // 查询耗时测试
+    var start = new Date().getTime();
+
+    async.parallel([
+        function(cb) {
+            Dream
+            .find({}, '_id title description nodes _belong_u')
+            .populate([{
+                path: 'nodes',
+                select: "_id content date",
+                option: { limit: 6, lean: true, sort: "-date" },
+                model: Node
+            }, {
+                path: '_belong_u',
+                select: "_id nickname avatar",
+                option: { lean: true },
+                model: Account
+            }])
+            .sort("-date")
+            .exec(function(err, dreams) {
+                if (err || !dreams) {
+                    dreams = [];
+                }
+                cb(null, dreams);
+            });
+        },
+        function(cb) {
+            Account
+            .find({}, '_id nickname bio avatar dreams date')
+            .lean()
+            .populate({
+                path  : 'dreams',
+                select: "_id title description nodes",
+                options: { 
+                    limit: 3,
+                    populate: {
+                        path: 'nodes',
+                        select: "_id content date",
+                        option: { limit: 6, lean: true, sort: "-date" },
+                        model: Node
+                    },
+                    lean: true
+                },
+                model : Dream
+            })
+            .sort("-date")
+            .limit(3)
+            .exec(function(err, users) {
+                if (err || !users) {
+                    users = [];
+                }
+                cb(null, users);
+            });
+        }
+    ], function(err, results) {
+        var dreams = [],
+            users  = [];
+
+        if (results && results.length === 2) {
+            dreams = results[0];
+            users = results[1];
+        }
+        
+        var spend = end - start;
+        if (spend > maxtime) {
+            var end = new Date().getTime();
+            console.log(req.originalUrl + ' spend' + spend + 'ms');
+        }
+        resData(users, dreams);
+    });
+};
+
 // 主页
 router.get('/', function(req, res, next) {
     var einfo = req.flash('emailinfo');
@@ -118,7 +206,7 @@ router.get('/', function(req, res, next) {
     }
 
     if (!req.user) {
-        return res.redirect('/recommand');
+        return renderRecommand(req, res);
     }
 
     // 查询耗时测试
@@ -274,84 +362,6 @@ router.get('/', function(req, res, next) {
              messages : res.msgs,
         }
     }, res));
-});
-
-// 推荐页
-router.get('/recommand', function(req, res) {
-    function resData(users, dreams) {
-        res.render('pages/recommand', makeCommon({
-            title: settings.APP_NAME,
-            notice: getFlash(req, 'notice'),
-            user : req.user,
-            data: {
-                users: users,
-                dreams: dreams
-            },
-            success: 1
-        }, res));
-    }
-
-    async.parallel([
-        function(cb) {
-            Dream
-            .find({}, '_id title description nodes _belong_u')
-            .populate([{
-                path: 'nodes',
-                select: "_id content date",
-                option: { limit: 6, lean: true, sort: "-date" },
-                model: Node
-            }, {
-                path: '_belong_u',
-                select: "_id nickname avatar",
-                option: { lean: true },
-                model: Account
-            }])
-            .sort("-date")
-            .exec(function(err, dreams) {
-                if (err || !dreams) {
-                    dreams = [];
-                }
-                cb(null, dreams);
-            });
-        },
-        function(cb) {
-            Account
-            .find({}, '_id nickname bio avatar dreams date')
-            .lean()
-            .populate({
-                path  : 'dreams',
-                select: "_id title description nodes",
-                options: { 
-                    limit: 3,
-                    populate: {
-                        path: 'nodes',
-                        select: "_id content date",
-                        option: { limit: 6, lean: true, sort: "-date" },
-                        model: Node
-                    },
-                    lean: true
-                },
-                model : Dream
-            })
-            .sort("-date")
-            .exec(function(err, users) {
-                if (err || !users) {
-                    users = [];
-                }
-                cb(null, users);
-            });
-        }
-    ], function(err, results) {
-        var dreams = [],
-            users  = [];
-
-        if (results && results.length === 2) {
-            dreams = results[0];
-            users = results[1];
-        }
-        
-        resData(users, dreams);
-    });
 });
 
 // 建设中
@@ -2223,15 +2233,17 @@ router.post('/settings/account/pwdupdate', function(req, res, next) {
 // 忘记密码
 router.get('/forgot', function(req, res) {
     res.render('pages/forgot', makeCommon({
+        notice: '',
         error:  getFlash(req, 'error'),
         title : settings.APP_NAME,
-        user: req.user
+        user: req.user,
+        data: {}
     }, res));
 });
 
 // 发送重置邮件
 router.post('/forgot', function(req, res, next) {
-    Account.forgot(req.protocol + '://' + settings.DOMIAN, req.body.email, function(err, info) {
+    Account.forgot(req.protocol + '://' + settings.DOMAIN, req.body.email, function(err, info) {
         if (err) {
             req.flash('error', err.message);
             return res.redirect('/forgot');

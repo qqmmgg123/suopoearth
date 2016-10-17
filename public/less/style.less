@@ -91,7 +91,11 @@ a {
     &:hover {
         color: #333;
         background-color: #e6e6e6;
-        border-color: #adadad
+        border-color: #adadad;
+    }
+    &.disabled {
+        pointer-events: none;
+        opacity: .65;
     }
 }
 
@@ -988,19 +992,19 @@ i.search-icon {
                 background-position: -23px -22px;
             }
         }
-        a.dou-icon {
+        a.qzone-icon {
             background-position: -45px 0;
             &:hover {
                 background-position: -45px -22px;
             }
         }
-        a.ren-icon {
+        a.dou-icon {
             background-position: -67px 0;
             &:hover {
                 background-position: -67px -22px;
             }
         }
-        a.wei-icon {
+        a.ren-icon {
             background-position: -90px 0;
             &:hover {
                 background-position: -90px -22px;
