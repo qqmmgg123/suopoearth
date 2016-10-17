@@ -316,7 +316,7 @@ router.get('/recommand', function(req, res) {
         },
         function(cb) {
             Account
-            .find({}, '_id nickname bio avatar dreams')
+            .find({}, '_id nickname bio avatar dreams date')
             .lean()
             .populate({
                 path  : 'dreams',
@@ -1821,7 +1821,7 @@ router.post('/settings/emails/reverification', function(req, res) {
 
     var email = req.user.username;
 
-    Account.resendVerificationEmail(req.headers.host, email, function(err) {
+    Account.resendVerificationEmail(req.protocol + '://' + settings.DOMAIN, email, function(err) {
         if (err) {
             var err = new Error("发送认证邮件失败, 请点击发送按钮重新发送。");
             req.flash('error', err.message);
@@ -2161,7 +2161,7 @@ router.post('/signin', function(req, res, next) {
 
 // 注册
 router.post('/signup', function(req, res, next) {
-    Account.register(req.headers.host, new Account({
+    Account.register(req.protocol + '://' + settings.DOMAIN, new Account({
         username : req.body.username,
         nickname: req.body.nickname
     }), req.body.password, function(err, tempaccount) {
@@ -2231,7 +2231,7 @@ router.get('/forgot', function(req, res) {
 
 // 发送重置邮件
 router.post('/forgot', function(req, res, next) {
-    Account.forgot(req.headers.host, req.body.email, function(err, info) {
+    Account.forgot(req.protocol + '://' + settings.DOMIAN, req.body.email, function(err, info) {
         if (err) {
             req.flash('error', err.message);
             return res.redirect('/forgot');

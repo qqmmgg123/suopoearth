@@ -51,22 +51,25 @@
                             <div class="user-name">
                                 <p><a href="/user/<%= user._id %>"><%= user.nickname %></a></p>
                                 <p class="user-bio"><%= user.bio %></p>
+                                <p class="user-date"><%= timeFormat(user.date) %>&nbsp;</p>
                             </div>
                         </div>
                         <div class="user-dream">
-                            <% if (user.dreams && user.dreams.length > 0) { %>
-                            <% if (user.dreams[0]) { %>
-                            <h4><a href="/dream/<%= user.dreams[0]._id %>"><%= user.dreams[0].title %></a></h4>
-                            <p><%= user.dreams[0].description %></p>
                             <ul class="dream-nodes">
-                                <% if (user.dreams[0].nodes && user.dreams[0].nodes.length > 0) { %>
-                                <% user.dreams[0].nodes.forEach(function(node) { %>
-                                <li><%= node.content %></li>
-                                <% }); %>
+                                <% if (user.dreams && user.dreams.length > 0) { %>
+                                <% for (var i = 0; i < 3; i++) { %>
+                                <li>
+                                    <% if (user.dreams[i]) { %>
+                                    <h4><a href="/dream/<%= user.dreams[i]._id %>" class=""><%= user.dreams[i].title %></a></h4>
+                                    <p><%= user.dreams[i].description %></p>
+                                    <% } %>
+                                </li>
+                                <% }; %>
+                                <%} else {%>
+                                <p>期待他的分享。</p>
                                 <% } %>
                             </ul>
-                            <% } %>
-                            <% } %>
+                            <a href="">查看更多 ></a>
                         </div>
                     </div>
                     </li>

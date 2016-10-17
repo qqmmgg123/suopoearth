@@ -502,6 +502,7 @@ div.for-signin .banner-bg {
 }
 #new-users > ul > li div.new-user {
   border: 1px solid #eaeaea;
+  height: 260px;
   border-radius: 5px;
   padding: 10px;
   margin-right: 10px;
@@ -524,8 +525,15 @@ div.for-signin .banner-bg {
   color: #808080;
   font-size: 12px;
 }
+#new-users .user-info .user-date {
+  color: #999;
+  font-size: 12px;
+}
+#new-users .user-dream {
+  padding: 10px;
+}
 #new-users .user-dream h4 {
-  padding: 10px 0;
+  padding: 0 0;
 }
 #new-users .user-dream .dream-nodes {
   color: #808080;
