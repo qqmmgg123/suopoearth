@@ -19,10 +19,10 @@
                 <div class="content-area">
                     <div class="account-form">
                         <h1>邮箱认证</h1>
-                        <form accept-charset="UTF-8" action="/settings/emails/reverification" method="post">
+                        <form id="email-form" accept-charset="UTF-8" action="/settings/emails/reverification" method="post">
                             <div><%= data.error %></div>
                             <div>您的邮箱地址：<%= user.username %></div>
-                            <button type="submit" class="btn btn-primary">发送认证邮件</button>
+                            <button id="email-btn" type="submit" class="btn btn-primary">发送认证邮件</button>
                         </form>
                     </div>
                 </div>
@@ -31,6 +31,6 @@
     </div>
     <% include ../partials/footer.html %>
     <% include ../partials/create.html %>
-    <script data-main="/js/default.js" src="/js/require.js"></script>
+    <script data-main="/js/emails.js" src="/js/require.js"></script>
 </body>
 </html>

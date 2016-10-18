@@ -14,19 +14,21 @@
     <% include ../partials/header.html %>
     <div class="banner for-signin">
         <div class="forgot-area">
-            <form action="/reset/<%= token %>" method="post">
+            <form id="reset-form" action="/reset/<%= token %>" method="post">
                 <div>
                     <p class="label"><label for="password">输入您的新密码，密码须是6~16个字符的小写字母或数字组成。</label></p>
                     <p class="field"><input type="password" id="password" name="password" placeholder="输入新密码" required autocomplete="off"></p>
+                    <p class="validate-error"></p>
                 </div>
                 <div>
-                    <button class="btn btn-primary" type="submit">重置</button>
+                    <button id="pwdnew-btn" class="btn btn-primary" type="submit">重置</button>
                 </div>
             </form>
         </div>
     </div>
     <% include ../partials/footer.html %>
+    <% include ../partials/signinpop.html %>
     <% include ../partials/create.html %>
-    <script data-main="/js/default.js" src="/js/require.js"></script>
+    <script data-main="/js/reset.js" src="/js/require.js"></script>
 </body>
 </html>

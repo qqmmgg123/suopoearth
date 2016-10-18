@@ -163,10 +163,37 @@ var common = {
             $signin_pop.hide();
         });
     },
+    showSignupPop: function() {
+        var pagesize = common.getPageSize();
+        var $signup_pop = $('#signup-pop');
+        $('.modal').show();
+        $signup_pop.css({
+            top: (pagesize[3] - $signup_pop.height()) * .2,
+            left: (pagesize[2] - $signup_pop.width()) / 2
+        }).show();
+        $(document).off('keypress').on('keydown', function(event) {
+            if (event.keyCode === 27) {
+                $('.modal').hide();
+                $signup_pop.hide();
+            }
+        });
+        $signup_pop.find('a.close')
+        .off('click')
+        .on('click', function() {
+            $('.modal').hide();
+            $signup_pop.hide();
+        });
+    },
     bindSigninCtrl: function($signin_btn) {
         var self = this;
         $signin_btn.click(function() {
             self.showSigninPop();
+        });
+    },
+    bindSignupCtrl: function($signup_btn) {
+        var self = this;
+        $signup_btn.click(function() {
+            self.showSignupPop();
         });
     },
     bindCreatCtrl: function($create_btn) {
@@ -503,6 +530,15 @@ $(function() {
     common.bindFaceCtrl($('.desc-face'), $('#dream-desc'))
 
     //setInterval($.proxy(common.autoScroll, common, "#reference"), 2000);
+    
+    // 错误提示
+    $('.validate-error').each(function() {
+        var $this = $(this);
+            error = $.trim($this.text());
+        if (error) {
+            $this.show();
+        }
+    });
 
     // 查看消息列表
     var $msgNav = $('#message-nav');

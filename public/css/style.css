@@ -173,6 +173,7 @@ a:hover {
   color: #ff335e;
 }
 .validate-error {
+  display: none;
   text-align: left;
   color: #ff335e;
 }
@@ -375,11 +376,6 @@ div.for-signin .banner-bg {
   margin-bottom: 20px;
   font-size: 16px;
 }
-.banner .signin-area .slogan {
-  color: #666;
-  margin-top: 20px;
-  font-weight: bold;
-}
 .banner .signin-area .btn {
   width: 100%;
 }
@@ -465,14 +461,19 @@ div.for-signin .banner-bg {
 .forgot-area p.field input[type='text'] {
   width: 300px;
 }
-.note-area {
+.notice-area {
   top: 67px;
   position: relative;
   background-color: #f6f7f8;
   border-bottom: 1px solid #eaeaea;
   vertical-align: middle;
 }
-.note-area .note {
+.notice-area.notice-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+.notice-area .notice {
   font-size: 12px;
   padding: 3px;
   text-align: center;
@@ -694,7 +695,7 @@ i.search-icon {
 }
 .container .store-area,
 .container .team-area,
-.container .note,
+.container .notice,
 .container .search-area,
 .container .settings-area,
 .container .msg-area,
@@ -799,7 +800,7 @@ i.search-icon {
   text-align: center;
 }
 .container .search-area .no-result {
-  width: 300px;
+  width: 450px;
   margin: 0 auto;
   overflow: hidden;
   padding: 20px 10px 10px;
@@ -813,8 +814,7 @@ i.search-icon {
   float: left;
 }
 .container .search-area .no-result p.dismay-text {
-  line-height: 64px;
-  height: 64px;
+  width: 360px;
   float: right;
 }
 .container .dream-con {

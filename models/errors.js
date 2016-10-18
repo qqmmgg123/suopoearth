@@ -7,6 +7,7 @@ module.exports = {
     IncorrectUsernameError : generaterr('IncorrectUsernameError', null, { inherits : AuthenticationError }),
     IncorrectPasswordError : generaterr('IncorrectPasswordError', null,{ inherits : AuthenticationError }),
     IncorrectOldPasswordError : generaterr('IncorrectOldPasswordError', null,{ inherits : AuthenticationError }),
+    PasswordSameError : generaterr('PasswordSameError', null,{ inherits : AuthenticationError }),
     MissingUsernameError : generaterr('MissingUsernameError', null,{ inherits : AuthenticationError }),
     MissingPasswordError : generaterr('MissingPasswordError', null,{ inherits : AuthenticationError }),
     UserExistsError : generaterr('UserExistsError', null,{ inherits : AuthenticationError }),

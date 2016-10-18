@@ -2205,6 +2205,7 @@ router.post('/settings/account/pwdupdate', function(req, res, next) {
         var err = new Error("参数传递错误，密码更新失败！");
         return next(err);
     }
+
     var password_old = req.body.password_old;
     var password_new = req.body.password_new;
 

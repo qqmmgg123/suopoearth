@@ -85,6 +85,7 @@ module.exports = function(schema, options) {
     options.errorMessages.NoSaltValueStoredError = options.errorMessages.NoSaltValueStoredError || 'Authentication not possible. No salt value stored';
     options.errorMessages.IncorrectPasswordError = options.errorMessages.IncorrectPasswordError || '密码输入错误';
     options.errorMessages.IncorrectOldPasswordError = options.errorMessages.IncorrectOldPasswordError || '旧密码输入错误';
+    options.errorMessages.PasswordSameError = options.errorMessages.PasswordSameError || '新密码不能与旧密码相同';
     options.errorMessages.IncorrectUsernameError = options.errorMessages.IncorrectUsernameError || '您输入的用户不存在';
     options.errorMessages.MissingUsernameError = options.errorMessages.MissingUsernameError|| '用户名没有输入';
     options.errorMessages.UserExistsError = options.errorMessages.UserExistsError|| '该邮箱已经被注册';
@@ -244,6 +245,11 @@ module.exports = function(schema, options) {
             var hash = new Buffer(hashRaw, 'binary').toString(options.encoding);
 
             if (scmp(hash, self.get(options.hashField))) {
+                if (password_old == password_new) {
+                    var err = new errors.PasswordSameError(options.errorMessages.PasswordSameError);
+                    return cb(err);
+                }
+
                 self.setPassword(password_new, function(setPasswordErr, user) {
                     if (setPasswordErr) {
                         return cb(setPasswordErr);

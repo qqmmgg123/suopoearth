@@ -12,6 +12,12 @@ define([
    'jquery',
    'common',
 ], function ($, common) {
-    common.bindSignupCtrl($('#share_dream_btn'));
+    // 密码重置form校验
+    $('#email-btn').on('click', function() {
+        var $form = $('#email-form');
+        $form.replaceWith("<p>正在发送帐号邮箱认证邮件...请稍等</p>");
+        return true;
+    });
+
     common.statistics();
 });

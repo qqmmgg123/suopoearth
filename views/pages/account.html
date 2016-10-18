@@ -19,17 +19,19 @@
                 <div class="content-area">
                     <div class="account-form">
                         <h1>帐号设置</h1>
-                        <form accept-charset="UTF-8" action="/settings/account/pwdupdate" method="post">
-                            <div><%= data.error %></div>
+                        <form id="account-form" accept-charset="UTF-8" action="/settings/account/pwdupdate" method="post">
+                            <div class="validate-error"><%= data.error %></div>
                             <div>
                                 <p class="label"><label for="password_old">旧密码</label></p>
                                 <p class="field"><input id="password_old" name="password_old" type="password" autocomplete="off" /></p>
+                                <p class="validate-error"></p>
                             </div>
                             <div>
                                 <p class="label"><label for="password_new">新密码</label></p>
                                 <p class="field"><input id="password_old" name="password_new" type="password" autocomplete="off" /></p>
+                                <p class="validate-error"></p>
                             </div>
-                            <button type="submit" class="btn btn-primary">重置密码</button>
+                            <button id="account-btn" type="submit" class="btn btn-primary">重置密码</button>
                         </form>
                     </div>
                 </div>
@@ -38,6 +40,6 @@
     </div>
     <% include ../partials/footer.html %>
     <% include ../partials/create.html %>
-    <script data-main="/js/default.js" src="/js/require.js"></script>
+    <script data-main="/js/account.js" src="/js/require.js"></script>
 </body>
 </html>

@@ -1,29 +1,38 @@
-<div class="modal fade-in" style="display: none;"></div>
-<div id="signin-pop" class="dialog" style="display: none;">
+<div id="signup-pop" class="dialog" style="display: none;">
     <div class="hd">
         <span class="title">登录</span>
         <a href="javascript:;" class="close"></a>
     </div>
     <div class="bd">
-        <div class="signin-area">
-            <form action="/signin" method="post">
+        <div class="signup-area">
+            <form id="signup-form" action="/signup" autocomplete="off" method="post" novalidate>
+                <h2>用户注册</h2>
+                <!--<div>-->
+                    <!--<p class="label"><label for="email">邮箱</label></p>-->
+                    <!--<p class="field"><input type="email" name="email" id="email" placeholder="输入邮箱" required></p>-->
+                <!--</div>-->
                 <div>
                     <p class="label"><label for="username">邮箱</label></p>
-                    <p class="field"><input type="text" id="username" name="username" placeholder="输入用户名" required></p>
+                    <p class="field"><input type="email" name="username" id="username" placeholder="输入邮箱" required></p>
+                    <p class="validate-error"></p>
+                </div>
+                <div>
+                    <p class="label"><label for="nickname">昵称</label></p>
+                    <p class="field"><input type="text" name="nickname" id="nickname" placeholder="输入昵称" required></p>
+                    <p class="validate-error"></p>
                 </div>
                 <div>
                     <p class="label"><label for="password">密码</label></p>
-                    <p class="field"><input type="password" id="password" name="password" placeholder="输入用密码" required></p>
+                    <p class="field"><input type="password" name="password" id="password" placeholder="输入密码" required></p>
+                    <p class="validate-error"></p>
                 </div>
-                <div class="other-ctrl">
-                    <a class="forget-pwd" href="/forgot">忘记密码 ?</a>
-                    <a class="sign-up" href="/signup" role="button">注册 ></a>
-                </div>
+                <!--<div>-->
+                    <!--<p class="label"><label for="password_report">密码确认</label></p>-->
+                    <!--<p class="field"><input type="password" name="repassword" id="password_repeat" placeholder="再次输入密码" required></p>-->
+                <!--</div>-->
                 <div>
-                    <button class="btn btn-primary" type="submit">登录</button>
-                </div>
-                <div class="slogan">
-                    <p>地球很小，我们的内心很大，我们的内心地球已不够容纳，释放我们内心的想法，让我们的梦想从心起航!！！</p>
+                <button id="signup-btn" type="submit" class="btn btn-primary">注册</button>&nbsp;
+                <a class="btn btn-default" href="/signin" role="button">登录 ></a>
                 </div>
             </form>
         </div>
