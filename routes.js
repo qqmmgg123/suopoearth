@@ -12,6 +12,7 @@ var async = require("async")
     , Node = require("./models/node")
     , Activity = require("./models/activity")
     , Comment = require("./models/comment")
+    , DComment = require("./models/dcomment")
     , Message = require("./models/message")
     , log = require('util').log
     , router = require('express').Router()
@@ -1136,14 +1137,53 @@ router.get('/dream/:id/pnodes', function(req, res, next) {
 
 // 获取想法提议
 router.get('/dream/:id/comments', function(req, res, next) {
-    var curId = req.params.id;
+    var curId = req.params.id,
+        query = { _belong_n: curId };
 
-    Comment.find({ _belong_d: curId }).lean().populate({
-         path: '_belong_u'
-    }).exec(function(err, comments) {
-        if (err) {
-            return next(err);
+    var page  = 1,
+        limit = 10;
+
+    if (req.query && req.query.page) {
+        page = parseInt(req.query.page, 10);
+    }
+
+    var skip = (page - 1) * 10;
+
+    async.parallel([
+        function(cb) {
+            DComment.count(query, function(err, count) {
+                if (err || !count) {
+                    return cb(null, 0);
+                }
+
+                cb(null, count)
+            });
+        },
+        function(cb) {
+            DComment
+            .find(query)
+            .lean()
+            .populate({
+                path: '_belong_u'
+            })
+            .sort('-date')
+            .skip(skip)
+            .limit(limit)
+            .exec(function(err, comments) {
+                if (err || !comments) {
+                    return cb(null, []);
+                }
+
+                cb(null, comments)
+            });
         }
+    ], function(err, results) {
+        if (err || !results || results.length !== 2) {
+            return next(new Error("异常错误。"))
+        }
+
+        var comments = results[1],
+            count    = results[0];
 
         comments.forEach(function(comment) {
             comment.isowner = req.user && (comment._belong_u && comment._belong_u._id.equals(req.user.id));
@@ -1151,10 +1191,11 @@ router.get('/dream/:id/comments', function(req, res, next) {
 
         res.json({
             isauthenticated: !!req.user,
+            count   : count,
             comments: comments,
-            result: 0
-        })
-    })
+            result  : 0
+        });
+    });
 }, function(err, req, res, next) {
     if (err) {
         message = err.message;
@@ -3273,6 +3314,119 @@ router.post('/user/follow', function(req, res, next) {
     });
 });
 
+// 创建想法评论
+router.post('/dcomment/new', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+    var uid = req.user.id;
+    var nickname = req.user.nickname;
+
+    if (!req.body || !req.body.bl || !req.body.blid || !req.body.did) {
+        return next(new Error("请求参数错误，创建失败..."));
+    }
+
+    var bl   = req.body.bl;
+    var did  = req.body.did;
+    var blID = req.body.blid;
+
+    var content = req.body.content;
+
+    if (typeof content !== "string" || !content.trim()) {
+        return next(new Error("您的提议是空内容，创建失败..."));
+    }
+
+    // 查询耗时测试
+    var start = new Date().getTime();
+
+    var promise = null;
+
+    switch(bl) {
+        case '0':
+            promise = Dream.findOne({_id: blID}).select('comments').exec();
+            break;
+        case '1':
+            promise = Node.findOne({_id: blID}).select('comments').exec();
+            break;
+        default:
+            return next(new Error("请求参数错误，创建失败..."));
+            break;
+    }
+
+    promise.then(function(object) {
+        if (!object) {
+            var err = new Error("发布提议失败...");
+            return next(err);
+        }
+
+        var fields = {
+            _belong_d: did,
+            _belong_u: uid,
+            author   : nickname,
+            content  : content.trim()
+        }
+
+        switch(bl) {
+            case '1':
+                fields._belong_n = blID;
+                break;
+            default:
+                break;
+        }
+    
+        var comment = new DComment(fields);
+        object.comments.push(comment);
+
+        async.parallel([
+            function(cb_2) {
+                comment.save(function(err) {
+                    if (err) return cb_2(err, null);
+                    cb_2(null, null);
+                });
+            },
+            function(cb_2) {
+                object.save(function(err) {
+                    if (err) return cb_2(err, null);
+                    cb_2(null, null);
+                });
+            }
+            ], function(err, results) {
+                if (err) return next(err);
+
+                getNodeComments(blID, 1, req.user, function(err, data) {
+                    if (err) return next(err);
+
+                    data.info   =  "发布成功";
+                    data.result = 0;
+                    res.json(data);
+
+                    var spend = end - start;
+                    if (spend > maxtime) {
+                        var end = new Date().getTime();
+                        console.log(req.originalUrl + ' spend' + spend + 'ms');
+                    }
+                });
+            }
+        );
+    }).catch(function(err) {
+        if (err) return next(err);
+    });
+
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+
 // 创建评论
 router.post('/comment/new', function(req, res, next) {
     if (!req.user) {
@@ -3374,6 +3528,183 @@ router.post('/comment/new', function(req, res, next) {
         if (err) return next(err);
     });
 
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 创建想法回复
+router.post('/dreply/new', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+    var uid = req.user.id;
+    var nickname = req.user.nickname;
+
+    if (!req.body || !req.body.bl || !req.body.did || !req.body.blid 
+            || !req.body.toid || !req.body.forid) {
+        return next(new Error("请求参数错误，回复失败..."));
+    }
+
+    var bl    = req.body.bl
+    , did     = req.body.did
+    , blID    = req.body.blid
+    , toid    = req.body.toid
+    , forid   = req.body.forid
+    , content = req.body.content;
+
+    if (typeof content !== "string" || !content.trim()) {
+        return next(new Error("您的回复是空内容，创建失败..."));
+    }
+
+    var promise = null;
+
+    switch(bl) {
+        case '0':
+            promise = Dream.findOne({_id: blID}).select('comments').exec();
+            break;
+        case '1':
+            promise = Node.findOne({_id: blID}).select('comments').exec();
+            break;
+        default:
+            return next(new Error("请求参数错误，回复失败..."));
+            break;
+    }
+
+    // 查询耗时测试
+    var start = new Date().getTime();
+
+    async.parallel([
+        function(cb) {
+             promise.then(function(obj) {
+                 if (!obj) {
+                    var err = new Error("回复失败...");
+                    return cb(err, null);
+                 }
+
+                 cb(null, obj);
+             }).catch(function(err) {
+                 if (err) cb(err, null);
+             });
+        },
+        function(cb) {
+            Account.findById(toid).select('nickname messages').exec(function(err, user) {
+                if (err) {
+                    return cb(err, null);
+                }
+
+                if (!user) {
+                    var err = new Error("您回复的用户不存在...");
+                    return cb(err, null);
+                }
+
+                cb(null, user);
+            });
+        }
+    ], function(err, results) {
+        if (err || !results || results.length < 2) {
+            var err = new Error("回复失败...");
+            return next(err);
+        }
+
+        var object = results[0];
+        var other  = results[1];
+
+        if (!object || !other) {
+            var err = new Error("回复失败...");
+            return next(err);
+        }
+
+        var fields = {
+            isreply  : true,
+            _belong_d: did,
+            _belong_u: uid,
+            _reply_u : toid,
+            _reply_c : forid,
+            author   : nickname,
+            other    : other.nickname,
+            content  : content.trim(),
+        }
+
+        switch(bl) {
+            case '1':
+                fields._belong_n = blID;
+                break;
+            default:
+                break;
+        }
+    
+        var comment = new DComment(fields);
+        object.comments.push(comment);
+
+        async.parallel([
+            function(cb_2) {
+                comment.save(function(err) {
+                    if (err) return cb_2(err, null);
+                    cb_2(null, null);
+                });
+            },
+            function(cb_2) {
+                object.save(function(err) {
+                    if (err) return cb_2(err, null);
+                    cb_2(null, null);
+                });
+            }
+            ], function(err, results) {
+                if (err) return next(err);
+                var url        = '/dream/' + comment._belong_d + '?cid=' + comment.id;
+
+                var msgfields  = {
+                    _belong_u: toid,
+                    url      : url,
+                    title    : '你有新的回复',
+                    content  : comment.content
+                }
+                
+                var message = new Message(msgfields);
+                other.messages.push(message);
+                async.parallel([
+                    function(cb_3) {
+                        message.save(function(err) {
+                            if (err) return cb_3(err, null);
+                            cb_3(null, null);
+                        });
+                    },
+                    function(cb_3) {
+                        other.save(function(err) {
+                            if (err) return cb_3(err, null);
+                            cb_3(null, null);
+                        });
+                    }
+                ], function(err, results) {
+                    if (err) return next(err);
+
+                    getNodeComments(blID, 1, req.user, function(err, data) {
+                        if (err) return next(err);
+
+                        data.info   =  "回复成功";
+                        data.result = 0;
+                        res.json(data);
+
+                        var spend = end - start;
+                        if (spend > maxtime) {
+                            var end = new Date().getTime();
+                            console.log(req.originalUrl + ' spend' + spend + 'ms');
+                        }
+                    });
+                });
+            }
+        );
+    });
 }, function(err, req, res, next) {
     if (err) {
         message = err.message;
@@ -3637,6 +3968,68 @@ router.post('/comment/delete', function(req, res, next) {
     var start = new Date().getTime();
 
     Comment.findById(commentID, '_belong_u', function(err, comment) {
+        if (err) return next(err);
+
+        if (!comment) {
+            var err = new Error("删除评论失败...");
+            return next(err);
+        }
+
+        if (!comment._belong_u.equals(uid)) {
+            var err = new Error("这不是你的评论，你不能删除...");
+            return next(err);
+        }
+
+        comment.remove(function(err) {
+            if (err) {
+                var err = new Error("删除评论失败...");
+                return next(err);
+            }
+
+            res.json({
+                info: "删除评论成功",
+                result: 0
+            });
+
+            var spend = end - start;
+            if (spend > maxtime) {
+                var end = new Date().getTime();
+                console.log(req.originalUrl + ' spend' + spend + 'ms');
+            }
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 删除想法评论
+router.post('/dcomment/delete', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    var uid = req.user.id;
+
+    if (!req.body || !req.body.cid) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var commentID = req.body.cid;
+
+    // 查询耗时测试
+    var start = new Date().getTime();
+
+    DComment.findById(commentID, '_belong_u', function(err, comment) {
         if (err) return next(err);
 
         if (!comment) {
