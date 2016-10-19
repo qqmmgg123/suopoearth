@@ -819,7 +819,7 @@ share1.init();
             common.dreamPop.show({
                 did: $(this).data('did').toString(),
                 url: '/dream/modify',
-                tips: "修改想法",
+                tips: "修改心愿、想法",
                 title: $dreamContent.find('h1').text(),
                 description: $dreamContent.find('p.content').text()
             });

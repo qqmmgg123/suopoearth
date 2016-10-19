@@ -202,7 +202,7 @@ var common = {
             self.dreamPop.show({
                 did: "",
                 url: '/dream/new',
-                tips: "创建想法",
+                tips: "创建心愿、想法",
                 title: $.trim($('.search-in').val())
             });
         });
@@ -502,17 +502,63 @@ common.dreamPop = {
             .on('click', $.proxy(self.close, self));
     },
     bindFinishCtl: function() {
-        $popup = this.$el;
-        $popup.find('#finish_cdream_btn')
+        var $popup = this.$el;
+        var $form  = $popup.find('#deamcreat-form');
+        $form.find('#finish_cdream_btn')
             .off('click')
             .on('click', function() {
-                //var formData = {};
+                var formData = {};
+                var validate = true;
                 // 校验
-                /*$create_pop.find('p.field').each(function() {
-                  var $widget = $(this).children();
-                  formData[$widget.attr('name')] = $.trim($widget.val());
-                  });*/
-                self.finish();
+                $form.find('input[type="text"]').each(function() {
+                    var $this = $(this);
+                    var val = $this.val();
+                    var $field = $this.closest('.field');
+                    var label = $this.data('cnname');
+                    var $tips = $field.next('.validate-error');
+
+                    // 判断是否为空
+                    if ($.trim(val).length === 0) {
+                        $tips.text(label + "未填写").show();
+                        validate = false;
+                        return;
+                    }else{
+                        $tips.text("").hide();
+                    }
+
+                    var isValid = true;
+                    var errorText = "";
+                    // 判断是否有效
+                    switch(this.name) {
+                        case 'title':
+                            if ($.trim(val).length > 100) {
+                                errorText = label + "长度不能超过100个字符";
+                                validate = false;
+                                isValid = false;
+                            }
+                            if (!/^[我希望|我想].+/.test($.trim(val))) {
+                                errorText = label + "必须以“我希望”或者“我想”开头";
+                                validate = false;
+                                isValid = false;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    if (!isValid) {
+                        $tips.text(errorText).show();
+                    }else{
+                        $tips.text("").hide();
+                    }
+                    formData[this.name] = $(this).val();
+                });
+                
+                if (!validate) {
+                    return false;
+                }else{
+                    self.finish();
+                    return true;
+                }
             });
     }
 };

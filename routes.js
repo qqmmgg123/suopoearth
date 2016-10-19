@@ -2402,6 +2402,10 @@ router.post('/dream/new', function(req, res, next) {
         return next(new Error("参数传递错误..."));
     }
 
+    if (!/^[我希望|我想].+/.test(req.body.title.trim())) {
+        return next(new Error("标题必须以“我希望”或者“我想”开头"));
+    }
+
     if (req.body.title.length > 100 
         || req.body.description.length > 140) {
         return next(new Error("标题或概要字数超出限制范围.."));

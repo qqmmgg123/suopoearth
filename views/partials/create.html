@@ -1,25 +1,32 @@
 <div class="modal fade-in" style="display: none;"></div>
 <div id="dream-pop" class="dialog" style="display: none;">
     <div class="hd">
-        <span class="title">创建想法</span>
+        <span class="title">创建心愿、想法</span>
         <a href="javascript:;" class="close"></a>
     </div>
     <div class="bd">
         <div class="dream-step">
-            <ul>
-                <li>步骤：</li>
-                <li><div>填写您的想法 → </div></li>
-                <li><div>分享您的心路历程</div></li>
-            </ul>
+            <!--<ul>-->
+                <!--<li>步骤：</li>-->
+                <!--<li><div>填写您的心愿或想法 → </div></li>-->
+                <!--<li><div>分享您的心路历程</div></li>-->
+            <!--</ul>-->
         </div>
         <div class="dream-area">
-            <form action="/dream/new" method="post">
-                <div><p class="field"><input type="text" name="title" placeholder="想法标题..." /></p></div>
+            <form id="deamcreat-form" action="/dream/new" method="post">
+                <div class="title-head">
+                    <p class="title-prompt">标题必须以“我希望”或者“我想”开头</p>
+                    心愿、想法的标题（必填）
+                </div>
+                <div>
+                    <p class="field"><input data-cnname="标题" type="text" name="title" placeholder="心愿、想法的标题..." /></p>
+                    <p class="validate-error"></p>
+                </div>
                 <div class="desc-head">
                     <a href="javascript:;" title="表情" alt="表情" class="desc-face">(∩＿∩)</a>
-                    想法概要（可选）
+                    心愿、想法的概要（可选）
                 </div>
-                <div><p class="field"><textarea id="dream-desc" name="description" placeholder="想法概要..."></textarea></p></div>
+                <div><p class="field"><textarea id="dream-desc" name="description" placeholder="心愿、想法的概要..."></textarea></p></div>
                 <!--<div>
                     <p class="field"><input id="public" name="sharestate" type="radio" value="0" /></p>
                     <p class="label"><label for="public">共享</label></p>

@@ -1723,6 +1723,15 @@ ul.activity-list > li div.more a.btn {
 .dialog#dream-pop .dream-area {
   margin-top: 10px;
 }
+.dialog#dream-pop .dream-area .title-head {
+  overflow: hidden;
+  text-align: left;
+}
+.dialog#dream-pop .dream-area .title-head .title-prompt {
+  color: #999;
+  font-size: 12px;
+  float: right;
+}
 .dialog#dream-pop .dream-area .desc-head {
   overflow: hidden;
   text-align: left;
