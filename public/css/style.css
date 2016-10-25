@@ -1747,6 +1747,12 @@ ul.activity-list > li div.more a.btn {
   height: 100px;
   overflow: auto;
 }
+.dialog#signup-pop {
+  width: 600px;
+}
+.dialog#signin-pop {
+  width: 600px;
+}
 .dialog .arrow-border {
   border-style: solid;
   border-width: 20px;

@@ -4,14 +4,17 @@ requirejs.config({
         'jquery': 'jquery.min',
         'jplaceholder': 'jquery.placeholder.min',
         'backbone': 'backbone-min',
+        'utilities': 'utilities',
+        'validation': 'validate',
         'common': 'common'
     }
 });
 
 define([
    'jquery',
+   'utilities',
    'common',
-], function ($, common) {
+], function ($, util, common) {
     // 密码重置form校验
     $('#account-btn').on('click', function() {
         var formData = {};
@@ -40,7 +43,7 @@ define([
             switch(this.name) {
                 case 'password_new':
                 case 'password_old':
-                    if (!common.isPassword(val)) {
+                    if (!util.isPassword(val)) {
                         errorText = label + "须是6~16个字符的小写字母或数字组成";
                         validate = false;
                         isValid = false;

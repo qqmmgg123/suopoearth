@@ -4,14 +4,17 @@ requirejs.config({
         'jquery': 'jquery.min',
         'jplaceholder': 'jquery.placeholder.min',
         'backbone': 'backbone-min',
+        'utilities': 'utilities',
+        'validation': 'validate',
         'common': 'common'
     }
 });
 
 define([
    'jquery',
-   'common',
-], function ($, common) {
+   'utilities',
+   'common'
+], function ($, util, common) {
     // 密码重置form校验
     $('#pwdreset-btn').on('click', function() {
         var formData = {};
@@ -38,7 +41,7 @@ define([
             // 判断是否有效
             switch(this.name) {
                 case 'email':
-                    if (!common.isValidEmail(val)) {
+                    if (!util.isValidEmail(val)) {
                         errorText = label + "的格式书写错误";
                         validate = false;
                         isValid = false;
