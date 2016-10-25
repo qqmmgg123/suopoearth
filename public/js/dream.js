@@ -5,6 +5,7 @@ requirejs.config({
         'jquery': 'jquery.min',
         'jplaceholder': 'jquery.placeholder.min',
         'backbone' : 'backbone-min',
+        'validation': 'validate',
         'common': 'common',
         'text'  : 'text',
         'template' : '../template'

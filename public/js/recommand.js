@@ -4,6 +4,8 @@ requirejs.config({
         'jquery': 'jquery.min',
         'jplaceholder': 'jquery.placeholder.min',
         'backbone': 'backbone-min',
+        'utilities': 'utilities',
+        'validation': 'validate',
         'common': 'common'
     }
 });
