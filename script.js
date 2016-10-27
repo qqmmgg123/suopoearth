@@ -9,7 +9,7 @@ var async = require("async")
 
 mongoose.connect('mongodb://localhost/suopoearth');
 
-var command = process.argv[2];
+var command = process.argv[2], args = process.argv[3];
 
 function clearnode() {
     Node.find({})
@@ -183,6 +183,26 @@ Dream.find({
                 });*/
 }
 
+function deleteDream(dreamID) {
+    Dream.findById(dreamID, function(err, dream) {
+        if (err) return next(err);
+
+        if (!dream) {
+            console.log('Dream not found.');
+            return;
+        }
+        
+        dream.remove(function(err) {
+            if (err) {
+                console.log(err.message);
+                return;
+            }
+
+            console.log('Remove ' + dreamID + 'success!');
+        });
+    });
+}
+
 switch(command) {
     case '--clearnode':
         clearnode();
@@ -192,5 +212,8 @@ switch(command) {
         break;
     case '--test':
         test();
+        break;
+    case '--deletedream':
+        deleteDream(args);
         break;
 }

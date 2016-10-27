@@ -51,6 +51,13 @@ var common = {
             alert('您使用的是ie浏览器，但版本过低，请使用chrome、firefox、或用ie8或ie更高版本，或者携带以上内核的浏览器，如QQ，搜狗等。');
         }
     },
+    checkMobile: function() {
+        if(window.innerWidth <= 800 && window.innerHeight <= 600) {
+            return true;
+        } else {
+            return false;
+        }
+    },
     // 增加输入框提示（主要是为了兼容ie）
     placeholder: function() {
         $('input, textarea').placeholder();
@@ -181,12 +188,20 @@ var common = {
     bindSigninCtrl: function($signin_btn) {
         var self = this;
         $signin_btn.click(function() {
+            if (self.checkMobile()) {
+                window.location.replace('/signin');
+                return;
+            }
             self.showSigninPop();
         });
     },
     bindSignupCtrl: function($signup_btn) {
         var self = this;
         $signup_btn.click(function() {
+            if (self.checkMobile()) {
+                window.location.replace('/signup');
+                return;
+            }
             self.showSignupPop();
         });
     },

@@ -227,8 +227,22 @@ a:hover {
   padding: 10px;
 }
 .header .head-con {
-  width: 1026px;
   margin: 0 auto;
+}
+@media (min-width: 768px) {
+  .header .head-con {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .header .head-con {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .header .head-con {
+    width: 1170px;
+  }
 }
 .header .create-area {
   overflow: hidden;
@@ -358,15 +372,39 @@ div.for-signin .banner-bg {
 .banner .banner-bg {
   text-align: left;
   margin: 0 auto;
-  width: 1026px;
   height: 300px;
-  background: url(/images/banner_bg.png) no-repeat;
+}
+@media (min-width: 768px) {
+  .banner .banner-bg {
+    width: 750px;
+    background: none;
+  }
+  .banner .signin-area {
+    margin: 100px 0 0 0;
+  }
+}
+@media (min-width: 992px) {
+  .banner .banner-bg {
+    width: 970px;
+    background: url(/images/banner_bg.png) no-repeat;
+  }
+  .banner .signin-area {
+    margin: 100px 20px 0 0;
+    float: right;
+  }
+}
+@media (min-width: 1200px) {
+  .banner .banner-bg {
+    width: 1026px;
+    background: url(/images/banner_bg.png) no-repeat;
+  }
+  .banner .signin-area {
+    margin: 100px 20px 0 0;
+    float: right;
+  }
 }
 .banner .signin-area {
-  margin: 100px 20px 0 0;
   padding: 10px 20px 20px;
-  width: 320px;
-  float: right;
   border: 2px solid #eaeaea;
   background-color: #fff;
   border-radius: 5px;
@@ -703,8 +741,46 @@ i.search-icon {
 .container .followers-area,
 .container #recommand-area {
   text-align: left;
-  width: 1026px;
   margin: 0 auto;
+}
+@media (min-width: 768px) {
+  .container .store-area,
+  .container .team-area,
+  .container .notice,
+  .container .search-area,
+  .container .settings-area,
+  .container .msg-area,
+  .container .following-area,
+  .container .followers-area,
+  .container #recommand-area {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .container .store-area,
+  .container .team-area,
+  .container .notice,
+  .container .search-area,
+  .container .settings-area,
+  .container .msg-area,
+  .container .following-area,
+  .container .followers-area,
+  .container #recommand-area {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .container .store-area,
+  .container .team-area,
+  .container .notice,
+  .container .search-area,
+  .container .settings-area,
+  .container .msg-area,
+  .container .following-area,
+  .container .followers-area,
+  .container #recommand-area {
+    width: 1026px;
+  }
 }
 .container .settings-area {
   margin-top: 20px;
@@ -1501,7 +1577,6 @@ a.next-btn {
 .footer .company-area {
   overflow: hidden;
   padding: 20px;
-  width: 1026px;
   margin: 0 auto;
 }
 .footer .company-area .company-ver {
@@ -1524,6 +1599,21 @@ a.next-btn {
   padding: 0 3px;
   font-family: Arial;
   color: #bbb;
+}
+@media (min-width: 768px) {
+  .footer .company-area {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .footer .company-area {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .footer .company-area {
+    width: 1026px;
+  }
 }
 .r-footer {
   margin-top: 20px;
