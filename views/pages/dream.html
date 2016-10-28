@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= data.current.title %> - <%= title %></title>
     <link rel="shortcut icon" href="/favicon.ico" /> 
     <!-- 通用样式 -->
@@ -70,7 +71,13 @@
                         <div class="nav-left clearfix">
                             <ul class="tab-nav">
                                 <li>
-                                    <a class="cur tab" href="javascript:;">心路历程</a>
+                                    <a class="<% if (data.category === 'node') { %>cur<% } %> tab" href="/dream/<%= data.current._id %>">心路历程</a>
+                                </li>
+                                <li>
+                                    <a class="<% if (data.category === 'suggest') { %>cur<% } %> tab" href="/dream/<%= data.current._id %>/suggest">建议</a>
+                                </li>
+                                <li>
+                                    <a class="<% if (data.category === 'experience') { %>cur<% } %> tab" href="/dream/<%= data.current._id %>/experience">心得</a>
                                 </li>
                                 <!--<li>-->
                                     <!--<a href="javascript:;">甘特图</a>-->
@@ -109,7 +116,9 @@
                         <!--</div>-->
                         <% } %>
                         <div id="node-list">
+                            <% if () { %>
                             <% include ../partials/nodelist.html %>
+                            <% } %>
                         </div>
                     </div>
                     <div class="tab-content" style="display: none;">
@@ -132,6 +141,7 @@
                     <button data-did="<%= data.current.id %>" rel="dream-delete" class="btn">删除想法</button>&nbsp;
                     <button data-did="<%= data.current.id %>" rel="dream-modify" class="btn">修改</button>
                 <% } %>
+                <% if (data.author) { %>
                 <div class="author">
                     <h2>发起人</h2>
                     <div class="author-top">
@@ -163,6 +173,11 @@
                         <!--<button class="message-add btn">打招呼</button>-->
                     </p>
                 </div>
+                <% } else { %>
+                <div class="author">
+                    想法发起人帐号不存在
+                </div>
+                <% } %>
                 <div class="member">
                     <h2><%= data.membercount %>人关注了该想法</h2>
                         <ul>

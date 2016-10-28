@@ -3,10 +3,10 @@ var mongoose = require('mongoose')
 
     , Schema = mongoose.Schema;
 
-var Node = new Schema({
-    content    : { type: String, required: true, minlength: 1, maxlength: 140, trim: true },
+var Experience = new Schema({
+    content    : { type: String, required: true, minlength: 1, trim: true },
+    category   : { type: Number, reqiured: true, default: 3 },
     author     : { type: String, required: true, minlength: 2, maxlength: 12, trim: true },
-    category   : { type: Number, reqiured: true, default: 1 },
     _belong_u  : { type: Schema.Types.ObjectId, ref: 'Account' },
     _belong_d  : { type: Schema.Types.ObjectId, ref: 'Dream' },
     comments   : [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
@@ -15,16 +15,16 @@ var Node = new Schema({
     date       : { type: Date, default: Date.now }
 });
 
-Node.index({'supporters': 1});
-Node.index({'opponents': 1});
+Experience.index({'supporters': 1});
+Experience.index({'opponents': 1});
 
-Node.pre('remove', function(next) {
+Experience.pre('remove', function(next) {
     var self = this;
     async.parallel([
         function(cb) {
             self.model('Account').update({ 
-                "nodes": self._id
-            }, { $pull: { "nodes": self._id } }, function(err, users) {
+                "experiences": self._id
+            }, { $pull: { "experiences": self._id } }, function(err, users) {
                 if (err) {
                     return cb(err);
                 }
@@ -34,8 +34,8 @@ Node.pre('remove', function(next) {
         },
         function(cb) {
             self.model('Dream').update({ 
-                "nodes": self._id
-            }, { $pull: { "nodes": self._id } }, function(err, dreams) {
+                "experiences": self._id
+            }, { $pull: { "experiences": self._id } }, function(err, dreams) {
                 if (err) {
                     return cb(err);
                 }
@@ -49,4 +49,4 @@ Node.pre('remove', function(next) {
     );
 });
 
-module.exports = mongoose.model('Node', Node);
+module.exports = mongoose.model('Experience', Experience);

@@ -9,6 +9,8 @@ var Dream = new Schema({
     accounts    : [{ type: Schema.Types.ObjectId, ref: 'Account', unique: true }],
     _followers_u: [{ type: Schema.Types.ObjectId, ref: 'Account', unique: true }],
     nodes       : [{ type: Schema.Types.ObjectId, ref: 'Node', unique: true }],
+    experiences : [{ type: Schema.Types.ObjectId, ref: 'Experience', unique: true }],
+    suggests    : [{ type: Schema.Types.ObjectId, ref: 'Suggest', unique: true }],
     comments    : [{ type: Schema.Types.ObjectId, ref: 'Comment', unique: true }],
     supporters  : [{ type: Schema.Types.ObjectId, ref: 'Account', unique: true }],
     opponents   : [{ type: Schema.Types.ObjectId, ref: 'Account', unique: true }],
@@ -21,6 +23,8 @@ Dream.index({'nodes':1});
 Dream.index({'accounts':1});
 Dream.index({'_followers_u':1});
 Dream.index({'nodes':1});
+Dream.index({'experiences':1});
+Dream.index({'suggests':1});
 Dream.index({'comments':1});
 Dream.index({'supporters':1});
 Dream.index({'opponents':1});

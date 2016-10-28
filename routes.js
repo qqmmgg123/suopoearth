@@ -10,6 +10,8 @@ var async = require("async")
     , Account = require('./models/account')
     , Dream = require("./models/dream")
     , Node = require("./models/node")
+    , Suggest = require("./models/Suggest")
+    , Experience = require("./models/Experience")
     , Activity = require("./models/activity")
     , Comment = require("./models/comment")
     , Message = require("./models/message")
@@ -374,8 +376,25 @@ router.get('/canvas', function(req, res) {
 });
 
 // 想法详情页
-router.get('/dream/:id', function(req, res, next) {
-    var msgs = [];
+router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(req, res, next) {
+    var msgs     = [],
+        category = req.params.category || 'node',
+        CModel = Node;
+    
+    switch (category) {
+        case 'node':
+            CModel = Node;
+            break;
+        case 'suggest':
+            CModel = Suggest;
+            break;
+        case 'experience':
+            CModel = Experience;
+            break;
+        default:
+            break;
+    }
+
     if (!req.user) {
         req.session.redirectTo = req.originalUrl;
     }
@@ -547,7 +566,7 @@ router.get('/dream/:id', function(req, res, next) {
                     }
                 },
                 function(cb) {
-                    Node.aggregate([match, {
+                    CModel.aggregate([match, {
                         $project: {
                             id        : 1,
                             content   : 1,
@@ -562,12 +581,12 @@ router.get('/dream/:id', function(req, res, next) {
                     }, {
                         $limit: 11
                     }],
-                    function(err, nodes) {
-                        if (err || !nodes) {
+                    function(err, items) {
+                        if (err || !items) {
                             return cb(noExistErr, []);
                         };
                         
-                        cb(null, nodes);
+                        cb(null, items);
                     });
                 }], function(err, results) {
                     if (err) {
@@ -578,35 +597,35 @@ router.get('/dream/:id', function(req, res, next) {
                         return next(noExistErr);
                     }
 
-                    var pnodes = results[0],
-                        nodes  = results[1];
+                    var pitems = results[0],
+                        items  = results[1];
 
                     var hasprev = false,
-                        nprev   = 0;
-                    if (pnodes[0]) {
+                        iprev   = 0;
+                    if (pitems[0]) {
                         hasprev = true;
-                        nprev = pnodes[0]._id;
+                        iprev = pitems[0]._id;
                     }
 
                     var hasmore = false,
-                        nnext   = 0;
-                    if (nodes[10]) {
+                        inext   = 0;
+                    if (items[10]) {
                         hasmore = true;
-                        nnext = nodes[10]._id;
+                        inext = items[10]._id;
                     }
-                    nodes = nodes.slice(0, 10);
+                    items = items.slice(0, 10);
     
-                    Account.populate(nodes, { path: '_belong_u' }, function(err, rnodes) {
+                    Account.populate(items, { path: '_belong_u' }, function(err, ritems) {
                         if (err) {
                             return next(err);
                         }
     
-                        if (!rnodes) {
+                        if (!ritems) {
                             return next(noExistErr);
                         }
     
-                        rnodes.forEach(function(node) {
-                            node.isowner = req.user && (node._belong_u && node._belong_u._id.equals(req.user.id));
+                        ritems.forEach(function(item) {
+                            item.isowner = req.user && (item._belong_u && item._belong_u._id.equals(req.user.id));
                         });
     
                         async.parallel([
@@ -701,21 +720,24 @@ router.get('/dream/:id', function(req, res, next) {
                                     membercount: results[0][0]? results[0][0]:0,
                                     members    : accounts,
                                     prev       : results[1][0],
-                                    nodes      : rnodes,
+                                    nodes      : ritems,
                                     hasprev    : hasprev,
                                     hasmore    : hasmore,
-                                    nprev      : nprev,
-                                    nnext      : nnext,
+                                    nprev      : iprev,
+                                    nnext      : inext,
                                     current    : results[2][0],
                                     next       : results[2][1],
                                     isFollow   : isfollow,
                                     text       : settings.COMMENT_TEXT,
                                     viewType   : viewType,
+                                    category   : category,
                                     currNid    : currNid,
                                     currCid    : currCid,
                                     currComments: currComments,
                                     isauthenticated: !!req.user
                                 };
+
+                                console.log(category);
     
                                 res.render('pages/dream', makeCommon({
                                     user  : req.user,
@@ -734,28 +756,6 @@ router.get('/dream/:id', function(req, res, next) {
                     });
                 }
             );
-
-            Node.aggregate([match, {
-                $project: {
-                    id        : 1,
-                    content   : 1,
-                    author    : 1,
-                    _belong_u : 1,
-                    _belong_d : 1,
-                    comments  : { $size: '$comments' },
-                    date      : 1
-                }
-            }, {
-                $sort: { date: -1 }
-            }, {
-                $limit: 11
-            }],
-            function(err, nodes) {
-                if (err || !nodes) {
-                    return next(noExistErr);
-                };
-                
-            });
         }
     });
 });
@@ -971,7 +971,7 @@ router.get('/activities', function(req, res, next) {
 });
 
 // 获取历程信息
-router.get('/dream/:id/nodes', function(req, res, next) {
+router.get('/dream/:id([a-z0-9]+)/nodes', function(req, res, next) {
     var curId  = req.params.id,
         defaultErr = new Error("获取更多历程失败。"),
         _curId = mongoose.Types.ObjectId(curId);
@@ -1053,7 +1053,7 @@ router.get('/dream/:id/nodes', function(req, res, next) {
 });
 
 // 获取更晚的历程信息
-router.get('/dream/:id/pnodes', function(req, res, next) {
+router.get('/dream/:id([a-z0-9]+)/pnodes', function(req, res, next) {
     var curId  = req.params.id,
         defaultErr = new Error("获取更多历程失败。"),
         _curId = mongoose.Types.ObjectId(curId);
@@ -1135,7 +1135,7 @@ router.get('/dream/:id/pnodes', function(req, res, next) {
 });
 
 // 获取想法提议
-router.get('/dream/:id/comments', function(req, res, next) {
+router.get('/dream/:id([a-z0-9]+)/comments', function(req, res, next) {
     var curId = req.params.id;
 
     Comment.find({ _belong_d: curId }).lean().populate({
@@ -1167,9 +1167,24 @@ router.get('/dream/:id/comments', function(req, res, next) {
 });
 
 // 获取历程提议
-router.get('/node/:id/comments', function(req, res, next) {
-    var curId = req.params.id,
-        query = { _belong_n: curId };
+router.get('/:category(node|suggest|experience)/:id([a-z0-9]+)/comments', function(req, res, next) {
+    var category = req.params.category,
+        curId    = req.params.id,
+        query    = {};
+
+    switch(category) {
+        case 'node':
+            query._belong_n = curId;
+            break;
+        case 'suggest':
+            query._belong_s = curId;
+            break;
+        case 'experience':
+            query._belong_e = curId;
+            break;
+        default:
+            break;
+    }
 
     var page  = 1,
         limit = 10;
@@ -2537,6 +2552,220 @@ router.post('/node/new', function(req, res, next) {
     );
 });
 
+// 保存一个梦想节点
+router.post('/experience/new', function(req, res, next) {
+    if (!req.user) {
+        return res.redirect('/signin');
+    }
+
+    var uid = req.user.id;
+
+    if (!req.body.did) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var dreamId = req.body.did;
+    if (!req.body.content) {
+        return next(new Error("您的历程是空内容..."));
+    }
+
+    if (req.body.content.length > 140) {
+        return next(new Error("内容字数超出限制范围.."));
+    }
+
+    async.parallel([
+        function(cb){
+            Dream.findOne({_id: dreamId}, function(err, dream) {
+                if (err) return cb(err, null);
+
+                if (!dream) {
+                    var err = new Error("添加历程失败...");
+                    return cb(err, null);
+                }
+                
+                cb(null, dream);
+            });
+        },
+        function(cb){
+            Account.findOne({_id: uid}, function(err, user) {
+                if (err) return cb(err, null);
+
+                if (!user) {
+                    var err = new Error("添加历程失败...");
+                    return cb(err, null);
+                }
+                
+                cb(null, user);
+            });
+        }],
+        function(err, results){
+            if (err) return next(err);
+
+            if (!results || results.length < 2) {
+                var err = new Error("添加历程失败...");
+                return next(err);
+            }
+
+            var dream = results[0];
+            var user = results[1];
+
+            var experience = new Experience({
+                _belong_d: dream._id,
+                _belong_u: user._id,
+                author   : user.nickname,
+                content  : req.body.content
+            });
+
+            experience.save(function(err) {
+                if (err) return next(err);
+
+                dream.experiences.push(experience);
+                user.experiences.push(experience);
+
+                var newAc = new Activity({
+                    _belong_u : user._id,
+                    _belong_d : dream._id,
+                    _create_e : experience._id,
+                    alias     : user.nickname,
+                    type      : experience.category
+                });
+
+                async.parallel([
+                        function(cb_2) {
+                            dream.save(function(err) {
+                                if (err) return cb_2(err, null);
+                                cb_2(null, null);
+                            });
+                        },
+                        function(cb_2) {
+                            user.save(function(err) {
+                                if (err) return cb_2(err, null);
+                                cb_2(null, null);
+                            });
+                        },
+                        function(cb_2) {
+                            newAc.save(function(err) {
+                                if (err) return cb_2(err, null);
+                                cb_2(null, null);
+                            });
+                        }
+                    ], function(err, results) {
+                        if (err) return next(err);
+
+                        res.redirect('/dream/' + dream._id + '/experience');
+                });
+            });
+        }
+    );
+});
+
+// 保存一个梦想节点
+router.post('/suggest/new', function(req, res, next) {
+    if (!req.user) {
+        return res.redirect('/signin');
+    }
+
+    var uid = req.user.id;
+
+    if (!req.body.did) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var dreamId = req.body.did;
+    if (!req.body.content) {
+        return next(new Error("您的历程是空内容..."));
+    }
+
+    if (req.body.content.length > 140) {
+        return next(new Error("内容字数超出限制范围.."));
+    }
+
+    async.parallel([
+        function(cb){
+            Dream.findOne({_id: dreamId}, function(err, dream) {
+                if (err) return cb(err, null);
+
+                if (!dream) {
+                    var err = new Error("添加历程失败...");
+                    return cb(err, null);
+                }
+                
+                cb(null, dream);
+            });
+        },
+        function(cb){
+            Account.findOne({_id: uid}, function(err, user) {
+                if (err) return cb(err, null);
+
+                if (!user) {
+                    var err = new Error("添加历程失败...");
+                    return cb(err, null);
+                }
+                
+                cb(null, user);
+            });
+        }],
+        function(err, results){
+            if (err) return next(err);
+
+            if (!results || results.length < 2) {
+                var err = new Error("添加历程失败...");
+                return next(err);
+            }
+
+            var dream = results[0];
+            var user = results[1];
+
+            var suggest = new Suggest({
+                _belong_d: dream._id,
+                _belong_u: user._id,
+                author   : user.nickname,
+                content  : req.body.content
+            });
+
+            suggest.save(function(err) {
+                if (err) return next(err);
+
+                dream.suggests.push(suggest);
+                user.suggests.push(suggest);
+
+                var newAc = new Activity({
+                    _belong_u : user._id,
+                    _belong_d : dream._id, 
+                    _create_s : suggest._id,
+                    alias     : user.nickname,
+                    type      : seggest.category
+                });
+
+                async.parallel([
+                        function(cb_2) {
+                            dream.save(function(err) {
+                                if (err) return cb_2(err, null);
+                                cb_2(null, null);
+                            });
+                        },
+                        function(cb_2) {
+                            user.save(function(err) {
+                                if (err) return cb_2(err, null);
+                                cb_2(null, null);
+                            });
+                        },
+                        function(cb_2) {
+                            newAc.save(function(err) {
+                                if (err) return cb_2(err, null);
+                                cb_2(null, null);
+                            });
+                        }
+                    ], function(err, results) {
+                        if (err) return next(err);
+
+                        res.redirect('/dream/' + dream._id + '/seggest');
+                });
+            });
+        }
+    );
+});
+
 // 删除想法
 router.post('/dream/delete', function(req, res, next) {
     if (!req.user) {
@@ -3597,6 +3826,114 @@ router.post('/node/delete', function(req, res, next) {
         }
         
         node.remove(function(err) {
+            if (err) {
+                var err = new Error("删除历程失败...");
+                return next(err);
+            }
+
+            res.json({
+                info: "删除历程成功",
+                result: 0
+            });
+        });
+    });
+
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 删除心得
+router.post('/experience/delete', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    var uid = req.user.id;
+
+    if (!req.body || !req.body.nid) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var ID = req.body.nid;
+
+    Experience.findById(experienceID, function(err, experience) {
+        if (err) return next(err);
+
+        if (!experience) {
+            var err = new Error("删除历程失败...");
+            return next(err);
+        }
+
+        if (!experience._belong_u.equals(uid)) {
+            var err = new Error("这不是你的历程，你不能删除...");
+            return next(err);
+        }
+        
+        experience.remove(function(err) {
+            if (err) {
+                var err = new Error("删除历程失败...");
+                return next(err);
+            }
+
+            res.json({
+                info: "删除历程成功",
+                result: 0
+            });
+        });
+    });
+
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 删除历程
+router.post('/suggest/delete', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    var uid = req.user.id;
+
+    if (!req.body || !req.body.nid) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var ID = req.body.nid;
+
+    Suggest.findById(suggestID, function(err, suggest) {
+        if (err) return next(err);
+
+        if (!suggest) {
+            var err = new Error("删除历程失败...");
+            return next(err);
+        }
+
+        if (!suggest._belong_u.equals(uid)) {
+            var err = new Error("这不是你的历程，你不能删除...");
+            return next(err);
+        }
+        
+        suggest.remove(function(err) {
             if (err) {
                 var err = new Error("删除历程失败...");
                 return next(err);

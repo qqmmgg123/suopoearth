@@ -1,0 +1,116 @@
+<% if (data.nodes.length > 0) { %>
+<% if (data.hasprev) { %>
+<div class="process-node">
+    <div data-did="<%= data.current.id %>" data-nprev="<%= data.nprev %>" id="load-nodes-prev" class="more"><a class="btn">查看更多 ></a></div>
+</div>
+<% } %>
+<% data.nodes.forEach(function(node) { %>
+<% if (data.viewType == 2 && (node._id.equals && node._id.equals(data.currNid))) { %>
+<div id="currView" data-isauthenticated="<%= data.isauthenticated %>" class="process-node">
+<% } else { %>
+<div class="process-node">
+<% } %>
+    <div>
+        <p class="user-info">
+        <a class="avatar" href="/user/<%= node._belong_u? node._belong_u.id:node._belong_u %>"><img width="25" height="25" src="<%= node._belong_u.avatar %>" /></a>
+        <em class="username">
+            <% if (node._belong_u) { %>
+            <a href="/user/<%= node._belong_u.id %>">
+                <%= node._belong_u.nickname %>
+                <% } else { %>
+                <a href="/user/<%= node._belong_u %>">
+                    <%= node.author %>
+                    <% } %>
+                </a> <%= timeFormat(node.date) %> 更新了历程
+        </em>
+        </p>
+        <p class="node-content"><%= node.content %></p>
+    </div>
+    <div data-did="<%= data.current.id %>" data-blid="<%= node._id %>" data-bl="1" class="node-ctrl ctrl-area">
+        <div class="ctrl-nav">
+            <ul class="ctrl-list">
+                <!--<li><a class="good" href="javascript:;"><i class="approval-icon"></i>支持</a></li>-->
+                <!--<li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>-->
+                <% if (node.isowner) { %>
+                <li><a class="remove" rel="node-delete" href="javascript:;"><i class="remove-icon"></i>删除</a></li>
+                <% } %>
+                <li>
+                    <% if (data.viewType == 2 && (node._id.equals && node._id.equals(data.currNid))) { %>
+                    <a class="comment" data-show="true" data-total="<%= node.comments %>" href="javascript:;">
+                        <i class="comment-icon"></i>
+                        <%= data.text.COLLAPSE_COMMENT %>
+                    </a>
+                    <% } else { %>
+                    <a class="comment" data-show="false" href="javascript:;">
+                        <i class="comment-icon"></i>
+                        <%= data.text.EXPANSION_COMMENT %>
+                        <%= node.comments %>
+                    </a>
+                    <% } %>
+                </li>
+            </ul>
+        </div>
+        <div class="comment-area" style="display: none;">
+            <div class="comment-input" style="display: none;">
+                <textarea rel="comment-input" placeholder="说说你的看法..."></textarea>
+                <div class="btn-area" data-show="false" style="display: none;"><button class="btn btn-comment">发表</button></div>
+            </div>
+            <ul class="comment-list">
+                <% if (data.viewType == 2 && (node._id.equals && node._id.equals(data.currNid))) { %>
+                <% if (data.currComments && data.currComments.comments && data.currComments.comments.length > 0) { %>
+                <% data.currComments.comments.forEach(function(comment) { %>
+                <% if (comment._id.equals && comment._id.equals(data.currCid)) { %>
+                <li id="currShow" data-cid="<%= comment._id %>" data-uid="<%= comment._belong_u? comment._belong_u._id:'' %>">
+                <% } else { %>
+                <li data-cid="<%= comment._id %>" data-uid="<%= comment._belong_u? comment._belong_u._id:'' %>">
+                <% } %>
+                <div class="user-info">
+                    <a class="avatar"><img src="/images/user_mini.png" /></a>
+                    <em class="username"><a href="/user/<%= comment._belong_u._id %>"><%= comment.author %></a>
+                        <% if (comment.isreply) { %>
+                        回复<a href="/user/<%= comment._reply_u %>"><%= comment.other %></a>
+                        <% } %>
+                        <%= timeFormat(comment.date) %>
+                    </em>
+                </div>
+                <p class="text"><%= comment.content %></p>
+                <div>
+                    <a rel="comment-delete" href="javascript:;"><%= comment.isowner? '删除':'' %></a>
+                    <a class="reply" href="javascript:;"><%= comment.isowner? '':'回复' %></a>
+                </div>
+                <% if (data.isauthenticated) { %>
+                <div class="reply-area" style="display: none;">
+                    <textarea placeholder="说说你的看法..."></textarea>
+                    <button class="btn btn-reply">回复</button>
+                </div>
+                <% } %>
+                </li>
+                <% }); %>
+                <% } %>
+                <% } %>
+            </ul>
+            <% if (data.viewType == 2 && (node._id.equals && node._id.equals(data.currNid))) { %>
+            <% if (data.currComments && data.currComments.currPage) { %>
+            <div class="comment-page" data-page="<%= data.currComments.currPage %>" style="display: none;">
+            <% } %>
+            <% } else { %>
+            <div class="comment-page pagination" style="display: none;">
+            <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+<% }); %>
+<% if (data.hasmore) { %>
+<div class="process-node">
+    <div data-did="<%= data.current.id %>" data-nnext="<%= data.nnext %>" id="load-nodes-next" class="more"><a class="btn">查看更多 ></a></div>
+</div>
+<% } %>
+<% } else { %>
+<div class="process-node">
+    <div class="result">
+        没有想法的践行历程
+    </div>
+</div>
+<% } %>
+

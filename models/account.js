@@ -12,6 +12,8 @@ var Account = new Schema({
     dreams        : [{ type: Schema.Types.ObjectId, ref: 'Dream', unique: true }],
     _following_d  : [{ type: Schema.Types.ObjectId, ref: 'Dream', unique: true }],
     nodes         : [{ type: Schema.Types.ObjectId, ref: 'Node', unique: true }],
+    experiences   : [{ type: Schema.Types.ObjectId, ref: 'Experience', unique: true }],
+    suggests      : [{ type: Schema.Types.ObjectId, ref: 'Suggest', unique: true }],
     messages      : [{ type: Schema.Types.ObjectId, ref: 'Message', unique: true }],
     msgreviewdate : { type: Date },
     date          : { type: Date,  default: Date.now }
@@ -20,6 +22,8 @@ var Account = new Schema({
 Account.index({'follows':1});
 Account.index({'fans':1});
 Account.index({'nodes':1});
+Account.index({'experiences':1});
+Account.index({'suggests':1});
 Account.index({'dreams':1});
 Account.index({'messages':1});
 Account.index({'_following_d':1});
