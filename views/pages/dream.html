@@ -116,8 +116,12 @@
                         <!--</div>-->
                         <% } %>
                         <div id="node-list">
-                            <% if () { %>
+                            <% if (data.category === 'node') { %>
                             <% include ../partials/nodelist.html %>
+                            <% } else if (data.category === 'experience') { %>
+                            <% include ../partials/experiencelist.html %>
+                            <% } else if (data.category === 'suggest') { %>
+                            <% include ../partials/suggestlist.html %>
                             <% } %>
                         </div>
                     </div>
