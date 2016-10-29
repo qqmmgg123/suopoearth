@@ -1331,14 +1331,14 @@ i.search-icon {
 }
 .container .dream-con .dream-left {
   float: left;
-  width: 650px;
+  width: 62%;
 }
 .container .dream-con .dream-left .dream-left-inner {
   padding: 10px;
 }
 .container .dream-con .dream-right {
-  float: right;
-  width: 350px;
+  float: left;
+  width: 38%;
 }
 .container .dream-con .dream-right .dream-right-inner {
   padding: 10px;

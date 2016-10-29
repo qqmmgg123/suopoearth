@@ -8,6 +8,13 @@ var settings = {
     COMMENT_TEXT: {
         COLLAPSE_COMMENT: '收起提议',
         EXPANSION_COMMENT: '提议'
+    },
+
+    OBJEXT_TYPE: {
+        DREAM      : 0,
+        NODE       : 1,
+        SUGGEST    : 2,
+        EXPERIENCE : 3
     }
 };
 

@@ -54,10 +54,24 @@ function getFlash(req, name) {
     return '';
 }
 
-// 获取历程评论公共接口
-function getNodeComments(nodeId, page, user, callback) {
-    var curId = nodeId,
-        query = { _belong_n: curId };
+// 获取评论公共接口
+function getItemComments(itemId, category, page, user, callback) {
+    var curId = itemId,
+        query = {};
+
+    switch(category) {
+        case settings.OBJEXT_TYPE.NODE:
+            query._belong_n = curId;
+            break;
+        case settings.OBJEXT_TYPE.SUGGEST:
+            query._belong_s = curId;
+            break;
+        case settings.OBJEXT_TYPE.EXPERIENCE:
+            query._belong_e = curId;
+            break;
+        default:
+            break;
+    }
 
     var limit = 10;
 
@@ -574,6 +588,7 @@ router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(re
                             _belong_u : 1,
                             _belong_d : 1,
                             comments  : { $size: '$comments' },
+                            category  : 1,
                             date      : 1
                         }
                     }, {
@@ -585,7 +600,7 @@ router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(re
                         if (err || !items) {
                             return cb(noExistErr, []);
                         };
-                        
+
                         cb(null, items);
                     });
                 }], function(err, results) {
@@ -712,7 +727,8 @@ router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(re
                                         account.isfollow = (account.fans.indexOf(_uid)!== -1);
                                     });
 
-                                    author.isfollow = (author.fans.indexOf(_uid)!== -1)
+                                    if (author)
+                                        author.isfollow = (author.fans.indexOf(_uid)!== -1)
                                 }
     
                                 var resData = {
@@ -737,8 +753,6 @@ router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(re
                                     isauthenticated: !!req.user
                                 };
 
-                                console.log(category);
-    
                                 res.render('pages/dream', makeCommon({
                                     user  : req.user,
                                     title : settings.APP_NAME,
@@ -1134,39 +1148,7 @@ router.get('/dream/:id([a-z0-9]+)/pnodes', function(req, res, next) {
     });
 });
 
-// 获取想法提议
-router.get('/dream/:id([a-z0-9]+)/comments', function(req, res, next) {
-    var curId = req.params.id;
-
-    Comment.find({ _belong_d: curId }).lean().populate({
-         path: '_belong_u'
-    }).exec(function(err, comments) {
-        if (err) {
-            return next(err);
-        }
-
-        comments.forEach(function(comment) {
-            comment.isowner = req.user && (comment._belong_u && comment._belong_u._id.equals(req.user.id));
-        });
-
-        res.json({
-            isauthenticated: !!req.user,
-            comments: comments,
-            result: 0
-        })
-    })
-}, function(err, req, res, next) {
-    if (err) {
-        message = err.message;
-    }
-
-    return res.json({
-        info: message,
-        result: 1
-    });
-});
-
-// 获取历程提议
+// 获取历程/建议/心得评论
 router.get('/:category(node|suggest|experience)/:id([a-z0-9]+)/comments', function(req, res, next) {
     var category = req.params.category,
         curId    = req.params.id,
@@ -2734,7 +2716,7 @@ router.post('/suggest/new', function(req, res, next) {
                     _belong_d : dream._id, 
                     _create_s : suggest._id,
                     alias     : user.nickname,
-                    type      : seggest.category
+                    type      : suggest.category
                 });
 
                 async.parallel([
@@ -2759,7 +2741,7 @@ router.post('/suggest/new', function(req, res, next) {
                     ], function(err, results) {
                         if (err) return next(err);
 
-                        res.redirect('/dream/' + dream._id + '/seggest');
+                        res.redirect('/dream/' + dream._id + '/suggest');
                 });
             });
         }
@@ -3521,7 +3503,7 @@ router.post('/comment/new', function(req, res, next) {
         return next(new Error("请求参数错误，创建失败..."));
     }
 
-    var bl   = req.body.bl;
+    var bl   = parseInt(req.body.bl, 10);
     var did  = req.body.did;
     var blID = req.body.blid;
 
@@ -3537,11 +3519,14 @@ router.post('/comment/new', function(req, res, next) {
     var promise = null;
 
     switch(bl) {
-        case '0':
-            promise = Dream.findOne({_id: blID}).select('comments').exec();
-            break;
-        case '1':
+        case settings.OBJEXT_TYPE.NODE:
             promise = Node.findOne({_id: blID}).select('comments').exec();
+            break;
+        case settings.OBJEXT_TYPE.SUGGEST:
+            promise = Suggest.findOne({_id: blID}).select('comments').exec();
+            break;
+        case settings.OBJEXT_TYPE.EXPERIENCE:
+            promise = Experience.findOne({_id: blID}).select('comments').exec();
             break;
         default:
             return next(new Error("请求参数错误，创建失败..."));
@@ -3550,7 +3535,7 @@ router.post('/comment/new', function(req, res, next) {
 
     promise.then(function(object) {
         if (!object) {
-            var err = new Error("发布提议失败...");
+            var err = new Error("发布" + settings.COMMENT_TEXT.EXPANSION_COMMENT + "失败...");
             return next(err);
         }
 
@@ -3558,17 +3543,24 @@ router.post('/comment/new', function(req, res, next) {
             _belong_d: did,
             _belong_u: uid,
             author   : nickname,
-            content  : content.trim()
+            content  : content.trim(),
+            category : bl
         }
 
         switch(bl) {
-            case '1':
+            case settings.OBJEXT_TYPE.NODE:
                 fields._belong_n = blID;
+                break;
+            case settings.OBJEXT_TYPE.SUGGEST:
+                fields._belong_s = blID;
+                break;
+            case settings.OBJEXT_TYPE.EXPERIENCE:
+                fields._belong_e = blID;
                 break;
             default:
                 break;
         }
-    
+
         var comment = new Comment(fields);
         object.comments.push(comment);
 
@@ -3588,7 +3580,7 @@ router.post('/comment/new', function(req, res, next) {
             ], function(err, results) {
                 if (err) return next(err);
 
-                getNodeComments(blID, 1, req.user, function(err, data) {
+                getItemComments(blID, bl, 1, req.user, function(err, data) {
                     if (err) return next(err);
 
                     data.info   =  "发布成功";
@@ -3634,7 +3626,7 @@ router.post('/reply/new', function(req, res, next) {
         return next(new Error("请求参数错误，回复失败..."));
     }
 
-    var bl    = req.body.bl
+    var bl    = parseInt(req.body.bl, 10)
     , did     = req.body.did
     , blID    = req.body.blid
     , toid    = req.body.toid
@@ -3648,14 +3640,17 @@ router.post('/reply/new', function(req, res, next) {
     var promise = null;
 
     switch(bl) {
-        case '0':
-            promise = Dream.findOne({_id: blID}).select('comments').exec();
-            break;
-        case '1':
+        case settings.OBJEXT_TYPE.NODE:
             promise = Node.findOne({_id: blID}).select('comments').exec();
             break;
+        case settings.OBJEXT_TYPE.SUGGEST:
+            promise = Suggest.findOne({_id: blID}).select('comments').exec();
+            break;
+        case settings.OBJEXT_TYPE.EXPERIENCE:
+            promise = Experience.findOne({_id: blID}).select('comments').exec();
+            break;
         default:
-            return next(new Error("请求参数错误，回复失败..."));
+            return next(new Error("请求参数错误，创建失败..."));
             break;
     }
 
@@ -3712,11 +3707,18 @@ router.post('/reply/new', function(req, res, next) {
             author   : nickname,
             other    : other.nickname,
             content  : content.trim(),
+            category : bl
         }
 
         switch(bl) {
-            case '1':
+            case settings.OBJEXT_TYPE.NODE:
                 fields._belong_n = blID;
+                break;
+            case settings.OBJEXT_TYPE.SUGGEST:
+                fields._belong_s = blID;
+                break;
+            case settings.OBJEXT_TYPE.EXPERIENCE:
+                fields._belong_e = blID;
                 break;
             default:
                 break;
@@ -3767,7 +3769,7 @@ router.post('/reply/new', function(req, res, next) {
                 ], function(err, results) {
                     if (err) return next(err);
 
-                    getNodeComments(blID, 1, req.user, function(err, data) {
+                    getItemComments(blID, bl, 1, req.user, function(err, data) {
                         if (err) return next(err);
 
                         data.info   =  "回复成功";
@@ -3806,11 +3808,11 @@ router.post('/node/delete', function(req, res, next) {
 
     var uid = req.user.id;
 
-    if (!req.body || !req.body.nid) {
+    if (!req.body || !req.body.itemid) {
         return next(new Error("请求参数错误..."));
     }
 
-    var nodeID = req.body.nid;
+    var nodeID = req.body.itemid;
 
     Node.findById(nodeID, function(err, node) {
         if (err) return next(err);
@@ -3860,11 +3862,11 @@ router.post('/experience/delete', function(req, res, next) {
 
     var uid = req.user.id;
 
-    if (!req.body || !req.body.nid) {
+    if (!req.body || !req.body.itemid) {
         return next(new Error("请求参数错误..."));
     }
 
-    var ID = req.body.nid;
+    var experienceID = req.body.itemid;
 
     Experience.findById(experienceID, function(err, experience) {
         if (err) return next(err);
@@ -3903,7 +3905,7 @@ router.post('/experience/delete', function(req, res, next) {
     });
 });
 
-// 删除历程
+// 删除建议
 router.post('/suggest/delete', function(req, res, next) {
     if (!req.user) {
         return res.json({
@@ -3914,11 +3916,11 @@ router.post('/suggest/delete', function(req, res, next) {
 
     var uid = req.user.id;
 
-    if (!req.body || !req.body.nid) {
+    if (!req.body || !req.body.itemid) {
         return next(new Error("请求参数错误..."));
     }
 
-    var ID = req.body.nid;
+    var suggestID = req.body.itemid;
 
     Suggest.findById(suggestID, function(err, suggest) {
         if (err) return next(err);
@@ -3977,27 +3979,29 @@ router.post('/comment/delete', function(req, res, next) {
     // 查询耗时测试
     var start = new Date().getTime();
 
-    Comment.findById(commentID, '_belong_u', function(err, comment) {
+    var cname = settings.COMMENT_TEXT.EXPANSION_COMMENT;
+
+    Comment.findById(commentID, '_belong_u category', function(err, comment) {
         if (err) return next(err);
 
         if (!comment) {
-            var err = new Error("删除评论失败...");
+            var err = new Error("删除" + cname + "失败...");
             return next(err);
         }
 
         if (!comment._belong_u.equals(uid)) {
-            var err = new Error("这不是你的评论，你不能删除...");
+            var err = new Error("这不是你的" + cname + "，你不能删除...");
             return next(err);
         }
 
         comment.remove(function(err) {
             if (err) {
-                var err = new Error("删除评论失败...");
+                var err = new Error("删除" + cname + "失败...");
                 return next(err);
             }
 
             res.json({
-                info: "删除评论成功",
+                info: "删除" + cname + "成功",
                 result: 0
             });
 

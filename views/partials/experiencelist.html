@@ -1,7 +1,7 @@
 <% if (user && data.current._belong_u == user.id) { %>
 <div class="edit-area">
     <div class="add-area">
-        <form action="/node/new" id="node_create_form" method="post">
+        <form action="/experience/new" id="node_create_form" method="post">
             <ul>
                 <!--<li><a href="javascript:;" class="pic-add"><i class="pic-icon"></i>添加图片</a></li>-->
                 <!--<li><a href="javascript:;" class="video-add"><i class="video-icon"></i>添加视频</a></li>-->
@@ -21,7 +21,7 @@
 <!--和我的想法一样 <button class="btn">参与</button>-->
 <!--</div>-->
 <% } %>
-<div id="node-list">
+<div id="experience-list">
     <% if (data.nodes.length > 0) { %>
     <% if (data.hasprev) { %>
     <div class="process-node">
@@ -45,12 +45,12 @@
                     <a href="/user/<%= node._belong_u %>">
                         <%= node.author %>
                         <% } %>
-                    </a> <%= timeFormat(node.date) %> 更新了历程
+                    </a> <%= timeFormat(node.date) %> 发表了心得
             </em>
             </p>
             <p class="node-content"><%= node.content %></p>
         </div>
-        <div data-did="<%= data.current.id %>" data-blid="<%= node._id %>" data-bl="1" class="node-ctrl ctrl-area">
+        <div data-did="<%= data.current.id %>" data-blid="<%= node._id %>" data-bl="<%= node.category %>" class="node-ctrl ctrl-area">
             <div class="ctrl-nav">
                 <ul class="ctrl-list">
                     <!--<li><a class="good" href="javascript:;"><i class="approval-icon"></i>支持</a></li>-->
@@ -133,7 +133,7 @@
     <% } else { %>
     <div class="process-node">
         <div class="result">
-            没有想法的践行历程
+            没有发表想法的心得。
         </div>
     </div>
     <% } %>

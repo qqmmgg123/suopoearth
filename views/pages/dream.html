@@ -60,18 +60,12 @@
                         </ul>
                     </div>
                 </div>
-                <!--<div class="blue-print">-->
-                    <!--<h2>蓝图</h2>-->
-                    <!--<div>-->
-                        <!--<% include ../partials/blueprint.html %>-->
-                    <!--</div>-->
-                <!--</div>-->
                 <div class="process-area">
                     <div class="process-nav clearfix">
                         <div class="nav-left clearfix">
                             <ul class="tab-nav">
                                 <li>
-                                    <a class="<% if (data.category === 'node') { %>cur<% } %> tab" href="/dream/<%= data.current._id %>">心路历程</a>
+                                    <a class="<% if (data.category === 'node') { %>cur<% } %> tab" href="/dream/<%= data.current._id %>">历程</a>
                                 </li>
                                 <li>
                                     <a class="<% if (data.category === 'suggest') { %>cur<% } %> tab" href="/dream/<%= data.current._id %>/suggest">建议</a>
@@ -79,51 +73,17 @@
                                 <li>
                                     <a class="<% if (data.category === 'experience') { %>cur<% } %> tab" href="/dream/<%= data.current._id %>/experience">心得</a>
                                 </li>
-                                <!--<li>-->
-                                    <!--<a href="javascript:;">甘特图</a>-->
-                                <!--</li>-->
                             </ul>
                         </div>
-                        <!--<div class="nav-right">-->
-                            <!--<a id="node-add" href="javascript:;">-->
-                                <!--设置-->
-                                <!--<i class="config-icon"></i>-->
-                            <!--</a>-->
-                        <!--</div>-->
                     </div>
                     <div class="tab-content">
-                        <% if (user && data.current._belong_u == user.id) { %>
-                        <div class="edit-area">
-                            <div class="add-area">
-                                <form action="/node/new" id="node_create_form" method="post">
-                                <ul>
-                                    <!--<li><a href="javascript:;" class="pic-add"><i class="pic-icon"></i>添加图片</a></li>-->
-                                    <!--<li><a href="javascript:;" class="video-add"><i class="video-icon"></i>添加视频</a></li>-->
-                                    <!--<li><a href="/store" class="more-add"><i class="more-icon"></i>更多资源</a></li>-->
-                                    <li class="textarea-field"><textarea id="story-editor" placeholder="分享一下你的心路故事..." name="content"></textarea></li>
-                                    <li style="display: none;"><input name="did" type="hidden" value="<%= data.current.id %>" /></li>
-                                </ul>
-                                <div class="edit-ctrl">
-                                    <a href="javascript:;" title="表情" alt="表情" class="face">(∩＿∩)</a>
-                                    <button type="submit" id="node_create_btn" class="btn">分享</button>
-                                </div>
-                                </form>
-                            </div>
-                        </div>
-                        <% } else { %>
-                        <!--<div class="">-->
-                            <!--和我的想法一样 <button class="btn">参与</button>-->
-                        <!--</div>-->
+                        <% if (data.category === 'node') { %>
+                        <% include ../partials/nodelist.html %>
+                        <% } else if (data.category === 'experience') { %>
+                        <% include ../partials/experiencelist.html %>
+                        <% } else if (data.category === 'suggest') { %>
+                        <% include ../partials/suggestlist.html %>
                         <% } %>
-                        <div id="node-list">
-                            <% if (data.category === 'node') { %>
-                            <% include ../partials/nodelist.html %>
-                            <% } else if (data.category === 'experience') { %>
-                            <% include ../partials/experiencelist.html %>
-                            <% } else if (data.category === 'suggest') { %>
-                            <% include ../partials/suggestlist.html %>
-                            <% } %>
-                        </div>
                     </div>
                     <div class="tab-content" style="display: none;">
                     </div>

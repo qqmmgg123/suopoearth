@@ -1,5 +1,6 @@
 var mongoose = require('mongoose')
-, Schema = mongoose.Schema;
+, Schema = mongoose.Schema
+, settings = require('../public/const/settings');
 
 var Comment = new Schema({
     isreply   : { type: Boolean, default: false},
@@ -24,21 +25,18 @@ Comment.index({'opponents':1});
 
 Comment.pre('remove', function(next) {
     var self = this,
-        objType  = 'Node',
-        objTypes = {
-        NODE       : 1,
-        SUGGEST    : 2,
-        EXPERIENCE : 3
-    };
+        objType  = 'Node';
+
+    console.log(self);
 
     switch (self.category) {
-        case objTypes.NODE:
+        case settings.OBJEXT_TYPE.NODE:
             objType = 'Node';
             break;
-        case objTypes.SUGGEST:
+        case settings.OBJEXT_TYPE.SUGGEST:
             objType = 'Suggest';
             break;
-        case objTypes.EXPERIENCE:
+        case settings.OBJEXT_TYPE.EXPERIENCE:
             objType = 'Experience';
             break;
         default:

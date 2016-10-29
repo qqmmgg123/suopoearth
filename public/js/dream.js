@@ -135,6 +135,7 @@ share1.init();
         // 历程列表
         var nodelist = {
             el: '#node-list',
+            category: 'node',
             climit: 10,
             init: function() {
                 this.$el = $(this.el);
@@ -182,17 +183,19 @@ share1.init();
                 common.bindWordLimitTips(this.$el, 140, etarget);
             },
             bindEvent: function() {
+                var self = this;
+
                 var selectors = ['#load-nodes-prev', '#load-nodes-next', '[rel="node-delete"]', '.comment', 'button.btn-comment'],
                     handles   = [
                         this.loadMorePrevNodes,
                         this.loadMoreNodes,
-                        this.nodeDelete,
+                        this.itemDelete,
                         this.showComments,
                         this.createComment
                     ];
 
                 this.$el.on('click', selectors.join(','), function() {
-                    var $this = $(this);
+                    var $this = $(this).data('category', self.category);
                     
                     for (var i = 0, l = selectors.length; i < l; i++) {
                         var selector = selectors[i],
@@ -386,15 +389,17 @@ share1.init();
                     }
                 });
             },
-            nodeDelete: function() {
+            itemDelete: function() {
                 // 删除历程
-                var $belong = $(this).closest('.ctrl-area'),
-                    $item   = $(this).closest('.process-node');
+                var $this    = $(this),
+                    $belong  = $this.closest('.ctrl-area'),
+                    $item    = $this.closest('.process-node'),
+                    category = $this.data('category');
                 
                 $.ajax({
-                    url: "/node/delete",
+                    url: "/" + category + "/delete",
                     data: {
-                        nid: $belong.data('blid')
+                        itemid: $belong.data('blid')
                     },
                     method: "POST",
                     dataType: "json",
@@ -645,14 +650,17 @@ share1.init();
                     btype = "";
 
                 switch(bl) {
-                    case COMMENT_DREAM:
-                        btype = "dream";
+                    case settings.OBJEXT_TYPE.NODE:
+                        btype = 'node';
                         break;
-                    case COMMENT_NODE:
-                        btype = "node";
+                    case settings.OBJEXT_TYPE.SUGGEST:
+                        btype = 'suggest';
+                        break;
+                    case settings.OBJEXT_TYPE.EXPERIENCE:
+                        btype = 'experience';
                         break;
                     default:
-                        return;
+                        break;
                 }
 
                 var params = {
@@ -686,14 +694,17 @@ share1.init();
                     btype = "";
 
                 switch(bl) {
-                    case COMMENT_DREAM:
-                        btype = "dream";
+                    case settings.OBJEXT_TYPE.NODE:
+                        btype = 'node';
                         break;
-                    case COMMENT_NODE:
-                        btype = "node";
+                    case settings.OBJEXT_TYPE.SUGGEST:
+                        btype = 'suggest';
+                        break;
+                    case settings.OBJEXT_TYPE.EXPERIENCE:
+                        btype = 'experience';
                         break;
                     default:
-                        return;
+                        break;
                 }
 
                 if (!editShow) {
@@ -782,7 +793,21 @@ share1.init();
             }
         };
 
+        // 建议列表
+        var suggestList = $.extend({}, nodelist, {
+            el: '#suggest-list',
+            category: 'suggest'
+        });
+
+        // 心得列表
+        var experienceList = $.extend({}, nodelist, {
+            el: '#experience-list',
+            category: 'experience'
+        });
+
         nodelist.init();
+        suggestList.init();
+        experienceList.init();
 
         // 删除想法
         $('[rel="dream-delete"]').click(function() {
