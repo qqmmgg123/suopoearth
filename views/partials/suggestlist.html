@@ -1,6 +1,20 @@
 <% if (user && data.current._belong_u != user.id) { %>
 <div class="edit-area">
-    <div class="add-area">
+    <div>
+        <div class="command"> + 
+            <span id="insertImg"><i>插入图片</i></span>
+            <span id="bold"><i>bold</i></span>
+            <span id="italic"><i>italic</i></span>
+            <span id="underLine"><i>underLine</i></span> |  
+            <span id="justifyleft"><i>left</i></span>
+            <span id="justifycenter"><i>center</i></span>
+            <span id="justifyright"><i>right</i></span> |  
+            <span id="insertUnorderedList"><i>ul</i></span>
+            <span id="insertOrderedList"><i>ol</i></span>
+        </div>
+        <div id="suggest-editor"></div>
+    </div>
+    <div class="add-area" style="display: none;">
         <form action="/suggest/new" id="node_create_form" method="post">
             <ul>
                 <!--<li><a href="javascript:;" class="pic-add"><i class="pic-icon"></i>添加图片</a></li>-->

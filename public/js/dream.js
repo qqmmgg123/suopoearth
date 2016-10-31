@@ -1,6 +1,7 @@
 requirejs.config({
     paths   : {
         'const': '../const',
+        'editor': 'editor',
         'underscore': 'underscore-min',
         'jquery': 'jquery.min',
         'jplaceholder': 'jquery.placeholder.min',
@@ -13,12 +14,13 @@ requirejs.config({
 });
 
 define([
-   'const/settings',
-   'underscore',
-   'jquery',
-   'common',
-   'text!template/nodelist.html'
-], function (settings, _, $, common, nodesTpl) {
+    'editor',
+    'const/settings',
+    'underscore',
+    'jquery',
+    'common',
+    'text!template/nodelist.html'
+], function (Editor, settings, _, $, common, nodesTpl) {
     /**
  * Created by wpzheng on 2015/3/2.
  */
@@ -796,7 +798,14 @@ share1.init();
         // 建议列表
         var suggestList = $.extend({}, nodelist, {
             el: '#suggest-list',
-            category: 'suggest'
+            category: 'suggest',
+            createEditor: function() {
+                this.editor = new Editor({
+                    containerid: 'suggest-editor'
+                });
+                this.editor.render();
+                this.editor.controller();
+            }
         });
 
         // 心得列表
@@ -807,6 +816,7 @@ share1.init();
 
         nodelist.init();
         suggestList.init();
+        suggestList.createEditor();
         experienceList.init();
 
         // 删除想法
