@@ -3,13 +3,13 @@
                         <li>
                             <div>
                                 <p class="user-info">
-                                <a class="avatar" href="/user/<%= ac._belong_u? ac._belong_u._id:ac._belong_u %>"><img width="25" height="25" src="<%= ac._belong_u.avatar %>" /></a>
+                                <a hidefocus="true" class="avatar" href="/user/<%= ac._belong_u? ac._belong_u._id:ac._belong_u %>"><img width="25" height="25" src="<%= ac._belong_u.avatar %>" /></a>
                                 <em class="user-desc">
                                     <% if (ac._belong_u) { %>
-                                    <a href="/user/<%= ac._belong_u._id %>">
+                                    <a hidefocus="true" href="/user/<%= ac._belong_u._id %>">
                                     <%= ac._belong_u.nickname %>
                                     <% } else { %>
-                                    <a href="/user/<%= ac._belong_u %>">
+                                    <a hidefocus="true" href="/user/<%= ac._belong_u %>">
                                     <%= ac.alias %>
                                     <% } %>
                                     </a>
@@ -17,19 +17,25 @@
                                     <% if (ac.type == 0) { %>
                                     创建了想法
                                     <% if (ac._create_d) { %>
-                                    <a href="/dream/<%= ac._create_d._id %>"><%= ac._create_d.title %></a>
+                                    <a hidefocus="true" href="/dream/<%= ac._create_d._id %>"><%= ac._create_d.title %></a>
                                     <% } else { %>
                                     该想法已经不存在
                                     <% } %>
-                                    <% } else if (ac.type == 1) { %>
+                                    <% } else if ([1, 2, 3].indexOf(ac.type) !== -1) { %>
                                     在想法
                                     <% if (ac._belong_d) { %>
-                                    <a href="/dream/<%= ac._belong_d._id %>"><%= ac._belong_d.title %></a>
+                                    <a hidefocus="true" href="/dream/<%= ac._belong_d._id %>"><%= ac._belong_d.title %></a>
                                     <% } else { %>
                                     该想法已经不存在
                                     <% } %>
                                     中
+                                    <% if (ac.type == 1) { %>
                                     更新了历程
+                                    <% } else if (ac.type == 2) { %>
+                                    发表了建议
+                                    <% } else if (ac.type == 3) { %>
+                                    发表了心得
+                                    <% } %>
                                     <% } %>
                                 </em>
                                 </p>
@@ -38,9 +44,23 @@
                                 <% } else if (ac.type == 1) { %>
                                 <% if (ac._create_n) { %>
                                 <p class="ac-summary"><%= ac._create_n.content %></p>
-                                <p><a href="/dream/<%= ac._belong_d && ac._belong_d._id %>?nid=<%= ac._create_n._id %>">查看</a></p>
+                                <p><a hidefocus="true"  href="/dream/<%= ac._belong_d && ac._belong_d._id %>/node/<%= ac._create_n._id %>">查看</a></p>
                                 <% } else { %>
-                                该历程已经不存在
+                                <p class="ac-summary not-exist-content">该历程已经不存在</p>
+                                <% } %>
+                                <% } else if (ac.type == 2) { %>
+                                <% if (ac._create_s) { %>
+                                <p class="ac-summary"><%= ac._create_s.content %></p>
+                                <p><a hidefocus="true" href="/dream/<%= ac._belong_d && ac._belong_d._id %>/suggest/<%= ac._create_s._id %>">查看</a></p>
+                                <% } else { %>
+                                <p class="ac-summary not-exist-content">该建议已经不存在</p>
+                                <% } %>
+                                <% } else if (ac.type == 3) { %>
+                                <% if (ac._create_e) { %>
+                                <p class="ac-summary"><%= ac._create_e.content %></p>
+                                <p><a hidefocus="true" href="/dream/<%= ac._belong_d && ac._belong_d._id %>/experinece/<%= ac._create_e._id %>">查看</a></p>
+                                <% } else { %>
+                                <p class="ac-summary not-exist-content">该心得已经不存在</p>
                                 <% } %>
                                 <% } %>
                             </div>
@@ -48,7 +68,7 @@
                         <% }); %>
                         <li>
                         <% if (data.hasmore) { %>
-                            <div  data-anext="<%= data.anext %>" data-uid="<%= data.id %>" class="more"><a class="btn">查看更多 ></a></div>
+                            <div  data-anext="<%= data.anext %>" data-uid="<%= data.id %>" class="more"><a hidefocus="true" class="btn">查看更多 ></a></div>
                         <% } %>
                         </li>
                         <% } else { %>

@@ -1,130 +1,30 @@
 requirejs.config({
     paths   : {
         'const': '../const',
-        'editor': 'editor',
+        'rules': 'rules',
+        'wysihtml': 'wysihtml',
         'underscore': 'underscore-min',
         'jquery': 'jquery.min',
         'jplaceholder': 'jquery.placeholder.min',
         'backbone' : 'backbone-min',
         'validation': 'validate',
         'common': 'common',
+        'share' : 'share',
         'text'  : 'text',
         'template' : '../template'
     }
 });
 
 define([
-    'editor',
+    'rules',
+    'wysihtml',
     'const/settings',
     'underscore',
     'jquery',
     'common',
-    'text!template/nodelist.html'
-], function (Editor, settings, _, $, common, nodesTpl) {
-    /**
- * Created by wpzheng on 2015/3/2.
- */
-// 分享
-function shareaside(o){
-	//参数说明：self.tit说明文字，self.pic小图片，self.url分享要链接到的地址
-	var self = this;
-	self.tit = o.tit;
-	self.pic = o.pic;
-	self.titsummary = o.intro;
-	self.url = o.url;
-}
-shareaside.prototype={
-    postToDb: function() {
-        var d=document,
-            e=encodeURIComponent,
-            s1=window.getSelection,
-            s2=d.getSelection,
-            s3=d.selection,
-            s=s1?s1():s2?s2():s3?s3.createRange().text:'',
-            r='https://www.douban.com/recommend/?url='+e(d.location.href)+'&title='+e(d.title)+'&sel='+e(s)+'&v=1',
-            w=450,
-            h=330,
-            x = function(){
-                if (!window.open(r,'douban','toolbar=0,resizable=1,scrollbars=yes,status=1,width='+w+',height='+h+',left='+(screen.width-w)/2+',top='+(screen.height-h)/2)) {
-                    location.href=r+'&r=1';
-                }
-            };
-
-        if (/Firefox/.test(navigator.userAgent)){
-            setTimeout(x,0);
-        }else{
-            x();
-        }
-    },
-	postToWb: function(){
-		var _t = encodeURI(this.tit);//当前页面title，使用document.title
-		var _url = encodeURIComponent(this.url);//当前页的链接地址使用document.location
-		var _appkey = encodeURI("appkey");//你从腾讯获得的appkey，如果有appkey,直接写入key值，例如：_appkey=123456
-		var _pic = encodeURI(this.pic); //（例如：var _pic='图片url1|图片url2|图片url3....）
-		var _site = '';//你的网站地址
-		var x = window.screen.width;
-		var y = window.screen.height;
-		var _u = 'http://v.t.qq.com/share/share.php?title='+_t+'&url='+_url+'&appkey='+_appkey+'&site='+_site+'&pic='+_pic;
-		window.open( _u,'\u5206\u4eab\u5230\u817e\u8baf\u5fae\u535a',"height=480,width=608,top= "+(y-480)/2 + ", left = " + (x-608)/2 + ",toolbar=no,menubar=no,resizable=yes,location=yes,status=no");
-	},
-	//参数说明：title标题，summary摘要，pic小图片，url分享要链接到的地址
-	postToQzone:function (){
-		var _url = encodeURIComponent(this.url);//当前页的链接地址使用document.location
-		var _t = encodeURI(this.tit);//当前页面title，使用document.title
-		var _pic = encodeURI(this.pic);//（例如：var _pic='图片url1|图片url2|图片url3....）
-		var _summary=encodeURIComponent('');
-		var x = window.screen.width;
-		var y = window.screen.height;
-		var _u = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url='+_url+'&title='+_t+'&pics='+_pic+'&summary='+_summary;
-		window.open( _u,'\u5206\u4eab\u5230\u0051\u0051\u7a7a\u95f4\u548c\u670b\u53cb\u7f51',"height=480,width=608,top= "+(y-480)/2 + ", left = " + (x-608)/2 + ",toolbar=no,menubar=no,resizable=yes,location=yes,status=no");
-	},
-	shareToSina:function(){
-		var url = "http://v.t.sina.com.cn/share/share.php",
-			_url = this.url,
-			_title = this.tit,
-			_appkey = '',
-			_ralateUid = '',
-			c = '', pic = this.pic;
-			var x = window.screen.width;
-		    var y = window.screen.height;
-	c = url + "?url=" + encodeURIComponent(_url) + "&appkey=" + _appkey + "&title=" + _title + "&pic=" + pic + "&ralateUid=" + _ralateUid + "&language=";
-	window.open(c, "shareQQ", "height=480,width=608,top= "+(y-480)/2 + ", left = " + (x-608)/2 + ",toolbar=no,menubar=no,resizable=yes,location=yes,status=no");
-	},
-	share2qq:function (){
-		//var l = document.getElementById('imgBox').getElementsByTagName('img')[0];
-		var a = "http://connect.qq.com/widget/shareqq/index.html",
-			d = this.url,
-			m = this.tit,
-			pic=this.pic,
-			pl = '\u52a0\u70b9\u8bc4\u8bba\u5427...',
-			b = "",
-			x = window.screen.width,
-			y = window.screen.height;
-			h = "", k = ""; //g = l.join("||")||"";
-			k = a + "?url=" + encodeURIComponent(d) + "&showcount=0&desc=" + encodeURIComponent(pl) + "&summary=" +  encodeURIComponent(this.titsummary) + "&title="+ encodeURIComponent(m) + "&pics="+ pic +"&style=203&width=19&height=22";
-			window.open(k, "", "height = 680, width = 960, top = "+(y-680)/2 + ", left = " + (x-960)/2 + ", toolbar = no, menubar = no, resizable = yes, location = yes,status = no" );
-	},
-	init:function(){
-		var _this=this;
-		$('#db_share').bind('click',function(){
-			_this.postToDb();
-		});
-		$('#qqwb_share').bind('click',function(){
-			_this.postToWb();
-		});
-		$('#xlwb_share').bind('click',function(){
-			_this.shareToSina();
-		});
-	}
-}
-var share1= new shareaside({
-	"tit": $("#sharetitle").text() || "",
-	"pic": $("#shareimg").attr("src") || "",
-	"url": window.location.href,
-	"intro": $("#shareintro").text() || ""
-});
-share1.init();
-
+    'share',
+    'text!template/' + category + 'list.html'
+], function (rules, wysihtml, settings, _, $, common, Share, itemsTpl) {
     $(function() {
         // 绑定用户操作
         common.bindUserCtrl();
@@ -189,22 +89,22 @@ share1.init();
 
                 var selectors = ['#load-nodes-prev', '#load-nodes-next', '[rel="node-delete"]', '.comment', 'button.btn-comment'],
                     handles   = [
-                        this.loadMorePrevNodes,
-                        this.loadMoreNodes,
+                        this.loadMorePrevItems,
+                        this.loadMoreItems,
                         this.itemDelete,
                         this.showComments,
                         this.createComment
                     ];
 
-                this.$el.on('click', selectors.join(','), function() {
-                    var $this = $(this).data('category', self.category);
+                this.$el.on('click', selectors.join(','), function(ev) {
+                    var $this = $(ev.currentTarget);
                     
                     for (var i = 0, l = selectors.length; i < l; i++) {
                         var selector = selectors[i],
                             handle   = handles[i];
 
                         if ($this.is(selector)) {
-                            handle.call(this);
+                            handle.call(self, ev);
                         }
                     }
                 });
@@ -288,7 +188,7 @@ share1.init();
                 ptpl += '<a ' + nextData + ' ' + nextClass + ' href="javascript:;">下一页</a>';
                 
                 $commentArea.find('.comment-page').html(ptpl).off('click')
-                .on('click', 'a', self.pageComments).show();
+                .on('click', 'a', $.proxy(self.pageComments, self)).show();
             },
             bindComentInput: function(opts) {
                 var $commentArea = opts.$commentArea,
@@ -309,14 +209,16 @@ share1.init();
 
                 $commentArea.find('.comment-input').show();
             },
-            loadMoreNodes: function() {
+            loadMoreItems: function(ev) {
+                console.log('common...');
+                var self = this;
                 // 加载更多历程
-                var $this = $(this),
+                var $this = $(ev.currentTarget),
                     did   = $this.data('did'),
                     nnext = $this.data('nnext');
 
                 $.ajax({
-                    url: "/dream/" + did + "/nodes",
+                    url: "/dream/" + did + "/" + this.category + "s",
                     data: {
                         nnext: nnext
                     },
@@ -338,8 +240,8 @@ share1.init();
                                     }
                                 });
 
-                                var template = _.template(nodesTpl);
-                                $('#node-list').append(template(data));
+                                var template = _.template(itemsTpl);
+                                self.$el.append(template(data));
                                 $this.closest('.process-node').remove();
                             }
                         });
@@ -349,14 +251,16 @@ share1.init();
                     }
                 });
             },
-            loadMorePrevNodes: function() {
+            loadMorePrevItems: function(ev) {
+                var self = this;
+
                 // 加载更多历程
-                var $this = $(this),
+                var $this = $(ev.currentTarget),
                     did   = $this.data('did'),
                     nprev = $this.data('nprev');
 
                 $.ajax({
-                    url: "/dream/" + did + "/pnodes",
+                    url: "/dream/" + did + "/p" + this.category + "s",
                     data: {
                         nprev: nprev
                     },
@@ -380,8 +284,8 @@ share1.init();
                                     }
                                 });
 
-                                var template = _.template(nodesTpl);
-                                $('#node-list').prepend(template(data));
+                                var template = _.template(itemsTpl);
+                                self.$el.prepend(template(data));
                                 $this.closest('.process-node').remove();
                             }
                         });
@@ -391,12 +295,12 @@ share1.init();
                     }
                 });
             },
-            itemDelete: function() {
+            itemDelete: function(ev) {
                 // 删除历程
-                var $this    = $(this),
+                var $this    = $(ev.currentTarget),
                     $belong  = $this.closest('.ctrl-area'),
                     $item    = $this.closest('.process-node'),
-                    category = $this.data('category');
+                    category = this.category;
                 
                 $.ajax({
                     url: "/" + category + "/delete",
@@ -504,7 +408,7 @@ share1.init();
                                     $pageCacheEl: $belong.find('a.comment'),
                                     currPage: 1
                                 }
-                                nodelist.renderComments(data, opts);
+                                self.renderComments(data, opts);
                             });
                         },
                         error: function() {
@@ -632,8 +536,9 @@ share1.init();
                     }
                 });
             },
-            pageComments: function() {
-                var $this = $(this),
+            pageComments: function(ev) {
+                var self = this,
+                    $this = $(ev.currentTarget),
                     isDis = $this.hasClass('disable');
 
                 if (isDis) return;
@@ -676,16 +581,17 @@ share1.init();
                     $commentArea : $commentArea
                 }
 
-                nodelist.loadComments(params, function(data) {
+                self.loadComments(params, function(data) {
                     $commentArea.find('.comment-input').show();
                 });
             },
-            showComments: function() {
+            showComments: function(ev) {
                 // 添加提议
-                var COMMENT_DREAM = 0,
+                var self = this,
+                    COMMENT_DREAM = 0,
                     COMMENT_NODE  = 1;
 
-                var $this = $(this),
+                var $this = $(ev.currentTarget),
                     $belong = $this.closest('.ctrl-area'),
                     $commentArea = $belong.find('.comment-area'),
                     editShow = $this.data('show');
@@ -728,9 +634,9 @@ share1.init();
                             $pageCacheEl : $this,
                             $commentArea : $commentArea
                         }
-                        nodelist.loadComments(params, function(data) {
+                        self.loadComments(params, function(data) {
                             params.isauthenticated = data.isauthenticated;
-                            nodelist.bindComentInput(params);
+                            self.bindComentInput(params);
                             $this.data('firstShow', true);
                         });
                     }
@@ -741,9 +647,10 @@ share1.init();
                     $this.data('show', false);
                 }
             },
-            createComment: function() {
-                var $this        = $(this);
-                var $belong       = $this.closest('.ctrl-area');
+            createComment: function(ev) {
+                var self         = this;
+                var $this        = $(ev.currentTarget);
+                var $belong      = $this.closest('.ctrl-area');
                 var $commentArea = $belong.find('.comment-area');
                 var $textarea    = $belong.find('textarea');
                 var id           = $belong.data("blid");
@@ -785,7 +692,7 @@ share1.init();
                                 $pageCacheEl: $belong.find('a.comment'),
                                 currPage: 1
                             }
-                            nodelist.renderComments(data, opts);
+                            self.renderComments(data, opts);
                         });
                     },
                     error: function() {
@@ -800,16 +707,26 @@ share1.init();
             el: '#suggest-list',
             category: 'suggest',
             createEditor: function() {
-                this.editor = new Editor({
-                    containerid: 'suggest-editor'
-                });
-                this.editor.render();
-                this.editor.controller();
+                if (document.getElementById(this.category + '-editor') !== null) {
+                    var self = this;
+
+                    this.editor = new wysihtml5.Editor("textarea", {
+                        toolbar:        "toolbar",
+                        stylesheets:    "/css/wysihtml5.css",
+                        parserRules:    rules.config
+                    });
+
+                    var pbtn = document.getElementById('publish');
+
+                    pbtn.onclick = function() {
+                        console.log(self.editor.getValue(true));
+                    }
+                }
             }
         });
 
         // 心得列表
-        var experienceList = $.extend({}, nodelist, {
+        var experienceList = $.extend({}, suggestList, {
             el: '#experience-list',
             category: 'experience'
         });
@@ -818,6 +735,31 @@ share1.init();
         suggestList.init();
         suggestList.createEditor();
         experienceList.init();
+        experienceList.createEditor();
+
+        // 分享想法
+        var dreamShare= new Share({
+            "tit": $("#sharetitle").text() || "",
+            "pic": $("#shareimg").attr("src") || "",
+            "url": window.location.href,
+            "intro": $("#shareintro").text() || ""
+        });
+
+        // 分享到豆瓣
+        $('#db_share').bind('click',function(){
+            dreamShare.postToDb();
+        });
+
+        // 分享到腾讯微博
+        $('#qqwb_share').bind('click',function(){
+            dreamShare.postToWb();
+        });
+
+        // 分享到新浪微博
+        $('#xlwb_share').bind('click',function(){
+            dreamShare.shareToSina();
+        });
+
 
         // 删除想法
         $('[rel="dream-delete"]').click(function() {
@@ -908,17 +850,6 @@ share1.init();
         }
     });*/
 
-    $('.fav').data('isFav', false).click(function() {
-        var isFav = $(this).data('isfav');
-        if (!isFav) {
-            $(this)[0].lastChild.nodeValue = "取消收藏";
-            $(this).data('isfav', true);
-        }else{
-            $(this)[0].lastChild.nodeValue = "收藏";
-            $(this).data('isfav', false);
-        }
-    });
-
     $('.good').data('isGood', false).click(function() {
         var isGood = $(this).data('isGood');
         if (!isGood) {
@@ -1003,17 +934,6 @@ share1.init();
         }
     });
 
-    $('.support-box').hover(function() {
-        $(this).find('.support-list').show().find('textarea').focus();
-    }, function() {
-        $(this).find('.support-list').hide().find('textarea').blur();
-    });
-
-    $('.team-way').on('click', 'a', function() {
-        $('.team-way').find('a').removeClass('cur');
-        $(this).addClass('cur');
-    });
-    
     common.statistics();
 });
 });

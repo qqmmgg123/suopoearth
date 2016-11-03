@@ -1,0 +1,59 @@
+<% if (data.nodes.length > 0) { %>
+<% if (data.hasprev) { %>
+<div class="process-node">
+    <div data-did="<%= data.current.id %>" id="load-nodes-prev" data-nprev="<%= data.nprev %>" class="more"><a class="btn">查看更多 ></a></div>
+</div>
+<% } %>
+<% for (var i = 0; i < data.nodes.length; i++) { %>
+<div class="process-node">
+    <div>
+        <p class="user-info">
+        <a class="avatar" href="/user/<%- data.nodes[i]._belong_u? data.nodes[i]._belong_u.id:data.nodes[i]._belong_u %>"><img width="25" height="25" src="<%- data.nodes[i]._belong_u.avatar %>" /></a>
+        <em class="username">
+            <% if (data.nodes[i]._belong_u) { %>
+            <a href="/user/<%- data.nodes[i]._belong_u.id %>">
+                <%- data.nodes[i]._belong_u.nickname %>
+                <% } else { %>
+                <a href="/user/<%- data.nodes[i]._belong_u %>">
+                    <%- data.nodes[i].author %>
+                    <% } %>
+                </a> <%- timeFormat(data.nodes[i].date) %> 发表了心得
+        </em>
+        </p>
+        <p class="node-content"><%= data.nodes[i].content %></p>
+    </div>
+    <div data-did="<%- data.current.id %>" data-total="<%- data.nodes[i].comments %>" data-blid="<%- data.nodes[i]._id %>" data-bl="<%- data.nodes[i].category %>" class="node-ctrl ctrl-area">
+        <div class="ctrl-nav">
+            <ul class="ctrl-list">
+                <!--<li><a class="good" href="javascript:;"><i class="approval-icon"></i>支持</a></li>-->
+                <!--<li><a class="bad" href="javascript:;"><i class="opposition-icon"></i>不屑</a></li>-->
+                <% if (data.nodes[i].isowner) { %>
+                <li><a class="remove" rel="node-delete" href="javascript:;"><i class="remove-icon"></i>删除</a></li>
+                <% } %>
+                <li><a class="comment" data-show="false" href="javascript:;"><i class="comment-icon"></i><%- data.text.EXPANSION_COMMENT %> <%- data.nodes[i].comments %></a></li>
+                <ul>
+        </div>
+        <div class="comment-area" style="display: none;">
+            <div class="comment-input" style="display: none;">
+                <textarea rel="comment-input" placeholder="说说你的看法..."></textarea>
+                <div class="btn-area" data-show="false" style="display: none;"><button class="btn btn-comment">发表</button></div>
+            </div>
+            <ul class="comment-list"></ul>
+            <div class="comment-page pagination"></div>
+        </div>
+    </div>
+</div>
+<% } %>
+<% if (data.hasmore) { %>
+<div class="process-node">
+    <div data-did="<%- data.current.id %>" data-nnext="<%- data.nnext %>" id="load-nodes-next" class="more"><a class="btn">查看更多 ></a></div>
+</div>
+<% } %>
+<% } else { %>
+<div class="process-node">
+    <div class="result">
+        没有想法的心得
+    </div>
+</div>
+<% } %>
+

@@ -34,8 +34,6 @@ input.search-in,
 ul.h-right li {
   padding-top: 7px;
 }
-.demand-modal,
-.result-modal,
 .modal.fade-in {
   cursor: pointer;
   /* IE 4-9 */

@@ -7,16 +7,18 @@
     <title>关于我们 - <%= title %></title>
     <!-- 通用样式 -->
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="/css/intro.css" rel="stylesheet" type="text/css" />
     <!--[if lt IE 9]>
-    <link href="/css/compatible.css" rel="stylesheet" type="text/css" />
+    <link href="/css/compatible.css" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="/js/respond.min.js"></script>
     <![endif]-->
 </head>
 <body>
     <% include ../partials/header.html %>
     <% include ../partials/banner.html %>
-    <div class="container">
+    <div id="intro-page" class="container">
         <div class="team-area">
-            <div class="team-nav tab-nav">
+            <div class="tab-nav">
                 <ul>
                     <li><a class="tab cur" href="/intro">关于我们</a></li>
                     <li><a class="tab" href="/contact">联系我们</a></li>

@@ -10,11 +10,12 @@
     <!-- 通用样式 -->
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
     <!--[if lt IE 9]>
-    <link href="/css/compatible.css" rel="stylesheet" type="text/css" />
+    <link href="/css/compatible.css" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="/js/respond.min.js"></script>
     <![endif]-->
 </head>
 <body>
-    <div class="header t-fixed">
+    <div class="header">
         <div class="head-con">
             <button class="navbar-toggle" style="display: none;"> 
                 <span class="sr-only">Toggle navigation</span>
@@ -101,7 +102,10 @@
                             </div>
                             <% } else { %>
                             <div class="user-info">
-                                帐号不存在
+                                <a class="user-avatar" href="/user/unkonw">
+                                    <img width="25" height="25" src="/images/avatar.png" />
+                                </a>
+                                <a class="user-name" href="/user/unkonw">未知</a>
                             </div>
                             <% } %>
                         </div>

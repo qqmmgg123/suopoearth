@@ -312,6 +312,12 @@ router.get('/', function(req, res, next) {
                     path: '_create_n',
                     select: '_id content'
                 }, {
+                    path: '_create_s',
+                    select: '_id content'
+                }, {
+                    path: '_create_e',
+                    select: '_id content'
+                }, {
                     path: '_belong_u',
                     select: '_id nickname avatar'
                 }, {
@@ -390,20 +396,25 @@ router.get('/canvas', function(req, res) {
 });
 
 // 想法详情页
-router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(req, res, next) {
+router.get('/dream/:id([a-z0-9]+)(/:category(node|suggest|experience)(/:itemid([a-z0-9]+))?)?', function(req, res, next) {
     var msgs     = [],
         category = req.params.category || 'node',
+        btype    = '_belong_n',
+        itemId  = req.params.itemid,
         CModel = Node;
     
     switch (category) {
         case 'node':
             CModel = Node;
+            btype    = '_belong_n';
             break;
         case 'suggest':
             CModel = Suggest;
+            btype    = '_belong_s';
             break;
         case 'experience':
             CModel = Experience;
+            btype    = '_belong_e';
             break;
         default:
             break;
@@ -441,13 +452,13 @@ router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(re
             viewType    = 0,
             currComments = null;
 
-        var currNid, currCid;
-        if (req.query && req.query.nid) {
+        var currCid;
+        if (itemId) {
             noExistErr = new Error("找不到该历程...");
             viewType   = 1;
 
             try {
-                var currNid =  mongoose.Types.ObjectId(req.query.nid);
+                itemId =  mongoose.Types.ObjectId(itemId);
             }catch(err) {};
         }
 
@@ -485,29 +496,32 @@ router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(re
                     return next(noExistErr);
                 }
 
-                currNid = comment._belong_n;
+                itemId = comment[btype];
                 _resComment();
             });
 
             function _resComment() {
-                Comment.count({
-                    _belong_n: currNid,
+                var options = {
                     _id: {
                         $gte: currCid
                     }
-                }, function(err, count) {
+                };
+
+                options[btype] = itemId
+
+                Comment.count(options, function(err, count) {
                     if (err || !count) {
                         return next(noExistErr);
                     }
     
-                    var query = { _belong_n: currNid };
+                    var query = { _belong_n: itemId };
 
                     preMatch.$match._id = {
-                        $gt: currNid
+                        $gt: itemId
                     }
         
                     match.$match._id = {
-                        $lte: currNid
+                        $lte: itemId
                     };
     
                     var limit = 10,
@@ -543,13 +557,13 @@ router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(re
             }
         }
         
-        if (currNid) {
+        if (itemId) {
             preMatch.$match._id = {
-                $gt: currNid
+                $gt: itemId
             }
 
             match.$match._id = {
-                $lte: currNid
+                $lte: itemId
             };
         }
 
@@ -558,8 +572,8 @@ router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(re
         function _reponse() {
             async.parallel([
                 function(cb) {
-                    if (currNid) {
-                        Node.aggregate([preMatch, {
+                    if (itemId) {
+                        CModel.aggregate([preMatch, {
                             $project: {
                                 id        : 1
                             }
@@ -568,12 +582,12 @@ router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(re
                         }, {
                             $limit: 1
                         }],
-                        function(err, nodes) {
-                            if (err || !nodes) {
+                        function(err, items) {
+                            if (err || !items) {
                                 return cb(noExistErr, []);
                             };
 
-                            cb(null, nodes);
+                            cb(null, items);
                         });
                     } else {
                         cb(null, [])
@@ -747,7 +761,7 @@ router.get('/dream/:id([a-z0-9]+)(/:category(suggest|experience))?', function(re
                                     text       : settings.COMMENT_TEXT,
                                     viewType   : viewType,
                                     category   : category,
-                                    currNid    : currNid,
+                                    currNid    : itemId,
                                     currCid    : currCid,
                                     currComments: currComments,
                                     isauthenticated: !!req.user
@@ -940,13 +954,23 @@ router.get('/activities', function(req, res, next) {
     .sort('-date')
     .limit(11)
     .populate([{
-            path: '_create_d'
+            path: '_create_d',
+            select: '_id title description'
         }, {
-            path: '_create_n'
+            path: '_create_n',
+            select: '_id content'
         }, {
-            path: '_belong_u'
+            path: '_create_e',
+            select: '_id content'
         }, {
-            path: '_belong_d'
+            path: '_create_s',
+            select: '_id content'
+        }, {
+            path: '_belong_u',
+            select: '_id nickname avatar'
+        }, {
+            path: '_belong_d',
+            select: '_id title description'
     }])
     .exec(function(err, activities) {
         if (err || !activities) {
@@ -985,9 +1009,30 @@ router.get('/activities', function(req, res, next) {
 });
 
 // 获取历程信息
-router.get('/dream/:id([a-z0-9]+)/nodes', function(req, res, next) {
+router.get('/dream/:id([a-z0-9]+)/:items(nodes|suggests|experiences)', function(req, res, next) {
+    var type = req.params.items,
+        Model = Node,
+        tname = "历程";
+
+    switch(type) {
+        case "nodes":
+            tname = "历程";
+            Model = Node;
+            break;
+        case "suggests":
+            tname = "建议";
+            Model = Suggest;
+            break;
+        case "experiences":
+            tname = "心得";
+            Model = Experience;
+            break;
+        default:
+            break;
+    }
+
     var curId  = req.params.id,
-        defaultErr = new Error("获取更多历程失败。"),
+        defaultErr = new Error("获取更多" + tname + "失败。"),
         _curId = mongoose.Types.ObjectId(curId);
 
     if (!req.query || !req.query.nnext) {
@@ -996,7 +1041,7 @@ router.get('/dream/:id([a-z0-9]+)/nodes', function(req, res, next) {
 
     var _current = mongoose.Types.ObjectId(req.query.nnext);
 
-    Node.aggregate([{
+    Model.aggregate([{
         $match: {
             _belong_d: _curId,
             _id: {
@@ -1011,6 +1056,7 @@ router.get('/dream/:id([a-z0-9]+)/nodes', function(req, res, next) {
             _belong_u : 1,
             _belong_d : 1,
             comments  : { $size: '$comments' },
+            category  : 1,
             date      : 1
         }
     }, {
@@ -1067,9 +1113,30 @@ router.get('/dream/:id([a-z0-9]+)/nodes', function(req, res, next) {
 });
 
 // 获取更晚的历程信息
-router.get('/dream/:id([a-z0-9]+)/pnodes', function(req, res, next) {
+router.get('/dream/:id([a-z0-9]+)/:pitems(pnodes|psuggests|pexperiences)', function(req, res, next) {
+    var type = req.params.pitems,
+        Model = Node,
+        tname = "历程";
+
+    switch(type) {
+        case "pnodes":
+            tname = "历程";
+            Model = Node;
+            break;
+        case "psuggests":
+            tname = "建议";
+            Model = Suggest;
+            break;
+        case "pexperiences":
+            tname = "心得";
+            Model = Experience;
+            break;
+        default:
+            break;
+    }
+
     var curId  = req.params.id,
-        defaultErr = new Error("获取更多历程失败。"),
+        defaultErr = new Error("获取更多" + tname + "失败。"),
         _curId = mongoose.Types.ObjectId(curId);
 
     if (!req.query || !req.query.nprev) {
@@ -1078,7 +1145,7 @@ router.get('/dream/:id([a-z0-9]+)/pnodes', function(req, res, next) {
 
     var _current = mongoose.Types.ObjectId(req.query.nprev);
 
-    Node.aggregate([{
+    Model.aggregate([{
         $match: {
             _belong_d: _curId,
             _id: {
@@ -1093,6 +1160,7 @@ router.get('/dream/:id([a-z0-9]+)/pnodes', function(req, res, next) {
             _belong_u : 1,
             _belong_d : 1,
             comments  : { $size: '$comments' },
+            category  : 1,
             date      : 1
         }
     }, {
@@ -1390,6 +1458,12 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                         path: '_create_n',
                         select: '_id content'
                     }, {
+                        path: '_create_s',
+                        select: '_id content'
+                    }, {
+                        path: '_create_e',
+                        select: '_id content'
+                    }, {
                         path: '_belong_u',
                         select: '_id nickname avatar'
                     }, {
@@ -1470,13 +1544,23 @@ router.get('/user/:id([a-z0-9]+)/activities', function(req, res, next) {
     .sort('-date')
     .limit(11)
     .populate([{
-            path: '_create_d'
-        }, {
-            path: '_create_n'
-        }, {
-            path: '_belong_u'
-        }, {
-            path: '_belong_d'
+        path: '_create_d',
+        select: '_id title description'
+    }, {
+        path: '_create_n',
+        select: '_id content'
+    }, {
+        path: '_create_s',
+        select: '_id content'
+    }, {
+        path: '_create_e',
+        select: '_id content'
+    }, {
+        path: '_belong_u',
+        select: '_id nickname avatar'
+    }, {
+        path: '_belong_d',
+        select: '_id title description'
     }])
     .exec(function(err, activities) {
         if (err || !activities) {
@@ -2534,7 +2618,7 @@ router.post('/node/new', function(req, res, next) {
     );
 });
 
-// 保存一个梦想节点
+// 创建心得
 router.post('/experience/new', function(req, res, next) {
     if (!req.user) {
         return res.redirect('/signin');
@@ -2549,10 +2633,6 @@ router.post('/experience/new', function(req, res, next) {
     var dreamId = req.body.did;
     if (!req.body.content) {
         return next(new Error("您的历程是空内容..."));
-    }
-
-    if (req.body.content.length > 140) {
-        return next(new Error("内容字数超出限制范围.."));
     }
 
     async.parallel([
@@ -2656,10 +2736,6 @@ router.post('/suggest/new', function(req, res, next) {
     var dreamId = req.body.did;
     if (!req.body.content) {
         return next(new Error("您的历程是空内容..."));
-    }
-
-    if (req.body.content.length > 140) {
-        return next(new Error("内容字数超出限制范围.."));
     }
 
     async.parallel([
@@ -3637,16 +3713,20 @@ router.post('/reply/new', function(req, res, next) {
         return next(new Error("您的回复是空内容，创建失败..."));
     }
 
-    var promise = null;
+    var promise = null,
+        category = "node";
 
     switch(bl) {
         case settings.OBJEXT_TYPE.NODE:
+            category = "node";
             promise = Node.findOne({_id: blID}).select('comments').exec();
             break;
         case settings.OBJEXT_TYPE.SUGGEST:
+            category = "suggest";
             promise = Suggest.findOne({_id: blID}).select('comments').exec();
             break;
         case settings.OBJEXT_TYPE.EXPERIENCE:
+            category = "experience";
             promise = Experience.findOne({_id: blID}).select('comments').exec();
             break;
         default:
@@ -3742,7 +3822,7 @@ router.post('/reply/new', function(req, res, next) {
             }
             ], function(err, results) {
                 if (err) return next(err);
-                var url        = '/dream/' + comment._belong_d + '?cid=' + comment.id;
+                var url        = '/dream/' + comment._belong_d + '/' + category + '/' + blID + '?cid=' + comment.id;
 
                 var msgfields  = {
                     _belong_u: toid,

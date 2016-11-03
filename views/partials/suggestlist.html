@@ -1,32 +1,8 @@
 <% if (user && data.current._belong_u != user.id) { %>
 <div class="edit-area">
-    <div>
-        <div class="command"> + 
-            <span id="insertImg"><i>插入图片</i></span>
-            <span id="bold"><i>bold</i></span>
-            <span id="italic"><i>italic</i></span>
-            <span id="underLine"><i>underLine</i></span> |  
-            <span id="justifyleft"><i>left</i></span>
-            <span id="justifycenter"><i>center</i></span>
-            <span id="justifyright"><i>right</i></span> |  
-            <span id="insertUnorderedList"><i>ul</i></span>
-            <span id="insertOrderedList"><i>ol</i></span>
-        </div>
-        <div id="suggest-editor"></div>
-    </div>
-    <div class="add-area" style="display: none;">
+    <div id="suggest-editor">
         <form action="/suggest/new" id="node_create_form" method="post">
-            <ul>
-                <!--<li><a href="javascript:;" class="pic-add"><i class="pic-icon"></i>添加图片</a></li>-->
-                <!--<li><a href="javascript:;" class="video-add"><i class="video-icon"></i>添加视频</a></li>-->
-                <!--<li><a href="/store" class="more-add"><i class="more-icon"></i>更多资源</a></li>-->
-                <li class="textarea-field"><textarea id="story-editor" placeholder="分享一下你的心路故事..." name="content"></textarea></li>
-                <li style="display: none;"><input name="did" type="hidden" value="<%= data.current.id %>" /></li>
-            </ul>
-            <div class="edit-ctrl">
-                <a href="javascript:;" title="表情" alt="表情" class="face">(∩＿∩)</a>
-                <button type="submit" id="node_create_btn" class="btn">分享</button>
-            </div>
+        <% include ../partials/editor.html %>
         </form>
     </div>
 </div>
@@ -62,7 +38,7 @@
                     </a> <%= timeFormat(node.date) %> 发表了建议
             </em>
             </p>
-            <p class="node-content"><%= node.content %></p>
+            <p class="node-content"><%- node.content %></p>
         </div>
         <div data-did="<%= data.current.id %>" data-blid="<%= node._id %>" data-bl="<%= node.category %>" class="node-ctrl ctrl-area">
             <div class="ctrl-nav">

@@ -9,7 +9,8 @@
     <!-- 通用样式 -->
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
     <!--[if lt IE 9]>
-    <link href="/css/compatible.css" rel="stylesheet" type="text/css" />
+    <link href="/css/compatible.css" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="/js/respond.min.js"></script>
     <![endif]-->
 </head>
 <body>
@@ -61,17 +62,17 @@
                     </div>
                 </div>
                 <div class="process-area">
-                    <div class="process-nav clearfix">
-                        <div class="nav-left clearfix">
-                            <ul class="tab-nav">
+                    <div class="process-nav">
+                        <div class="nav-left">
+                            <ul>
                                 <li>
-                                    <a class="<% if (data.category === 'node') { %>cur<% } %> tab" href="/dream/<%= data.current._id %>">历程</a>
+                                    <a class="<% if (data.category === 'node') { %>cur<% } %>" href="/dream/<%= data.current._id %>">历程</a>
                                 </li>
                                 <li>
-                                    <a class="<% if (data.category === 'suggest') { %>cur<% } %> tab" href="/dream/<%= data.current._id %>/suggest">建议</a>
+                                    <a class="<% if (data.category === 'suggest') { %>cur<% } %>" href="/dream/<%= data.current._id %>/suggest">建议</a>
                                 </li>
                                 <li>
-                                    <a class="<% if (data.category === 'experience') { %>cur<% } %> tab" href="/dream/<%= data.current._id %>/experience">心得</a>
+                                    <a class="<% if (data.category === 'experience') { %>cur<% } %>" href="/dream/<%= data.current._id %>/experience">心得</a>
                                 </li>
                             </ul>
                         </div>
@@ -139,7 +140,14 @@
                 </div>
                 <% } else { %>
                 <div class="author">
-                    想法发起人帐号不存在
+                    <h2>发起人</h2>
+                    <div class="author-top">
+                        <a class="avatar" href="/user/unknow">
+                            <img width="48" height="48" src="/images/avatar.png" />
+                        </a>
+                        <a class="author-name" href="/user/unknow">未知</a>
+                        <p class="admonition">用户不存在</p>
+                    </div>
                 </div>
                 <% } %>
                 <div class="member">
@@ -218,6 +226,9 @@
     <% include ../partials/signinpop.html %>
     <% include ../partials/create.html %>
     <% include ../partials/messagepop.html %>
+    <script>
+        var category = "<%= data.category %>";
+    </script>
     <script data-main="/js/dream.js" src="/js/require.js"></script>
 </body>
 </html>

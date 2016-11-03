@@ -1,18 +1,8 @@
 <% if (user && data.current._belong_u == user.id) { %>
 <div class="edit-area">
-    <div class="add-area">
+    <div id="experience-editor">
         <form action="/experience/new" id="node_create_form" method="post">
-            <ul>
-                <!--<li><a href="javascript:;" class="pic-add"><i class="pic-icon"></i>添加图片</a></li>-->
-                <!--<li><a href="javascript:;" class="video-add"><i class="video-icon"></i>添加视频</a></li>-->
-                <!--<li><a href="/store" class="more-add"><i class="more-icon"></i>更多资源</a></li>-->
-                <li class="textarea-field"><textarea id="story-editor" placeholder="分享一下你的心路故事..." name="content"></textarea></li>
-                <li style="display: none;"><input name="did" type="hidden" value="<%= data.current.id %>" /></li>
-            </ul>
-            <div class="edit-ctrl">
-                <a href="javascript:;" title="表情" alt="表情" class="face">(∩＿∩)</a>
-                <button type="submit" id="node_create_btn" class="btn">分享</button>
-            </div>
+            <% include ../partials/editor.html %>
         </form>
     </div>
 </div>

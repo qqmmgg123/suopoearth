@@ -8,13 +8,14 @@
     <link rel="shortcut icon" href="/favicon.ico" /> 
     <!-- 通用样式 -->
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="/css/index.css" rel="stylesheet" type="text/css" />
     <!--[if lt IE 9]>
     <link href="/css/compatible.css" rel="stylesheet" type="text/css" />
     <![endif]-->
 </head>
 <body>
     <% include ../partials/header.html %>
-    <div class="container">
+    <div id="home-page" class="container">
         <div class="dream-con">
             <div class="dream-left">
             <div class="dream-left-inner">
@@ -95,6 +96,7 @@
         </div>
     </div>
     <% include ../partials/create.html %>
+    <% include ../partials/signinpop.html %>
     <script data-main="/js/index.js" src="/js/require.js"></script>
 </body>
 </html>
