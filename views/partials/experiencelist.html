@@ -38,7 +38,7 @@
                     </a> <%= timeFormat(node.date) %> 发表了心得
             </em>
             </p>
-            <p class="node-content"><%= node.content %></p>
+            <div class="node-content unescape"><%- node.content %></div>
         </div>
         <div data-did="<%= data.current.id %>" data-blid="<%= node._id %>" data-bl="<%= node.category %>" class="node-ctrl ctrl-area">
             <div class="ctrl-nav">

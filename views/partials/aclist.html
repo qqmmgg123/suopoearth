@@ -40,27 +40,34 @@
                             </em>
                         </p>
                         <% if (ac.type == 0 && ac._create_d) { %>
-                        <p class="ac-summary"><%= ac._create_d.description %></p>
+                        <div class="ac-summary"><%= ac._create_d.description %></div>
                         <% } else if (ac.type == 1) { %>
                         <% if (ac._create_n) { %>
-                        <p class="ac-summary"><%= ac._create_n.content %></p>
-                        <p><a hidefocus="true" href="/dream/<%= ac._belong_d && ac._belong_d._id %>/node/<%= ac._create_n._id %>">查看</a></p>
+                        <div class="ac-summary"><%= ac._create_n.content %></div>
+                        <div><a hidefocus="true" href="/dream/<%= ac._belong_d && ac._belong_d._id %>/node/<%= ac._create_n._id %>">查看</a></div>
                         <% } else { %>
-                        <p class="ac-summary not-exist-content">该历程已经不存在</p>
+                        <div class="ac-summary not-exist-content">该历程已经不存在</div>
                         <% } %>
                         <% } else if (ac.type == 2) { %>
                         <% if (ac._create_s) { %>
-                        <p class="ac-summary"><%= ac._create_s.content %></p>
-                        <p><a hidefocus="true" href="/dream/<%= ac._belong_d && ac._belong_d._id %>/suggest/<%= ac._create_s._id %>">查看</a></p>
+                        <div class="ac-summary"><%- ac._create_s.summary %></div>
+                        <% if (ac._create_s.images) { %>
+                        <div>
+                            <% for (var i = 0, list = ac._create_s.images.split('|'), l = list.length; i < l; i++) { %>
+                            <img width="90" height="90" src="<%= list[i] %>" />
+                            <% } %>
+                        </div>
+                        <% } %>
+                        <div><a hidefocus="true" href="/dream/<%= ac._belong_d && ac._belong_d._id %>/suggest/<%= ac._create_s._id %>">查看</a></div>
                         <% } else { %>
-                        <p class="ac-summary not-exist-content">该建议已经不存在</p>
+                        <div class="ac-summary not-exist-content">该建议已经不存在</div>
                         <% } %>
                         <% } else if (ac.type == 3) { %>
                         <% if (ac._create_e) { %>
-                        <p class="ac-summary"><%= ac._create_e.content %></p>
-                        <p><a hidefocus="true" href="/dream/<%= ac._belong_d && ac._belong_d._id %>/experience/<%= ac._create_e._id %>">查看</a></p>
+                        <div class="ac-summary"><%- ac._create_e.content %></div>
+                        <div><a hidefocus="true" href="/dream/<%= ac._belong_d && ac._belong_d._id %>/experience/<%= ac._create_e._id %>">查看</a></div>
                         <% } else { %>
-                        <p class="ac-summary not-exist-content">该心得已经不存在</p>
+                        <div class="ac-summary not-exist-content">该心得已经不存在</div>
                         <% } %>
                         <% } %>
                     </div>

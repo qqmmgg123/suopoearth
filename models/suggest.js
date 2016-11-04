@@ -1,10 +1,12 @@
 var mongoose = require('mongoose')
     , async = require("async")
-
+    , striptags = require('../striptags')
     , Schema = mongoose.Schema;
 
 var Suggest = new Schema({
-    content    : { type: String, required: true, minlength: 1, trim: true },
+    content    : { type: String, required: true, minlength: 1 },
+    summary    : { type: String, required: true, minlength: 1, maxlength: 150, trim: true },
+    images     : { type: String },
     author     : { type: String, required: true, minlength: 2, maxlength: 12, trim: true },
     category   : { type: Number, reqiured: true, default: 2 },
     _belong_u  : { type: Schema.Types.ObjectId, ref: 'Account' },
@@ -17,6 +19,24 @@ var Suggest = new Schema({
 
 Suggest.index({'supporters': 1});
 Suggest.index({'opponents': 1});
+
+Suggest.pre('validate', function(next) {
+    var self = this;
+    var str  = striptags(this.content)
+    this.summary = str.length > 150? str.slice(0, 150) + '...':str;
+    this.images  = (function(str) {
+        var m,
+            urls = [], 
+            rex = /<img.*?src="([^">]*\/([^">]*?))".*?>/g;
+
+        while ( m = rex.exec( str ) ) {
+            urls.push( m[1] );
+        }
+
+        return urls.join('|');
+    })(this.content);
+    next();
+});
 
 Suggest.pre('remove', function(next) {
     var self = this;

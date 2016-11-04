@@ -5,6 +5,8 @@ var mongoose = require('mongoose')
 
 var Experience = new Schema({
     content    : { type: String, required: true, minlength: 1, trim: true },
+    summary    : { type: String, required: true, minlength: 1, maxlength: 150, trim: true },
+    images     : { type: String },
     category   : { type: Number, reqiured: true, default: 3 },
     author     : { type: String, required: true, minlength: 2, maxlength: 12, trim: true },
     _belong_u  : { type: Schema.Types.ObjectId, ref: 'Account' },

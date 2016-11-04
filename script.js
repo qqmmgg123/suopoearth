@@ -5,7 +5,8 @@ var async = require("async")
   , Dream = require("./models/dream")
   , Account = require("./models/account")
   , Activity = require("./models/activity")
-  , Tag = require("./models/tag");
+  , Tag = require("./models/tag")
+  , Suggest = require("./models/suggest");
 
 mongoose.connect('mongodb://localhost/suopoearth');
 
@@ -203,6 +204,23 @@ function deleteDream(dreamID) {
     });
 }
 
+function test2() {
+    Suggest.findById('581c583ad63ec080969207b0', function(err, dream) {
+        /*console.log((function(str) {
+        var m,
+            urls = [], 
+            rex =  /<img.*?src="([^">]*\/([^">]*?))".*?>/g;
+
+        while ( m = rex.exec( str ) ) {
+            urls.push( m[1] );
+        }
+
+        return urls.join('|');
+    })(dream.content));*/
+            console.log(dream.images);
+    })
+}
+
 switch(command) {
     case '--clearnode':
         clearnode();
@@ -212,6 +230,9 @@ switch(command) {
         break;
     case '--test':
         test();
+        break;
+    case '--test2':
+        test2();
         break;
     case '--deletedream':
         deleteDream(args);

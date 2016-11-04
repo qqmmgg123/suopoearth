@@ -9326,9 +9326,9 @@ wysihtml5.views.Textarea = wysihtml5.views.View.extend(
         command = commandMapping[i];
         if (this.commandsDisabled) {
           state = false;
-          dom.removeClass(command.link, CLASS_NAME_COMMAND_ACTIVE);
+          dom.removeClass(command.link.parentNode, CLASS_NAME_COMMAND_ACTIVE);
           if (command.group) {
-            dom.removeClass(command.group, CLASS_NAME_COMMAND_ACTIVE);
+            dom.removeClass(command.group.parentNode, CLASS_NAME_COMMAND_ACTIVE);
           }
           if (command.dialog) {
             command.dialog.hide();
@@ -9342,9 +9342,9 @@ wysihtml5.views.Textarea = wysihtml5.views.View.extend(
             // but the dialog interface can only update one
             state = state.length === 1 ? state[0] : true;
           }
-          dom.removeClass(command.link, CLASS_NAME_COMMAND_DISABLED);
+          dom.removeClass(command.link.parentNode, CLASS_NAME_COMMAND_DISABLED);
           if (command.group) {
-            dom.removeClass(command.group, CLASS_NAME_COMMAND_DISABLED);
+            dom.removeClass(command.group.parentNode, CLASS_NAME_COMMAND_DISABLED);
           }
         }
 
@@ -9354,9 +9354,9 @@ wysihtml5.views.Textarea = wysihtml5.views.View.extend(
 
         command.state = state;
         if (state) {
-          dom.addClass(command.link, CLASS_NAME_COMMAND_ACTIVE);
+          dom.addClass(command.link.parentNode, CLASS_NAME_COMMAND_ACTIVE);
           if (command.group) {
-            dom.addClass(command.group, CLASS_NAME_COMMAND_ACTIVE);
+            dom.addClass(command.group.parentNode, CLASS_NAME_COMMAND_ACTIVE);
           }
           if (command.dialog) {
             if (typeof(state) === "object") {
@@ -9366,9 +9366,9 @@ wysihtml5.views.Textarea = wysihtml5.views.View.extend(
             }
           }
         } else {
-          dom.removeClass(command.link, CLASS_NAME_COMMAND_ACTIVE);
+          dom.removeClass(command.link.parentNode, CLASS_NAME_COMMAND_ACTIVE);
           if (command.group) {
-            dom.removeClass(command.group, CLASS_NAME_COMMAND_ACTIVE);
+            dom.removeClass(command.group.parentNode, CLASS_NAME_COMMAND_ACTIVE);
           }
           if (command.dialog) {
             command.dialog.hide();

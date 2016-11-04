@@ -313,7 +313,7 @@ router.get('/', function(req, res, next) {
                     select: '_id content'
                 }, {
                     path: '_create_s',
-                    select: '_id content'
+                    select: '_id summary images'
                 }, {
                     path: '_create_e',
                     select: '_id content'
@@ -406,14 +406,17 @@ router.get('/dream/:id([a-z0-9]+)(/:category(node|suggest|experience)(/:itemid([
     switch (category) {
         case 'node':
             CModel = Node;
+            ctname  = "历程";
             btype    = '_belong_n';
             break;
         case 'suggest':
             CModel = Suggest;
+            ctname  = "建议";
             btype    = '_belong_s';
             break;
         case 'experience':
             CModel = Experience;
+            ctname  = "心得";
             btype    = '_belong_e';
             break;
         default:
@@ -454,7 +457,7 @@ router.get('/dream/:id([a-z0-9]+)(/:category(node|suggest|experience)(/:itemid([
 
         var currCid;
         if (itemId) {
-            noExistErr = new Error("找不到该历程...");
+            noExistErr = new Error("找不到该" + ctname + "...");
             viewType   = 1;
 
             try {
@@ -492,7 +495,7 @@ router.get('/dream/:id([a-z0-9]+)(/:category(node|suggest|experience)(/:itemid([
         if (currCid) {
             return Comment.findById(currCid)
             .exec(function(err, comment) {
-                if (err || !comment || !comment._belong_n) {
+                if (err || !comment || !comment[btype]) {
                     return next(noExistErr);
                 }
 
@@ -514,7 +517,8 @@ router.get('/dream/:id([a-z0-9]+)(/:category(node|suggest|experience)(/:itemid([
                         return next(noExistErr);
                     }
     
-                    var query = { _belong_n: itemId };
+                    var query = {};
+                    query[btype] = itemId;
 
                     preMatch.$match._id = {
                         $gt: itemId
@@ -964,7 +968,7 @@ router.get('/activities', function(req, res, next) {
             select: '_id content'
         }, {
             path: '_create_s',
-            select: '_id content'
+            select: '_id summary images'
         }, {
             path: '_belong_u',
             select: '_id nickname avatar'
@@ -1459,7 +1463,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                         select: '_id content'
                     }, {
                         path: '_create_s',
-                        select: '_id content'
+                        select: '_id summary images'
                     }, {
                         path: '_create_e',
                         select: '_id content'
@@ -1551,7 +1555,7 @@ router.get('/user/:id([a-z0-9]+)/activities', function(req, res, next) {
         select: '_id content'
     }, {
         path: '_create_s',
-        select: '_id content'
+        select: '_id summary images'
     }, {
         path: '_create_e',
         select: '_id content'

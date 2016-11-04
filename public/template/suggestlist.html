@@ -20,7 +20,7 @@
                 </a> <%- timeFormat(data.nodes[i].date) %> 发表了建议
         </em>
         </p>
-        <p class="node-content"><%= data.nodes[i].content %></p>
+        <div class="node-content unescape"><%= data.nodes[i].content %></div>
     </div>
     <div data-did="<%- data.current.id %>" data-total="<%- data.nodes[i].comments %>" data-blid="<%- data.nodes[i]._id %>" data-bl="<%- data.nodes[i].category %>" class="node-ctrl ctrl-area">
         <div class="ctrl-nav">

@@ -55,6 +55,15 @@ a:hover {
 .color-warning {
   color: #ff335e;
 }
+.unescape ol,
+.unescape ul {
+  margin: 15px 0;
+  padding-left: 40px;
+}
+.unescape ol li,
+.unescape ul li {
+  list-style: inherit;
+}
 .btn {
   cursor: pointer;
   outline: none;
@@ -66,6 +75,8 @@ a:hover {
   border-radius: 4px;
   text-align: center;
   font: 12px/1.5 Microsoft YaHei;
+  white-space: nowrap;
+  vertical-align: middle;
   -moz-user-select: none;
   /* Firefox */
   -ms-user-select: none;
@@ -101,6 +112,15 @@ a:hover {
   color: #fff;
   background-color: #286090;
   border-color: #204d74;
+}
+.btn-group {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+.btn-group .btn {
+  position: relative;
+  float: left;
 }
 .dropDown {
   width: 120px;
@@ -802,7 +822,7 @@ div.for-signin .banner-bg {
   text-align: center;
 }
 .container .search-area .no-result {
-  width: 450px;
+  width: 320px;
   margin: 0 auto;
   overflow: hidden;
   padding: 20px 10px 10px;
@@ -815,12 +835,15 @@ div.for-signin .banner-bg {
   line-height: 36px;
   font-size: 36px;
   font-style: normal;
+  color: #999;
   float: left;
 }
 .container .search-area .no-result p.dismay-text {
-  width: 360px;
+  width: 250px;
   float: right;
-  font-size: 25px;
+  font-size: 24px;
+  color: #999;
+  font-family: Microsoft YaHei, "黑体";
 }
 .container .dream-con {
   overflow: hidden;
@@ -1119,8 +1142,66 @@ div.for-signin .banner-bg {
 .container .dream-con .process-area .edit-area .edit-ctrl i.face {
   font-style: normal;
 }
-.container .dream-con .process-area .edit-area .edit-ctrl button {
+.container .dream-con .process-area .edit-area .edit-ctrl > .btn,
+.container .dream-con .process-area .edit-area .edit-ctrl > .btn-group {
   float: right;
+}
+.container .dream-con .process-area .edit-area .cmd-group {
+  overflow: hidden;
+}
+.container .dream-con .process-area .edit-area .cmd-group div {
+  padding: 10px;
+  display: block;
+  float: left;
+}
+.container .dream-con .process-area .edit-area .btn-group {
+  width: 200px;
+  clear: both;
+}
+.container .dream-con .process-area .edit-area .btn-group .btn {
+  margin-left: 5px;
+  width: 60;
+}
+.container .dream-con .process-area .edit-area a.bold-icon,
+.container .dream-con .process-area .edit-area a.italic-icon,
+.container .dream-con .process-area .edit-area a.underline-icon,
+.container .dream-con .process-area .edit-area a.link-icon,
+.container .dream-con .process-area .edit-area a.h-icon,
+.container .dream-con .process-area .edit-area a.ul-icon,
+.container .dream-con .process-area .edit-area a.ol-icon,
+.container .dream-con .process-area .edit-area a.undo-icon,
+.container .dream-con .process-area .edit-area a.redo-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  background: url(/images/sprite_icon_2.png) no-repeat;
+}
+.container .dream-con .process-area .edit-area a.bold-icon {
+  background-position: 0 -148px;
+}
+.container .dream-con .process-area .edit-area a.italic-icon {
+  background-position: -16px -148px;
+}
+.container .dream-con .process-area .edit-area a.underline-icon {
+  background-position: -32px -148px;
+}
+.container .dream-con .process-area .edit-area a.h-icon {
+  background-position: -48px -148px;
+}
+.container .dream-con .process-area .edit-area a.link-icon {
+  background-position: -176px -148px;
+}
+.container .dream-con .process-area .edit-area a.ul-icon {
+  background-position: -144px -148px;
+}
+.container .dream-con .process-area .edit-area a.ol-icon {
+  background-position: -128px -148px;
+}
+.container .dream-con .process-area .edit-area a.undo-icon {
+  background-position: 0 -164px;
+}
+.container .dream-con .process-area .edit-area a.redo-icon {
+  background-position: -16px -164px;
 }
 .container .dream-con .process-area .process-node {
   padding: 10px;
@@ -1810,4 +1891,8 @@ ul.activity-list > li div.more a.btn {
 .face-tips ul li {
   float: left;
   padding: 10px;
+}
+/* whsihtml5 */
+.wysihtml5-command-active {
+  background: #f7f7f9;
 }

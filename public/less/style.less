@@ -85,6 +85,16 @@ a {
     color: @warning-color;
 }
 
+.unescape {
+    ol, ul {
+        margin: 15px 0;
+        padding-left: 40px;
+        li {
+            list-style: inherit;
+        }
+    }
+}
+
 .btn {
     cursor: pointer;
     outline: none;
@@ -96,6 +106,8 @@ a {
     border-radius: 4px;
     text-align: center;
     font:12px/1.5 Microsoft YaHei;
+    white-space: nowrap;
+    vertical-align: middle;
     .disable-selection();
     &:hover {
         color: #333;
@@ -124,6 +136,16 @@ a {
         color: #fff;
         background-color: #286090;
         border-color: #204d74;
+    }
+}
+
+.btn-group {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    .btn {
+        position: relative;
+        float: left;
     }
 }
 
@@ -336,7 +358,6 @@ i.search-icon {
     }
     ul.h-right {
         float: right;
-        
         > li {
             padding: 8px 10px;
             height: 36px;
@@ -813,7 +834,7 @@ div.for-signin {
     }
     .search-area {
         .no-result {
-            width: 450px;
+            width: 320px;
             margin: 0 auto;
             overflow: hidden;
             padding: 20px 10px 10px;
@@ -824,12 +845,15 @@ div.for-signin {
                 line-height: 36px;
                 font-size: 36px;
                 font-style: normal;
+                color: #999;
                 float: left;
             }
             p.dismay-text {
-                width: 360px;
+                width: 250px;
                 float: right;
-                font-size: 25px;
+                font-size: 24px;
+                color: #999;
+                font-family: Microsoft YaHei, "黑体";
             }
             text-align: center;
         }
@@ -1121,9 +1145,59 @@ div.for-signin {
                     i.face {
                         font-style: normal;
                     }
-                    button {
+                    > .btn, > .btn-group {
                         float: right;
                     }
+                }
+                .cmd-group {
+                    overflow: hidden;
+                    div {
+                        padding: 10px;
+                        display: block;
+                        float: left;
+                    }
+                }
+                .btn-group {
+                    width: 200px;
+                    clear: both;
+                    .btn {
+                        margin-left: 5px;
+                        width: 60;
+                    }
+                }
+                a.bold-icon, a.italic-icon, a.underline-icon, a.link-icon,
+                a.h-icon, a.ul-icon, a.ol-icon, a.undo-icon, a.redo-icon {
+                    width: 16px;
+                    height: 16px;
+                    display: block;
+                    background: url(/images/sprite_icon_2.png) no-repeat;
+                }
+                a.bold-icon {
+                    background-position: 0 -148px;
+                }
+                a.italic-icon {
+                    background-position: -16px -148px;
+                }
+                a.underline-icon {
+                    background-position: -32px -148px;
+                }
+                a.h-icon {
+                    background-position: -48px -148px;
+                }
+                a.link-icon {
+                    background-position: -176px -148px;
+                }
+                a.ul-icon {
+                    background-position: -144px -148px;
+                }
+                a.ol-icon {
+                    background-position: -128px -148px;
+                }
+                a.undo-icon {
+                    background-position: 0 -164px;
+                }
+                a.redo-icon {
+                    background-position: -16px -164px;
                 }
             }
             .process-node {
@@ -1822,4 +1896,9 @@ ul.activity-list {
             padding: 10px;
         }
     }
+}
+
+/* whsihtml5 */
+.wysihtml5-command-active {
+    background: #f7f7f9;
 }

@@ -1,20 +1,16 @@
 <div id="toolbar" style="display: none;">
-    <a data-wysihtml5-command="bold" title="CTRL+B">bold</a> |
-    <a data-wysihtml5-command="italic" title="CTRL+I">italic</a> |
-    <a data-wysihtml5-command="createLink">insert link</a> |
-    <a data-wysihtml5-command="insertImage">insert image</a> |
-    <a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1">h1</a> |
-    <a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2">h2</a> |
-    <a data-wysihtml5-command="insertUnorderedList">insertUnorderedList</a> |
-    <a data-wysihtml5-command="insertOrderedList">insertOrderedList</a> |
-    <a data-wysihtml5-command="foreColor" data-wysihtml5-command-value="red">red</a> |
-    <a data-wysihtml5-command="foreColor" data-wysihtml5-command-value="green">green</a> |
-    <a data-wysihtml5-command="foreColor" data-wysihtml5-command-value="blue">blue</a> |
-    <a data-wysihtml5-command="undo">undo</a> |
-    <a data-wysihtml5-command="redo">redo</a> |
-    <a data-wysihtml5-command="insertSpeech">speech</a>
-    <a data-wysihtml5-action="change_view">switch to html view</a>
-
+    <div class="cmd-group">
+        <div><a class="bold-icon" data-wysihtml5-command="bold" title="CTRL+B"></a></div>
+        <div><a class="italic-icon" data-wysihtml5-command="italic" title="CTRL+I"></a></div>
+        <div><a class="underline-icon" data-wysihtml5-command="underline" title="CTRL+U"></a></div>
+        <div><a class="h-icon" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2"></a></div>
+        <!--<div><a class="link-icon" data-wysihtml5-command="createLink"></a></div>-->
+        <div><a class="ul-icon" data-wysihtml5-command="insertUnorderedList"></a></div>
+        <div><a class="ol-icon" data-wysihtml5-command="insertOrderedList"></a></div>
+        <div><a class="undo-icon" data-wysihtml5-command="undo"></a></div>
+        <div><a class="redo-icon" data-wysihtml5-command="redo"></a></div>
+        <div><a data-wysihtml5-command="insertSpeech">speech</a></div>
+    </div>
     <div data-wysihtml5-dialog="createLink" style="display: none;">
         <label>
             Link:
@@ -22,24 +18,12 @@
         </label>
         <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
     </div>
-
-    <div data-wysihtml5-dialog="insertImage" style="display: none;">
-        <label>
-            Image:
-            <input data-wysihtml5-dialog-field="src" value="http://">
-        </label>
-        <label>
-            Align:
-            <select data-wysihtml5-dialog-field="className">
-                <option value="">default</option>
-                <option value="wysiwyg-float-left">left</option>
-                <option value="wysiwyg-float-right">right</option>
-            </select>
-        </label>
-        <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
-    </div>
 </div>
 <textarea id="textarea" name="content" placeholder="发表你的<% if (data.category === "suggest") { %>建议<% } else if (data.category === "experience") { %>心得<% } %>"></textarea>
 <input name="did" type="hidden" value="<%= data.current.id %>" />
-<br><input type="reset" value="重置">
-<br><input id="publish" type="submit" value="写完了">
+<div class="edit-ctrl">
+    <div class="btn-group">
+        <input class="btn" id="publish" type="submit" value="写完了">
+        <input class="btn" type="reset" value="重置">
+    </div>
+</div>

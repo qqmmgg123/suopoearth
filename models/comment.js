@@ -27,8 +27,6 @@ Comment.pre('remove', function(next) {
     var self = this,
         objType  = 'Node';
 
-    console.log(self);
-
     switch (self.category) {
         case settings.OBJEXT_TYPE.NODE:
             objType = 'Node';
