@@ -316,7 +316,7 @@ router.get('/', function(req, res, next) {
                     select: '_id summary images'
                 }, {
                     path: '_create_e',
-                    select: '_id content'
+                    select: '_id summary images'
                 }, {
                     path: '_belong_u',
                     select: '_id nickname avatar'
@@ -965,7 +965,7 @@ router.get('/activities', function(req, res, next) {
             select: '_id content'
         }, {
             path: '_create_e',
-            select: '_id content'
+            select: '_id summary images'
         }, {
             path: '_create_s',
             select: '_id summary images'
@@ -1466,7 +1466,7 @@ router.get('/user/:id([a-z0-9]+)', function(req, res, next) {
                         select: '_id summary images'
                     }, {
                         path: '_create_e',
-                        select: '_id content'
+                        select: '_id summary images'
                     }, {
                         path: '_belong_u',
                         select: '_id nickname avatar'
@@ -1558,7 +1558,7 @@ router.get('/user/:id([a-z0-9]+)/activities', function(req, res, next) {
         select: '_id summary images'
     }, {
         path: '_create_e',
-        select: '_id content'
+        select: '_id summary images'
     }, {
         path: '_belong_u',
         select: '_id nickname avatar'

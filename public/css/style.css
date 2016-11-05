@@ -1159,8 +1159,7 @@ div.for-signin .banner-bg {
   clear: both;
 }
 .container .dream-con .process-area .edit-area .btn-group .btn {
-  margin-left: 5px;
-  width: 60;
+  width: 50%;
 }
 .container .dream-con .process-area .edit-area a.bold-icon,
 .container .dream-con .process-area .edit-area a.italic-icon,
@@ -1382,13 +1381,13 @@ div.for-signin .banner-bg {
 .container .dream-con .dream-right .author .achievem a {
   margin-right: 10px;
 }
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 768px) {
   .container .dream-con .dream-left,
   .container .dream-con .dream-right {
     width: 100%;
   }
 }
-@media (min-width: 768px) {
+@media screen and (max-width: 768px) {
   .header .head-con {
     width: 750px;
   }
@@ -1412,41 +1411,7 @@ div.for-signin .banner-bg {
     width: 750px;
   }
 }
-@media (min-width: 992px) {
-  .header {
-    position: fixed;
-    top: 0px;
-  }
-  .header .head-con {
-    width: 970px;
-  }
-  .banner {
-    top: 67px;
-  }
-  .banner .banner-bg {
-    width: 970px;
-  }
-  .banner .signin-area {
-    margin: 100px 20px 0 0;
-    float: right;
-  }
-  .container {
-    top: 67px;
-  }
-  .container .store-area,
-  .container .team-area,
-  .container .notice,
-  .container .search-area,
-  .container .settings-area,
-  .container .msg-area,
-  .container .following-area,
-  .container .followers-area,
-  .container #recommand-area,
-  .container .dream-con {
-    width: 970px;
-  }
-}
-@media (min-width: 1200px) {
+@media screen and (min-width: 768px) {
   .header {
     position: fixed;
     top: 0px;
