@@ -23,7 +23,7 @@ Suggest.index({'opponents': 1});
 Suggest.pre('validate', function(next) {
     var self = this;
     var str  = striptags(this.content)
-    this.summary = str.length > 150? str.slice(0, 150) + '...':str;
+    this.summary = str.length > 147? str.slice(0, 147) + '...':str;
     this.images  = (function(str) {
         var m,
             urls = [], 

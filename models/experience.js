@@ -1,6 +1,6 @@
 var mongoose = require('mongoose')
+    , striptags = require('../striptags')
     , async = require("async")
-
     , Schema = mongoose.Schema;
 
 var Experience = new Schema({
@@ -19,6 +19,24 @@ var Experience = new Schema({
 
 Experience.index({'supporters': 1});
 Experience.index({'opponents': 1});
+
+Experience.pre('validate', function(next) {
+    var self = this;
+    var str  = striptags(this.content)
+    this.summary = str.length > 147? str.slice(0, 147) + '...':str;
+    this.images  = (function(str) {
+        var m,
+            urls = [], 
+            rex = /<img.*?src="([^">]*\/([^">]*?))".*?>/g;
+
+        while ( m = rex.exec( str ) ) {
+            urls.push( m[1] );
+        }
+
+        return urls.join('|');
+    })(this.content);
+    next();
+});
 
 Experience.pre('remove', function(next) {
     var self = this;

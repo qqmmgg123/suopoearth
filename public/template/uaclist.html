@@ -50,14 +50,29 @@
                                 <% } %>
                                 <% } else if (data.activities[i].type == 2) { %>
                                 <% if (data.activities[i]._create_s) { %>
-                                <div class="ac-summary"><%= data.activities[i]._create_s.content %></div>
+                                <div class="ac-summary"><%= data.activities[i]._create_s.summary %></div>
+                                <% if (data.activities[i]._create_s.images) { %>
+                                <div class="ac-images">
+                                    <% for (var i = 0, list = data.activities[i]._create_s.images.split('|'), l = list.length; i < l; i++) { %>
+                                    <img width="90" height="90" src="<%= list[i] %>" />
+                                    <% } %>
+                                </div>
+                                <% } %>
                                 <div><a hidefocus="true" href="/dream/<%- data.activities[i]._belong_d && data.activities[i]._belong_d._id %>/suggest/<%- data.activities[i]._create_s._id %>">查看</a></div>
                                 <% } else { %>
                                 <div class="ac-summary not-exist-content">该建议已经不存在</div>
                                 <% } %>
                                 <% } else if (data.activities[i].type == 3) { %>
                                 <% if (data.activities[i]._create_e) { %>
-                                <div class="ac-summary"><%= data.activities[i]._create_e.content %></div>
+                                <div class="ac-summary"><%= data.activities[i]._create_e.summary %></div>
+                                 <% if (data.activities[i]._create_e.images) { %>
+                                <div class="ac-images">
+                                    <% for (var i = 0, list = data.activities[i]._create_e.images.split('|'), l = list.length; i < l; i++) { %>
+                                    <img width="90" height="90" src="<%= list[i] %>" />
+                                    <% } %>
+                                </div>
+                                <% } %>
+
                                 <div><a hidefocus="true" href="/dream/<%- data.activities[i]._belong_d && data.activities[i]._belong_d._id %>/experience/<%- data.activities[i]._create_e._id %>">查看</a></div>
                                 <% } else { %>
                                 <div class="ac-summary not-exist-content">该心得已经不存在</div>
