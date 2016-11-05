@@ -26,11 +26,13 @@ Experience.pre('validate', function(next) {
     this.summary = str.length > 147? str.slice(0, 147) + '...':str;
     this.images  = (function(str) {
         var m,
+            i = 0,
             urls = [], 
             rex = /<img.*?src="([^">]*\/([^">]*?))".*?>/g;
 
-        while ( m = rex.exec( str ) ) {
+        while ( (m = rex.exec( str )) !== null && i < 6 ) {
             urls.push( m[1] );
+            i++;
         }
 
         return urls.join('|');

@@ -205,20 +205,21 @@ function deleteDream(dreamID) {
 }
 
 function test2() {
-    Suggest.findById('581c583ad63ec080969207b0', function(err, dream) {
-        /*console.log((function(str) {
-        var m,
-            urls = [], 
-            rex =  /<img.*?src="([^">]*\/([^">]*?))".*?>/g;
+    Suggest.findById('581c5e4c43255d94983a2da8', function(err, dream) {
+        (function(str) {
+            var m,
+                i = 0,
+                urls = [], 
+                rex =  /<img.*?src="([^">]*\/([^">]*?))".*?>/g;
 
-        while ( m = rex.exec( str ) ) {
-            urls.push( m[1] );
-        }
+            while ( (m = rex.exec( str )) !== null && i < 9 ) {
+                urls.push( m[1] );
+                i++;
+            }
 
-        return urls.join('|');
-    })(dream.content));*/
-            console.log(dream.images);
-    })
+            return urls.join('|');
+        })(dream.content);
+    });
 }
 
 switch(command) {
