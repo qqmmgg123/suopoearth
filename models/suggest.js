@@ -20,7 +20,7 @@ var Suggest = new Schema({
 Suggest.index({'supporters': 1});
 Suggest.index({'opponents': 1});
 
-Suggest.pre('validate', function(next) {
+Suggest.methods.extract = function() {
     var self = this;
     var str  = striptags(this.content)
     this.summary = str.length > 147? str.slice(0, 147) + '...':str;
@@ -37,8 +37,7 @@ Suggest.pre('validate', function(next) {
 
         return urls.join('|');
     })(this.content);
-    next();
-});
+};
 
 Suggest.pre('remove', function(next) {
     var self = this;

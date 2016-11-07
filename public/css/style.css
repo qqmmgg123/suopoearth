@@ -979,7 +979,7 @@ div.for-signin .banner-bg {
   overflow: auto;
   resize: none;
 }
-.container .dream-con a.share-btn {
+.container .dream-con span.share-btn {
   float: left;
   display: block;
 }
@@ -1873,11 +1873,11 @@ ul.activity-list > li div.more a.btn {
     width: auto;
   }
   .footer .company-area {
-    width: 970px;
+    width: auto;
   }
 }
-/* for 700px or less */
-@media (min-width: 480px) {
+/* for 480px or less */
+@media screen and (max-width: 480px) {
   h1 {
     font-size: 0.8em;
   }

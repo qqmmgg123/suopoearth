@@ -8,6 +8,7 @@ requirejs.config({
         'jplaceholder': 'jquery.placeholder.min',
         'backbone' : 'backbone-min',
         'validation': 'validate',
+        'face'  : 'face',
         'common': 'common',
         'share' : 'share',
         'text'  : 'text',
@@ -21,10 +22,11 @@ define([
     'const/settings',
     'underscore',
     'jquery',
+    'face',
     'common',
     'share',
     'text!template/' + category + 'list.html'
-], function (rules, wysihtml, settings, _, $, common, Share, itemsTpl) {
+], function (rules, wysihtml, settings, _, $, face, common, Share, itemsTpl) {
     $(function() {
         // 绑定用户操作
         common.bindUserCtrl();
@@ -820,7 +822,7 @@ define([
             }
         });
 
-        common.bindFaceCtrl($('.face'), $('#story-editor'));
+        face().create({icon: '.face', editor: '#story-editor', tips: '.face-tips'});
 
     // 显示用户信息tips
     $('.friend').hover(

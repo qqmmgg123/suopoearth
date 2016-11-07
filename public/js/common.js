@@ -1,4 +1,4 @@
-define(['jquery', 'jplaceholder', 'backbone', 'validation'], function ($, jplaceholder, Backbone, Validation) {
+define(['jquery', 'jplaceholder', 'backbone', 'validation', 'face'], function ($, jplaceholder, Backbone, Validation, face) {
 
     var _d = document;
 
@@ -323,29 +323,6 @@ var common = {
             var s = document.getElementsByTagName("script")[0]; 
             s.parentNode.insertBefore(hm, s);
         })();
-    },
-    bindFaceCtrl: function($btn, $editor) {
-        // 添加表情
-        var $face_tips = $('.face-tips');
-        var $curFaceEdit = null;
-        $btn.mouseenter(function() {
-            var pos = $(this).offset();
-            $curFaceEdit = $editor;
-            $face_tips.css({
-                left: pos.left,
-                top: pos.top + $(this).height()
-            }).show();
-        }).mouseleave(function(e) {
-            if (e.toElement !== $face_tips[0] && !$.contains($face_tips[0], e.toElement)) {
-                $face_tips.hide();
-            }
-        });
-        $face_tips.mouseleave(function() {
-            $(this).hide();
-        }).on('click', 'a', function() {
-            $curFaceEdit.val($curFaceEdit.val() + $(this).text());
-            $face_tips.hide();
-        });
     }
 };
 
@@ -582,7 +559,7 @@ $(function() {
     }else{
         common.bindSigninCtrl($('#create_dream_btn'));
     }
-    common.bindFaceCtrl($('.desc-face'), $('#dream-desc'))
+    face().create({ icon: '.desc-face', editor: '#dream-desc', tips: '.face-tips' });
 
     //setInterval($.proxy(common.autoScroll, common, "#reference"), 2000);
     

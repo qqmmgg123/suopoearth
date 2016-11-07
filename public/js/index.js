@@ -7,6 +7,7 @@ requirejs.config({
         'backbone' : 'backbone-min',
         'template' : '../template',
         'validation': 'validate',
+        'face': 'face',
         'common': 'common'
     }
 });

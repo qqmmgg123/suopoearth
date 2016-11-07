@@ -5,6 +5,7 @@ requirejs.config({
         'jplaceholder': 'jquery.placeholder.min',
         'backbone' : 'backbone-min',
         'validation': 'validate',
+        'face': 'face',
         'common': 'common'
     }
 });

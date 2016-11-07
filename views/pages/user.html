@@ -59,8 +59,10 @@
                         </ul>
                         <% } else { %>
                         <div class="no-dream-content">
-                            <div class="no-dream-tips">你目前没有分享任何想法</div>
+                            <div class="no-dream-tips"><%= data.currUser %>目前没有分享任何想法</div>
+                            <% if (user && user.id == data.id) { %>
                             <div class="btn-group"><a href="/intro" class="btn btn-big">关于娑婆世界</a><a id="first_cdream_btn" class="btn btn-big">分享想法</a></div>
+                            <% } %>
                         </div>
                         <% } %>
                         <div>

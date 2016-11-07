@@ -20,7 +20,7 @@ var Experience = new Schema({
 Experience.index({'supporters': 1});
 Experience.index({'opponents': 1});
 
-Experience.pre('validate', function(next) {
+Experience.methods.extract = function() {
     var self = this;
     var str  = striptags(this.content)
     this.summary = str.length > 147? str.slice(0, 147) + '...':str;
@@ -37,8 +37,7 @@ Experience.pre('validate', function(next) {
 
         return urls.join('|');
     })(this.content);
-    next();
-});
+};
 
 Experience.pre('remove', function(next) {
     var self = this;

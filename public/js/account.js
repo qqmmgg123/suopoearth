@@ -6,6 +6,7 @@ requirejs.config({
         'backbone': 'backbone-min',
         'utilities': 'utilities',
         'validation': 'validate',
+        'face'  : 'face',
         'common': 'common'
     }
 });

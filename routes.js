@@ -2682,6 +2682,8 @@ router.post('/experience/new', function(req, res, next) {
                 content  : req.body.content
             });
 
+            experience.extract();
+
             experience.save(function(err) {
                 if (err) return next(err);
 
@@ -2784,6 +2786,8 @@ router.post('/suggest/new', function(req, res, next) {
                 author   : user.nickname,
                 content  : req.body.content
             });
+
+            suggest.extract();
 
             suggest.save(function(err) {
                 if (err) return next(err);
@@ -3600,12 +3604,15 @@ router.post('/comment/new', function(req, res, next) {
 
     switch(bl) {
         case settings.OBJEXT_TYPE.NODE:
+            category = "node";
             promise = Node.findOne({_id: blID}).select('comments').exec();
             break;
         case settings.OBJEXT_TYPE.SUGGEST:
+            category = "suggest";
             promise = Suggest.findOne({_id: blID}).select('comments').exec();
             break;
         case settings.OBJEXT_TYPE.EXPERIENCE:
+            category = "experience";
             promise = Experience.findOne({_id: blID}).select('comments').exec();
             break;
         default:
@@ -3659,6 +3666,15 @@ router.post('/comment/new', function(req, res, next) {
             }
             ], function(err, results) {
                 if (err) return next(err);
+                var url        = '/dream/' + comment._belong_d + '/' + category + '/' + blID + '?cid=' + comment.id;
+
+                var msgfields  = {
+                    _belong_u: object._belong_u,
+                    url      : url,
+                    title    : '你有新的评论',
+                    content  : comment.content
+                }
+
 
                 getItemComments(blID, bl, 1, req.user, function(err, data) {
                     if (err) return next(err);
