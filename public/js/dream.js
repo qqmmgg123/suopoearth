@@ -852,25 +852,65 @@ define([
         }
     });*/
 
-    $('.good').data('isGood', false).click(function() {
-        var isGood = $(this).data('isGood');
+    // 关注想法操作
+    $('[rel="dream-good"]').click(function() {
+        var isGood = $(this).data('isgood');
+        var $self = $(this);
         if (!isGood) {
-            $(this)[0].lastChild.nodeValue = "取消赞同";
-            $(this).data('isGood', true);
-        }else{
-            $(this)[0].lastChild.nodeValue = "赞同";
-            $(this).data('isGood', false);
-        }
-    });
+            $.ajax({
+                url: "/dream/good",
+                data: {
+                    did: $(this).data('did')
+                },
+                method: "POST",
+                dataType: "json",
+                success: function(data) {
+                    switch(data.result) {
+                        case 0:
+                            $self.text("取消关注想法");
+                            $self.data('isfollow', true);
+                            break;
+                        case 1:
+                            alert(data.info);
+                            break;
+                        case 2:
+                            common.showSigninPop();
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                error: function() {
 
-    $('.bad').data('isBad', false).click(function() {
-        var isBad = $(this).data('isBad');
-        if (!isBad) {
-            $(this)[0].lastChild.nodeValue = "取消不屑";
-            $(this).data('isBad', true);
+                }
+            });
         }else{
-            $(this)[0].lastChild.nodeValue = "不屑";
-            $(this).data('isBad', false);
+            $.ajax({
+                url: "/dream/cfollowing",
+                data: {
+                    did: $(this).data('did')
+                },
+                method: "POST",
+                dataType: "json",
+                success: function(data) {
+                    switch(data.result) {
+                        case 0:
+                            $self.text("关注该想法");
+                            $self.data('isfollow', false);
+                            break;
+                        case 1:
+                            alert(data.info);
+                            break;
+                        case 2:
+                            common.showSigninPop();
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                error: function() {
+                }
+            });
         }
     });
 

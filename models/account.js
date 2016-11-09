@@ -1,5 +1,6 @@
 var mongoose = require('mongoose')
 , Schema = mongoose.Schema
+, db = require('./db')
 , register = require('./register');
 
 var Account = new Schema({
@@ -16,6 +17,9 @@ var Account = new Schema({
     suggests      : [{ type: Schema.Types.ObjectId, ref: 'Suggest', unique: true }],
     messages      : [{ type: Schema.Types.ObjectId, ref: 'Message', unique: true }],
     msgreviewdate : { type: Date },
+    follow_guide  : { type: Boolean, default: false },
+    dream_guide   : { type: Boolean, default: false },
+    node_guide    : { type: Boolean, default: false },
     date          : { type: Date,  default: Date.now }
 });
 
@@ -28,5 +32,6 @@ Account.index({'dreams':1});
 Account.index({'messages':1});
 Account.index({'_following_d':1});
 Account.plugin(register);
+Account.plugin(db);
 
 module.exports = mongoose.model('Account', Account);

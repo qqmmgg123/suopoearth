@@ -66,13 +66,13 @@
                         <div class="nav-left">
                             <ul>
                                 <li>
-                                    <a class="<% if (data.category === 'node') { %>cur<% } %>" href="/dream/<%= data.current._id %>">历程</a>
+                                    <a class="<% if (data.category === 'node') { %>cur<% } %>" href="/dream/<%= data.current._id %>">历程&nbsp;(<%= data.current.nodes.length %>)</a>
                                 </li>
                                 <li>
-                                    <a class="<% if (data.category === 'suggest') { %>cur<% } %>" href="/dream/<%= data.current._id %>/suggest">建议</a>
+                                    <a class="<% if (data.category === 'suggest') { %>cur<% } %>" href="/dream/<%= data.current._id %>/suggest">建议&nbsp;(<%= data.current.suggests.length %>)</a>
                                 </li>
                                 <li>
-                                    <a class="<% if (data.category === 'experience') { %>cur<% } %>" href="/dream/<%= data.current._id %>/experience">心得</a>
+                                    <a class="<% if (data.category === 'experience') { %>cur<% } %>" href="/dream/<%= data.current._id %>/experience">心得&nbsp;(<%= data.current.experiences.length %>)</a>
                                 </li>
                             </ul>
                         </div>

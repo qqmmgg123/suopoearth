@@ -42,5 +42,9 @@ gulp.task('default', function() {
     });
 });
 
-gulp.task('mini', ['minify-css', 'minify-html', 'compress'], function() {
+//gulp.task('mini', ['minify-css', 'minify-html', 'compress'], function() {
+//});
+
+
+gulp.task('mini', ['minify-css', 'minify-html'], function() {
 });

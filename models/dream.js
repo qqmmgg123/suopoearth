@@ -1,4 +1,6 @@
 var mongoose = require('mongoose')
+    , db     = require('./db')
+    , poll   = require('./poll')
     , Schema = mongoose.Schema;
 
 var Dream = new Schema({
@@ -38,4 +40,8 @@ Dream.pre('remove', function(next) {
         next(null);
     });
 });
+
+Dream.plugin(poll);
+Dream.plugin(db);
+
 module.exports = mongoose.model('Dream', Dream);

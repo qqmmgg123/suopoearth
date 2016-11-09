@@ -204,8 +204,75 @@ function deleteDream(dreamID) {
     });
 }
 
+function cnode(i) {
+    console.log('insert...' + i);
+    async.parallel([
+        function(cb){
+            Dream.findOne({_id: '576d45be041d900c14bf8e0e'}, function(err, dream) {
+                if (err) return cb(err, null);
+
+                if (!dream) {
+                    var err = new Error("添加历程失败...");
+                    return cb(err, null);
+                }
+                
+                cb(null, dream);
+            });
+        },
+        function(cb){
+            Account.findOne({_id: '5757ca102dd1fff80849ecb2'}, function(err, user) {
+                if (err) return cb(err, null);
+
+                if (!user) {
+                    var err = new Error("添加历程失败...");
+                    return cb(err, null);
+                }
+                
+                cb(null, user);
+            });
+        }],
+        function(err, results){
+            var dream = results[0];
+            var user = results[1];
+
+            var node = new Node({
+                _belong_d: dream._id,
+                _belong_u: user._id,
+                author   : user.nickname,
+                content  : "我在测试你知道吗哈哈哈，我在测试你知道吗哈哈哈我在测试你知道吗哈哈哈，我在测试你知道吗哈哈哈我在测试你知道吗哈哈哈我在测试你知道吗哈哈哈，我在测试你知道吗哈哈哈我在测试你知道吗哈哈哈，我在测试你知道吗哈哈哈。"
+            });
+
+            node.save(function(err) {
+                dream.nodes.push(node);
+                user.nodes.push(node);
+
+                async.parallel([
+                        function(cb_2) {
+                            dream.save(function(err) {
+                                if (err) return cb_2(err, null);
+                                cb_2(null, null);
+                            });
+                        },
+                        function(cb_2) {
+                            user.save(function(err) {
+                                if (err) return cb_2(err, null);
+                                cb_2(null, null);
+                            });
+                        }
+                    ], function(err, results) {
+                        console.log('ok..' + i);
+                });
+            });
+        }
+    );
+}
+
 function test2() {
-    Suggest.findById('581c5e4c43255d94983a2da8', function(err, dream) {
+    /*for (var i = 0; i < 1000; i++) {
+        cnode(i);
+    }*/
+
+    /*Suggest.findById('581c5e4c43255d94983a2da8', function(err, dream) {
         (function(str) {
             var m,
                 i = 0,
@@ -219,6 +286,26 @@ function test2() {
 
             return urls.join('|');
         })(dream.content);
+    });*/
+    //var start = new Date().getTime();
+
+    /*Node.count({'_belong_d': '576d45be041d900c14bf8e0e'}, function(err, c) {
+        var end = new Date().getTime();
+        console.log(c, end - start);
+    });*/
+
+    /*Dream.aggregate([{$match: {_id: mongoose.Types.ObjectId('576d45be041d900c14bf8e0e')}}, {$project: {nodes: {$size: '$nodes'}}}], function(err, c) {
+        var end = new Date().getTime();
+        console.log(end - start);
+    });*/
+
+    /*Dream.findById('576d45be041d900c14bf8e0e', 'nodes', function(err, c) {
+        var start = new Date().getTime();
+        console.log(c.nodes.length, new Date().getTime() - start);
+    }).lean();*/
+
+    Account.find({}, 'nickname').lean().skip(2).limit(3).exec(function(err, users) {
+        console.log(users);
     });
 }
 

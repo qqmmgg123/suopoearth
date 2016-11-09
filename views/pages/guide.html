@@ -1,0 +1,76 @@
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>关于我们 - <%= title %></title>
+    <!-- 通用样式 -->
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="/css/cropper.css" rel="stylesheet" type="text/css" />
+    <link href="/css/guide.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <% include ../partials/header.html %>
+    <div id="guide-page" class="main">
+        <div class="container">
+                <form action="/followguide" method="post">
+                    <div>
+                        <p class="label"><label for="username">头像：</label></p>
+                        <p class="field">
+                            <input id="image-upload" type="file" name="upload_file" style="opacity:0;height:0;width:0;font-size:0;position:absolute;">
+                        </p>
+                        <button id="pic-choose" class="btn btn-primary" type="button">上传头像</button>
+                    </div>
+                    <div>
+                        <p class="label"><label for="username">兴趣：(请少选择一个您的兴趣)</label></p>
+                        <p class="field">
+                            <select>
+                                <option></option>
+                            </select>
+                        </p>
+                    </div>
+                    <div>
+                        <p class="label"><label for="username">推荐想法：(可选)</label><a>换一批&nbsp;<i class="icon-change"></i></a></p>
+                        <% if (data.rdreams && data.rdreams.length > 0) { %>
+                        <ul>
+                            <% data.rdreams.forEach(function(dream) { %>
+                            <li><a><%= dream.title %></a></li>
+                            <% }); %>
+                        </ul>
+                        <p class="field">
+                            <select>
+                                <option></option>
+                            </select>
+                        </p>
+                        <% } %>
+                    </div>
+                    <div>
+                        <p class="label"><label for="username">推荐用户：(可选)</label><a>换一批&nbsp;<i class="icon-change"></i></a></p>
+                        <ul>
+                            
+                        </ul>
+                        <% if (data.rusers && data.rusers.length > 0) { %>
+                        <ul>
+                            <% data.rusers.forEach(function(user) { %>
+                            <li><img width="48" height="48" src="<%= user.avatar %>" /><%= user.nickname %></li>
+                            <% }); %>
+                        </ul>
+                        <p class="field">
+                            <select>
+                                <option></option>
+                            </select>
+                        </p>
+                        <% } %>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">完成&nbsp;></button>
+                    </div>
+                </form>
+        </div>
+    </div>
+    <% include ../partials/signinpop.html %>
+    <% include ../partials/create.html %>
+    <% include ../partials/footer.html %>
+    <script src="/js/dist/commons.js"></script>
+    <script src="/js/dist/guide.js"></script>
+</body>
+</html>

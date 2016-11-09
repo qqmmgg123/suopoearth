@@ -47,8 +47,8 @@ var common = {
         return arrayPageSize;
     },
     checkBrowser: function() {
-        if (document.all && !document.querySelector) {
-            alert('您使用的是ie浏览器，但版本过低，请使用chrome、firefox、或用ie8或ie更高版本，或者携带以上内核的浏览器，如QQ，搜狗等。');
+        if (document.all && !document.addEventListener) {
+            alert('您使用的是ie浏览器，但版本过低，请使用chrome、firefox、或用ie9或ie更高版本，或者携带以上内核的浏览器，如QQ，搜狗等。');
         }
     },
     checkMobile: function() {
@@ -570,6 +570,13 @@ $(function() {
         if (error) {
             $this.show();
         }
+    });
+
+    $('.search-in').on('input', function() {
+        console.log($(this).val());
+        $.getJSON('/query', {query: $(this).val()}, function(data) {
+            console.log(data);
+        });
     });
 
     // 查看消息列表

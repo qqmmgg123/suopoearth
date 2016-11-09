@@ -14,6 +14,7 @@ var async = require("async")
     , Experience = require("./models/experience")
     , Activity = require("./models/activity")
     , Comment = require("./models/comment")
+    , Tag     = require("./models/tag")
     , Message = require("./models/message")
     , log = require('util').log
     , router = require('express').Router()
@@ -393,6 +394,55 @@ router.get('/canvas', function(req, res) {
         notice: getFlash(req, 'notice'),
         user : req.user
     }, res));
+});
+
+// 建设中
+router.get('/guide', function(req, res, next) {
+    async.parallel([
+        function(cb) {
+            Account.random('_id nickname bio avatar', 3, function(err, users) {
+                if (err) {
+                    return cb(err, []);
+                }
+
+                cb(null, users);
+            });
+        }, function(cb) {
+            Dream.random('_id title description', 3, function(err, dreams) {
+                if (err) {
+                    return cb(err, []);
+                }
+
+                cb(null, dreams)
+            });
+        }, function(cb) {
+            Tag.random('_id key', 20, function(err, tags) {
+                if (err) {
+                    return cb(err, []);
+                }
+
+                cb(null, tags);
+            });
+        }
+    ], function(err, ret) {
+        if (err) {
+            return next(err);
+        }
+
+        var users  = ret.length === 3 && ret[0]? ret[0]:[],
+            dreams = ret.length === 3 && ret[1]? ret[1]:[],
+            tags = ret.length === 3 && ret[2]? ret[2]:[];
+
+        res.render('pages/guide', makeCommon({
+            title: settings.APP_NAME,
+            notice: getFlash(req, 'notice'),
+            data: {
+                rusers: users,
+                rdreams: dreams
+            },
+            user : req.user
+        }, res));
+    });
 });
 
 // 想法详情页
@@ -2023,98 +2073,76 @@ router.get('/found', function(req, res) {
 // 搜索结果
 router.get('/query', function(req, res, next) {
     function reponse(data) {
-        res.json('result', {
-            data: {
-                results: data
-            },
+        res.json({
+            info: "success!",
+            data: data,
             result: 0
         });
     }
 
-    if (!req.body) {
-        return reponse([]);
+    if (!req.query) {
+        return reponse(null);
     }
 
-    var query = req.body.query;
+    var query = req.query.query;
 
     if (typeof query == "string") {
         query = query.trim();
     }else{
-        return reponse([]);
+        return reponse(null);
     }
-
-    var type = req.query.type || "content";
     
     async.parallel([
         function(cb) {
            Dream
             .find({
                 title: new RegExp(quote(query), 'i')
-            })
+            }, 'title')
             .limit(5)
-            .exec(function(err, results) {
+            .exec(function(err, dreams) {
                 if (err) {
-                    return next(err);
+                    return cb(err, []);
                 }
 
-                cb(null, results);
+                cb(null, dreams);
             });
         },
         function(cb) {
            Account
             .find({
                 nickname: new RegExp(quote(query), 'i')
-            })
+            }, 'nickname avatar')
             .limit(3)
-            .exec(function(err, results) {
+            .exec(function(err, users) {
                 if (err) {
-                    return next(err);
+                    return cb(err, []);
                 }
 
-                cb(null, results);
+                cb(null, users);
             });
         }
     ], function(err, results) {
-        if (err) {
-            return reponse([]);
+        if (err || !results || results.length !== 2) {
+            err = new Error('服务器异常.');
+            return next(err);
         }
 
-        reponse(results);
+        var data = {
+            dreams: results[0],
+            users: results[1]
+        }
+
+        reponse(data);
     });
-
-    switch(type) {
-        case 'content':
-            Dream
-            .find({
-                title: new RegExp(quote(query), 'i')
-            })
-            .limit(9)
-            .exec(function(err, results) {
-                if (err) {
-                    return next(err);
-                }
-
-                reponse(0, results);
-            });
-            break;
-        case 'user':
-            Account
-            .find({
-                nickname: new RegExp(quote(query), 'i')
-            })
-            .limit(9)
-            .exec(function(err, results) {
-                if (err) {
-                    return next(err);
-                }
-
-                reponse(1, results);
-            });
-            break;
-        default:
-            reponse(-1, results);
-            break;
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
     }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
 });
 
 // 搜索结果
@@ -2140,7 +2168,7 @@ router.get('/result', function(req, res, next) {
     var query = req.query.query,
         type  = req.query.type || 'content';
 
-    if (typeof query != "string") {
+    if (typeof query !== "string") {
         return reponse(type, []);
     }
 
@@ -2431,6 +2459,170 @@ router.get('/canvas', function(req, res) {
         notice: getFlash(req, 'notice'),
         user : req.user
     }, res));
+});
+
+// 点赞
+router.post('/dream/good', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    if (!req.body.did) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var dreamID = req.body.did;
+
+    Dream.findById(dreamID, 'supporters', function(err, dream) {
+        dream.good(req.user, function(err, num) {
+            if (err) {
+                return next(err.message);
+            }
+
+            return res.json({
+                info: 'success!',
+                data: {
+                    num: num
+                },
+                result: 0
+            });
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 反对
+router.post('/dream/bad', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    if (!req.body.did) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var dreamID = req.body.did;
+
+    Dream.findById(dreamID, 'supporters', function(err, dream) {
+        dream.bad(req.user, function(err, num) {
+            if (err) {
+                return next(err.message);
+            }
+
+            return res.json({
+                info: 'success!',
+                data: {
+                    num: num
+                },
+                result: 0
+            });
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 取消点赞
+router.post('/dream/cgood', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    if (!req.body.did) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var dreamID = req.body.did;
+
+    Dream.findById(dreamID, 'supporters', function(err, dream) {
+        dream.cancelGood(req.user, function(err, num) {
+            if (err) {
+                return next(err.message);
+            }
+
+            return res.json({
+                info: 'success!',
+                data: {
+                    num: num
+                },
+                result: 0
+            });
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
+});
+
+// 取消反对
+router.post('/dream/cbad', function(req, res, next) {
+    if (!req.user) {
+        return res.json({
+            info: "请登录",
+            result: 2
+        });
+    }
+
+    if (!req.body.did) {
+        return next(new Error("请求参数错误..."));
+    }
+
+    var dreamID = req.body.did;
+
+    Dream.findById(dreamID, 'supporters', function(err, dream) {
+        dream.cancelBad(req.user, function(err, num) {
+            if (err) {
+                return next(err.message);
+            }
+
+            return res.json({
+                info: 'success!',
+                data: {
+                    num: num
+                },
+                result: 0
+            });
+        });
+    });
+}, function(err, req, res, next) {
+    if (err) {
+        message = err.message;
+    }
+
+    return res.json({
+        info: message,
+        result: 1
+    });
 });
 
 // 创建一个想法
@@ -3594,33 +3786,37 @@ router.post('/comment/new', function(req, res, next) {
     var content = req.body.content;
 
     if (typeof content !== "string" || !content.trim()) {
-        return next(new Error("您的提议是空内容，创建失败..."));
+        return next(new Error("您的" + settings.COMMENT_TEXT.EXPANSION_COMMENT + "是空内容，创建失败..."));
     }
 
     // 查询耗时测试
-    var start = new Date().getTime();
-
-    var promise = null;
+    var start = new Date().getTime(), Model;
 
     switch(bl) {
         case settings.OBJEXT_TYPE.NODE:
             category = "node";
-            promise = Node.findOne({_id: blID}).select('comments').exec();
+            Model = Node;
             break;
         case settings.OBJEXT_TYPE.SUGGEST:
             category = "suggest";
-            promise = Suggest.findOne({_id: blID}).select('comments').exec();
+            Model = Suggest;
             break;
         case settings.OBJEXT_TYPE.EXPERIENCE:
             category = "experience";
-            promise = Experience.findOne({_id: blID}).select('comments').exec();
+            Model = Experience;
             break;
         default:
             return next(new Error("请求参数错误，创建失败..."));
             break;
     }
 
-    promise.then(function(object) {
+    Model.findOne({_id: blID})
+        .select('comments _belong_u')
+        .populate({
+            path: '_belong_u',
+            select: 'messages'
+        })
+        .exec(function(err, object) {
         if (!object) {
             var err = new Error("发布" + settings.COMMENT_TEXT.EXPANSION_COMMENT + "失败...");
             return next(err);
@@ -3666,28 +3862,47 @@ router.post('/comment/new', function(req, res, next) {
             }
             ], function(err, results) {
                 if (err) return next(err);
-                var url        = '/dream/' + comment._belong_d + '/' + category + '/' + blID + '?cid=' + comment.id;
+                var url        = '/dream/' + comment._belong_d + '/' + category + '/' + blID + '?cid=' + comment.id,
+                    other = object._belong_u;
 
                 var msgfields  = {
-                    _belong_u: object._belong_u,
+                    _belong_u: other._id,
                     url      : url,
                     title    : '你有新的评论',
                     content  : comment.content
                 }
 
+                var message = new Message(msgfields);
+                other.messages.push(message);
 
-                getItemComments(blID, bl, 1, req.user, function(err, data) {
-                    if (err) return next(err);
-
-                    data.info   =  "发布成功";
-                    data.result = 0;
-                    res.json(data);
-
-                    var spend = end - start;
-                    if (spend > maxtime) {
-                        var end = new Date().getTime();
-                        console.log(req.originalUrl + ' spend' + spend + 'ms');
+                async.parallel([
+                    function(cb_3) {
+                        message.save(function(err) {
+                            if (err) return cb_3(err, null);
+                            cb_3(null, null);
+                        });
+                    },
+                    function(cb_3) {
+                        other.save(function(err) {
+                            if (err) return cb_3(err, null);
+                            cb_3(null, null);
+                        });
                     }
+                ], function(err, results) {
+                    if (err) return next(err);
+                    getItemComments(blID, bl, 1, req.user, function(err, data) {
+                        if (err) return next(err);
+
+                        data.info   =  "发布成功";
+                        data.result = 0;
+                        res.json(data);
+
+                        var spend = end - start;
+                        if (spend > maxtime) {
+                            var end = new Date().getTime();
+                            console.log(req.originalUrl + ' spend' + spend + 'ms');
+                        }
+                    });
                 });
             }
         );
@@ -4207,6 +4422,7 @@ router.post('/avatar/upload', upload.single('avatar'), function(req, res, next) 
 
                 res.json({
                     info: 'img save successfully',
+                    dataUrl: '/avatar/' + req.file.filename,
                     result: 1
                 });
             });
