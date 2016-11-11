@@ -20,7 +20,7 @@ var config =  {
     //页面入口文件配置
     entry: [
         'webpack/hot/dev-server',
-        'webpack-hot-middleware/client?127.0.0.1:8080'
+        'webpack-hot-middleware/client?127.0.0.1:8080/__webpack_hmr'
     ],
     //入口文件输出配置
     output: {

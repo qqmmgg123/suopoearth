@@ -1,1 +1,5 @@
-document.body.innerHTML = "<h1>a123256ssa</h1>";
+if (module.hot) {
+  module.hot.accept();
+}
+
+document.body.innerHTML = "<h1>a123256ssafaassa</h1>";
