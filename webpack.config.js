@@ -1,45 +1,52 @@
 var path = require('path');
 var webpack = require('webpack');
-var env = process.env.WEBPACK_ENV;
-var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
+//var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 
-module.exports = {
+var args = process.argv,
+    capp = args[2];
+
+console.log(capp);
+
+var config =  {
     plugins: [
-        new CommonsChunkPlugin({
-            name: "commons",
-            minChunks: 2
-        }),
-        new webpack.DefinePlugin({ 
-            'process.env.NODE_ENV': '"development"' 
-        })
+        //new CommonsChunkPlugin({
+            //name: capp + '_common',
+            //minChunks: 2
+        //}),
+        new webpack.optimize.OccurenceOrderPlugin(), // recommanded by webpack
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NoErrorsPlugin() // recommanded by webpack
     ],
     //页面入口文件配置
-    entry: {
-        guide : path.join(__dirname, 'public/js/src/guide.js')
-    },
+    entry: [
+        'webpack/hot/dev-server',
+        'webpack-hot-middleware/client?127.0.0.1:8080'
+    ],
     //入口文件输出配置
     output: {
-        path: path.join(__dirname, 'public/js/dist'),
-        filename: '[name].js'
+        path: path.resolve(__dirname, 'public/js/dist'),
+        filename: capp + '.js',
+        publicPath: 'http://127.0.0.1:8080/'
     },
     module: {
         //加载器配置
         loaders: [
             { 
-                test: /\.js$/, 
-                loader: 'babel',
-                query: {
-                    presets: ['es2015']
-                }
+                test: /\.js[x]?$/, 
+                loaders: ['babel'],
+                include: path.join(__dirname, 'public/js/src/')
             }
         ]
     },
     //其它解决方案配置
     resolve: {
         root: [
-            path.join(__dirname, 'public/js/src')
+            path.resolve(__dirname, 'public/js/src')
         ], //绝对路径
-        extensions: ['', '.js'],
-        alias: {}
+        extensions: ['', '.js', '.jsx']
     }
 };
+
+config.entry.push(path.resolve(__dirname, 'public/js/src/' + capp + '.js'));
+
+module.exports = config;

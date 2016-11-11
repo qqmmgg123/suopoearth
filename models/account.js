@@ -16,6 +16,7 @@ var Account = new Schema({
     experiences   : [{ type: Schema.Types.ObjectId, ref: 'Experience', unique: true }],
     suggests      : [{ type: Schema.Types.ObjectId, ref: 'Suggest', unique: true }],
     messages      : [{ type: Schema.Types.ObjectId, ref: 'Message', unique: true }],
+    tags          : [{ type: Schema.Types.ObjectId, ref: 'Tag', unique: true }],
     msgreviewdate : { type: Date },
     follow_guide  : { type: Boolean, default: false },
     dream_guide   : { type: Boolean, default: false },
@@ -23,6 +24,7 @@ var Account = new Schema({
     date          : { type: Date,  default: Date.now }
 });
 
+Account.index({'tags':1});
 Account.index({'follows':1});
 Account.index({'fans':1});
 Account.index({'nodes':1});

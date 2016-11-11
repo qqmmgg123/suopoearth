@@ -14,9 +14,11 @@ var Experience = new Schema({
     comments   : [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
     supporters : [{ type: Schema.Types.ObjectId, ref: 'Account' }],
     opponents  : [{ type: Schema.Types.ObjectId, ref: 'Account' }],
+    tags       : [{ type: Schema.Types.ObjectId, ref: 'Tag', unique: true }],
     date       : { type: Date, default: Date.now }
 });
 
+Experience.index({'tags': 1});
 Experience.index({'supporters': 1});
 Experience.index({'opponents': 1});
 

@@ -63,29 +63,27 @@
         <% } %>
     </div>
 <% } %>
-    <div class="banner for-signin">
-        <div class="banner-bg">
-            <div class="signin-area">
-                <form action="/signin" method="post">
-                    <div class="validate-error"><%= error %></div>
-                    <h2>用户登录</h2>
-                    <div>
-                        <p class="label"><label for="username">邮箱</label></p>
-                        <p class="field"><input type="text" id="username" name="username" placeholder="输入邮箱" required></p>
-                    </div>
-                    <div>
-                        <p class="label"><label for="password">密码</label></p>
-                        <p class="field"><input type="password" id="password" name="password" placeholder="输入用密码" required autocomplete="off"></p>
-                    </div>
-                    <div class="other-ctrl">
-                        <a class="forget-pwd" href="/forgot">忘记密码 ?</a>
-                        <a class="sign-up" href="/signup" role="button">注册 ></a>
-                    </div>
-                    <div>
-                        <button class="btn btn-primary" type="submit">登录</button>
-                    </div>
-                </form>
-            </div>
+    <div class="container">
+        <div class="signin-area dialog">
+            <form action="/signin" method="post">
+                <div class="validate-error"><%= error %></div>
+                <h2>用户登录</h2>
+                <div>
+                    <p class="label"><label for="username">邮箱</label></p>
+                    <p class="field"><input type="text" id="username" name="username" placeholder="输入邮箱" required></p>
+                </div>
+                <div>
+                    <p class="label"><label for="password">密码</label></p>
+                    <p class="field"><input type="password" id="password" name="password" placeholder="输入用密码" required autocomplete="off"></p>
+                </div>
+                <div class="other-ctrl">
+                    <a class="forget-pwd" href="/forgot">忘记密码 ?</a>
+                    <a class="sign-up" href="/signup" role="button">注册 ></a>
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit">登录</button>
+                </div>
+            </form>
         </div>
     </div>
     <% include ../partials/footer.html %>

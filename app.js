@@ -2,6 +2,7 @@ var path = require('path')
   , flash = require('connect-flash')
   , settings = require("./public/const/settings")
   , express = require('express')
+  , webpack = require('webpack')
   , cookieParser = require('cookie-parser')
   , session = require('cookie-session')
   , bodyParser = require('body-parser')
@@ -12,6 +13,10 @@ var path = require('path')
   , LocalStrategy = require('passport-local').Strategy
   , log = require('util').log
   , Message = require("./models/message");
+
+var webpackDevMiddleware = require("webpack-dev-middleware");
+var webpackHotMiddleware = require("webpack-hot-middleware");
+var webpackConfig = require('./webpack.config');
 
 var common = {
     dateBeautify: function(date) {
@@ -64,6 +69,15 @@ var reload = require('reload')
 
 var app = express();
 
+var compiler = webpack(webpackConfig);
+app.use(webpackDevMiddleware(compiler, {
+    publicPath: webpackConfig.output.publicPath,
+    stats: {colors: true}
+}));
+app.use(webpackHotMiddleware(compiler, {
+    log: console.log
+}));
+
 app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
 
@@ -88,6 +102,7 @@ app.locals = {
 };
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, './')));
 app.set('port', process.env.PORT || 8080)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -170,10 +185,10 @@ app.use(function(err, req, res, next) {
 
 var server = http.createServer(app);
 
-reload(server, app)
+//reload(server, app)
 
-//app.listen(3000);
+app.listen(app.get('port'));
 
-server.listen(app.get('port'), function(){
-    log('express server running on ' + 8080);
-});
+//server.listen(app.get('port'), function(){
+    //log('express server running on ' + 8080);
+//});

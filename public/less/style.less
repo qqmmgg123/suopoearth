@@ -1,6 +1,15 @@
 @arrow-left: 20%;
 @top: 67px;
 @warning-color: #ff335e;
+
+.middle() {
+    margin: auto;
+    top: 0; 
+    left: 0;
+    bottom: 0;
+    right: 0; 
+}
+
 .disable-selection() {
     -moz-user-select:none; /* Firefox */
     -ms-user-select:none; /* Internet Explorer */
@@ -446,14 +455,6 @@ i.search-icon {
     }
 }
 
-div.for-signin {
-    height: 480px !important;
-    .banner-bg {
-        height: 420px;
-        background: url(/images/banner_signin.png) no-repeat;
-    }
-}
-
 .banner {
     height: 300px;
     background-color: #fff;
@@ -464,32 +465,6 @@ div.for-signin {
         margin: 0 auto;
         height: 300px;
         background: url(/images/banner_bg.png) no-repeat;
-    }
-    .signin-area {
-        padding: 10px 20px 20px;
-        border: 2px solid #eaeaea;
-        background-color: #fff;
-        border-radius: 5px;
-        h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-        .btn {
-            width: 100%;
-        }
-        p.field input {
-            width: 220px;
-        }
-        .other-ctrl {
-            overflow: hidden;
-            a.forget-pwd {
-                float: left;
-            }
-            a.sign-up {
-                float: right;
-            }
-        }
     }
 }
 
@@ -808,11 +783,32 @@ div.for-signin {
             }
         }
     }
-    .signup-area {
+    .signin-area, .signup-area {
+        padding: 10px 20px 20px;
         width: 320px;
         height: 420px;
         padding: 20px;
-        margin: 50px auto 0;
+        .middle();
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .btn {
+            width: auto;
+        }
+        p.field input {
+            width: 220px;
+        }
+        .other-ctrl {
+            overflow: hidden;
+            a.forget-pwd {
+                float: left;
+            }
+            a.sign-up {
+                float: right;
+            }
+        }
     }
     .team-area {
         padding: 10px;
@@ -1828,9 +1824,6 @@ ul.activity-list {
         width: 1026px;
         background-size: cover;
     }
-    .signin-area {
-        margin: 100px 20 0 0;
-    }
 }
 .container {
     .store-area, .team-area, .notice, .search-area, .settings-area, .msg-area
@@ -1856,9 +1849,6 @@ ul.activity-list {
         .banner-bg {
             width: 95%;
             background-size: cover;
-        }
-        .signin-area {
-            margin: 100px 0 0 0;
         }
     }
     .container {
@@ -1898,6 +1888,14 @@ ul.activity-list {
         .company-area {
             width: auto;
         }
+    }
+    .dialog {
+        left: 0;
+        top: 0;
+        bottom: 0;
+        top: 0;
+        width: auto !important;
+        height: auto  !important;
     }
 }
 

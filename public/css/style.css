@@ -434,13 +434,6 @@ i.search-icon {
     border-top: 1px solid #eaeaea;
   }
 }
-div.for-signin {
-  height: 480px !important;
-}
-div.for-signin .banner-bg {
-  height: 420px;
-  background: url(/images/banner_signin.png) no-repeat;
-}
 .banner {
   height: 300px;
   background-color: #fff;
@@ -452,32 +445,6 @@ div.for-signin .banner-bg {
   margin: 0 auto;
   height: 300px;
   background: url(/images/banner_bg.png) no-repeat;
-}
-.banner .signin-area {
-  padding: 10px 20px 20px;
-  border: 2px solid #eaeaea;
-  background-color: #fff;
-  border-radius: 5px;
-}
-.banner .signin-area h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 16px;
-}
-.banner .signin-area .btn {
-  width: 100%;
-}
-.banner .signin-area p.field input {
-  width: 220px;
-}
-.banner .signin-area .other-ctrl {
-  overflow: hidden;
-}
-.banner .signin-area .other-ctrl a.forget-pwd {
-  float: left;
-}
-.banner .signin-area .other-ctrl a.sign-up {
-  float: right;
 }
 .signup-area div,
 .signin-area div,
@@ -797,11 +764,43 @@ div.for-signin .banner-bg {
   text-overflow: ellipsis;
   color: #999;
 }
+.container .signin-area,
 .container .signup-area {
+  padding: 10px 20px 20px;
   width: 320px;
   height: 420px;
   padding: 20px;
-  margin: 50px auto 0;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.container .signin-area h2,
+.container .signup-area h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+.container .signin-area .btn,
+.container .signup-area .btn {
+  width: auto;
+}
+.container .signin-area p.field input,
+.container .signup-area p.field input {
+  width: 220px;
+}
+.container .signin-area .other-ctrl,
+.container .signup-area .other-ctrl {
+  overflow: hidden;
+}
+.container .signin-area .other-ctrl a.forget-pwd,
+.container .signup-area .other-ctrl a.forget-pwd {
+  float: left;
+}
+.container .signin-area .other-ctrl a.sign-up,
+.container .signup-area .other-ctrl a.sign-up {
+  float: right;
 }
 .container .team-area {
   padding: 10px;
@@ -1799,9 +1798,6 @@ ul.activity-list > li div.more a.btn {
   width: 1026px;
   background-size: cover;
 }
-.banner .signin-area {
-  margin: 100px 20 0 0;
-}
 .container .store-area,
 .container .team-area,
 .container .notice,
@@ -1825,9 +1821,6 @@ ul.activity-list > li div.more a.btn {
   .banner .banner-bg {
     width: 95%;
     background-size: cover;
-  }
-  .banner .signin-area {
-    margin: 100px 0 0 0;
   }
   .container .store-area,
   .container .team-area,
@@ -1873,6 +1866,13 @@ ul.activity-list > li div.more a.btn {
   }
   .footer .company-area {
     width: auto;
+  }
+  .dialog {
+    left: 0;
+    bottom: 0;
+    top: 0;
+    width: auto !important;
+    height: auto  !important;
   }
 }
 /* for 480px or less */

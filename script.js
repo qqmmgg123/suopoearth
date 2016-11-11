@@ -287,7 +287,7 @@ function test2() {
             return urls.join('|');
         })(dream.content);
     });*/
-    //var start = new Date().getTime();
+    var start = new Date().getTime();
 
     /*Node.count({'_belong_d': '576d45be041d900c14bf8e0e'}, function(err, c) {
         var end = new Date().getTime();
@@ -299,14 +299,37 @@ function test2() {
         console.log(end - start);
     });*/
 
-    /*Dream.findById('576d45be041d900c14bf8e0e', 'nodes', function(err, c) {
-        var start = new Date().getTime();
-        console.log(c.nodes.length, new Date().getTime() - start);
-    }).lean();*/
+    /*Dream.findById('576d45be041d900c14bf8e0e', 'nodes').lean().populate('nodes', 'content').exec(function(err, c) {
+        console.log(new Date().getTime() - start);
+    });*/
 
-    Account.find({}, 'nickname').lean().skip(2).limit(3).exec(function(err, users) {
-        console.log(users);
+    Node.find({'_belong': '576d45be041d900c14bf8e0e'}, 'content').lean().exec(function(err, c) {
+        console.log(new Date().getTime() - start);
     });
+
+    /*Account.find({}, 'nickname').lean().skip(2).limit(3).exec(function(err, users) {
+        console.log(users);
+    });*/
+    //mongoose.connection.once("open",function(err, conn) {
+        // body of program in here
+        /*var bulk = Tag.collection.initializeUnorderedBulkOp();
+        // representing a long loop
+        for ( var x = 0; x < 25; x++ ) {
+            var tag = {
+                // update conditions 
+                key: "兴趣_" + x
+            };
+
+            bulk.find(tag).upsert().updateOne({$set: { 'key': "兴趣_" + x }, $addToSet: { 'dreams': { $each: [10, 8, 9] } }});
+        }
+
+        bulk.execute(function(err, result) {
+            if (err) return console.log(err);
+        });*/
+        //Tag.update({ _id: '58243aaed5d9b8cb3d71d4e5'}, {$addToSet: {'dreams': { $each: [14, 23, 12, 91, 90] }}}).exec(function(err, res) {
+            //console.log(err, res);
+        //});
+    //});
 }
 
 switch(command) {

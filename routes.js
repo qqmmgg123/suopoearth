@@ -219,11 +219,30 @@ router.get('/', function(req, res, next) {
     var einfo = req.flash('emailinfo');
     if (einfo && einfo.length > 0) {
         req.flash('emailinfo', einfo);
-        return next();
+        return next(null, req, res, next);
     }
 
     if (!req.user) {
-        return renderRecommand(req, res);
+        return Dream.random('title content tags', 1, function(err, dreams) {
+            if (err) {
+                return next(err, req, res, next);
+            }
+
+            if (!dreams || !dreams.length || dreams.length === 0) {
+                return next(new Error("抱歉，今天没找不到愿望了！"));
+            }
+
+            res.render('pages/index_unlogged', makeCommon({
+                user: req.user,
+                title: settings.APP_NAME,
+                notice: getFlash(req, 'notice'),
+                data: {
+                    current: dreams[0],
+                    category: 'suggest'
+                },
+                success: 1
+            }, res));
+        });
     }
 
     // 查询耗时测试
@@ -335,7 +354,7 @@ router.get('/', function(req, res, next) {
                 });
             }], function(err, results) {
                 if (err && results.length < 3) {
-                    return next(err);
+                    return next(err, req, res, next);
                 }
 
                 var mdreams    = results[0],
@@ -350,7 +369,7 @@ router.get('/', function(req, res, next) {
                 }
                 activities = activities.slice(0, 10);
 
-                res.render('pages/index', makeCommon({
+                res.render('pages/index_logged', makeCommon({
                     user: req.user,
                     title: settings.APP_NAME,
                     notice: getFlash(req, 'notice'),
@@ -373,18 +392,22 @@ router.get('/', function(req, res, next) {
                     console.log(req.originalUrl + ' spend' + spend + 'ms');
                 }
             });
-}, function(req, res, next) {
+}, function(err, req, res, next) {
+    if (err) return next(err);
+
     var einfo = req.flash('emailinfo');
 
-    res.render('pages/authenticate', makeCommon({
-        title : settings.APP_NAME,
-        notice: getFlash(req, 'notice'),
-        message: einfo,
-        user : req.user,
-        data : {
-             messages : res.msgs,
-        }
-    }, res));
+    if (einfo) {
+        res.render('pages/authenticate', makeCommon({
+            title : settings.APP_NAME,
+            notice: getFlash(req, 'notice'),
+            message: einfo,
+            user : req.user,
+            data : {
+                messages : res.msgs,
+            }
+        }, res));
+    }
 });
 
 // 建设中
@@ -2063,7 +2086,8 @@ router.get('/found', function(req, res) {
         };
 
         if (result.length > 0) {
-            res.redirect('/dream/' + result[0].id);
+            //res.redirect('/dream/' + result[0].id);
+            renderRecommand(req, res);
         }else{
             res.redirect('/result');
         }

@@ -9,8 +9,10 @@ var Activity = new Schema({
     _create_e  : { type: Schema.Types.ObjectId, ref: 'Experience' },
     _create_n  : { type: Schema.Types.ObjectId, ref: 'Node' },
     _create_d  : { type: Schema.Types.ObjectId, ref: 'Dream' },
+    tags       : [{ type: Schema.Types.ObjectId, ref: 'Tag', unique: true }],
     type       : { type: Number, required: true, default: 0 },
     date       : { type: Date, default: Date.now }
 });
 
+Activity.index({'tags':1});
 module.exports = mongoose.model('Activity', Activity);

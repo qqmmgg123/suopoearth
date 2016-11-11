@@ -12,11 +12,13 @@ var Suggest = new Schema({
     _belong_u  : { type: Schema.Types.ObjectId, ref: 'Account' },
     _belong_d  : { type: Schema.Types.ObjectId, ref: 'Dream' },
     comments   : [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+    tags       : [{ type: Schema.Types.ObjectId, ref: 'Tag', unique: true }],
     supporters : [{ type: Schema.Types.ObjectId, ref: 'Account' }],
     opponents  : [{ type: Schema.Types.ObjectId, ref: 'Account' }],
     date       : { type: Date, default: Date.now }
 });
 
+Suggest.index({'tags': 1});
 Suggest.index({'supporters': 1});
 Suggest.index({'opponents': 1});
 
