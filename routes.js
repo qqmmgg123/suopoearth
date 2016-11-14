@@ -223,7 +223,7 @@ router.get('/', function(req, res, next) {
     }
 
     if (!req.user) {
-        return Dream.random('title content tags', 1, function(err, dreams) {
+        return Dream.random('_id title description tags', 1, function(err, dreams) {
             if (err) {
                 return next(err, req, res, next);
             }

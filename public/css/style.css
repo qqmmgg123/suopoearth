@@ -1,7 +1,5 @@
 body {
   font: 14px/1.8 Microsoft YaHei, Helvetica, Arial, sans-serif;
-  width: 100%;
-  text-align: center;
 }
 body,
 ol,
@@ -270,6 +268,17 @@ i.search-icon {
   background-position: -114px -86px;
   margin-top: 5px;
   margin-left: 5px;
+}
+.full {
+  text-align: center;
+  width: 800px;
+  height: 500px;
+  position: absolute;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 .friend .tips {
   z-index: 1;
@@ -635,9 +644,6 @@ i.search-icon {
   width: 500px;
   text-align: center;
 }
-.container {
-  position: relative;
-}
 .container.canvas-bg {
   background-color: #f2f3f4;
 }
@@ -771,10 +777,6 @@ i.search-icon {
   height: 420px;
   padding: 20px;
   margin: auto;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
 }
 .container .signin-area h2,
 .container .signup-area h2 {
@@ -1499,26 +1501,26 @@ a.next-btn {
   font-size: 12px;
   color: #bbb;
 }
-.footer .company-area {
+.company-area {
   overflow: hidden;
   padding: 20px;
   margin: 0 auto;
 }
-.footer .company-area .company-ver {
+.company-area .company-ver {
   float: left;
 }
-.footer .company-area .company-nav {
+.company-area .company-nav {
   float: right;
 }
-.footer .company-area .company-nav a {
+.company-area .company-nav a {
   display: line-block;
   color: #bbb;
 }
-.footer .company-area .company-nav a:hover {
+.company-area .company-nav a:hover {
   text-decoration: underline;
 }
-.footer .company-area .company-nav a.contact:before,
-.footer .company-area .company-nav a.feedback:before {
+.company-area .company-nav a.contact:before,
+.company-area .company-nav a.feedback:before {
   content: '•';
   margin-right: 3px;
   padding: 0 3px;
@@ -1649,6 +1651,11 @@ ul.activity-list > li div.more a.btn {
   border-right-width: 1px;
 }
 .dialog {
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   position: fixed;
   z-index: 2;
   border: 2px solid #ddd;
@@ -1786,10 +1793,6 @@ ul.activity-list > li div.more a.btn {
   float: left;
   padding: 10px;
 }
-/* whsihtml5 */
-.wysihtml5-command-active {
-  background: #f7f7f9;
-}
 /* Responsive Web Design */
 .header .head-con {
   width: 1026px;
@@ -1843,9 +1846,6 @@ ul.activity-list > li div.more a.btn {
   .header .head-con {
     width: auto;
   }
-  .banner {
-    top: 67px;
-  }
   .banner .banner-bg {
     width: auto;
   }
@@ -1867,7 +1867,15 @@ ul.activity-list > li div.more a.btn {
   .footer .company-area {
     width: auto;
   }
-  .dialog {
+  .company-ver,
+  .company-nav {
+    float: initial !important;
+  }
+  .full {
+    width: auto;
+  }
+  .dialog,
+  .full {
     left: 0;
     bottom: 0;
     top: 0;

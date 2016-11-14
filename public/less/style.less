@@ -37,8 +37,6 @@
 
 body {
     font:14px/1.8 Microsoft YaHei, Helvetica, Arial, sans-serif;
-    width:100%;
-    text-align: center;
 }
 
 body, ol, ul, li, h1, h4, p, form, button {
@@ -285,6 +283,14 @@ i.search-icon {
     background-position: -114px -86px;
     margin-top: 5px;
     margin-left: 5px;
+}
+
+.full {
+    text-align: center;
+    width: 800px;
+    height: 500px;
+    position: absolute;
+    .middle();
 }
 
 .friend {
@@ -660,7 +666,6 @@ i.search-icon {
 }
 
 .container {
-    position: relative;
     &.canvas-bg {
         background-color: #f2f3f4;
         .canvas {
@@ -788,7 +793,7 @@ i.search-icon {
         width: 320px;
         height: 420px;
         padding: 20px;
-        .middle();
+        margin: auto;
         h2 {
             margin-top: 0;
             margin-bottom: 20px;
@@ -1501,31 +1506,32 @@ a.next-btn {
     top: @top;
     font-size: 12px;
     color: #bbb;
-    .company-area {
-        overflow: hidden;
-        padding: 20px;
-        .company-ver {
-            float: left;
-        }
-        .company-nav {
-            float: right;
-            a {
-                display: line-block;
-                color: #bbb;
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
-            a.contact:before, a.feedback:before {
-                content: '•';
-                margin-right: 3px;
-                padding: 0 3px;
-                font-family: Arial;
-                color: #bbb;
-            }
-        }
-        margin: 0 auto;
+}
+
+.company-area {
+    overflow: hidden;
+    padding: 20px;
+    .company-ver {
+        float: left;
     }
+    .company-nav {
+        float: right;
+        a {
+            display: line-block;
+            color: #bbb;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+        a.contact:before, a.feedback:before {
+            content: '•';
+            margin-right: 3px;
+            padding: 0 3px;
+            font-family: Arial;
+            color: #bbb;
+        }
+    }
+    margin: 0 auto;
 }
 
 .global-ctrl {
@@ -1656,6 +1662,7 @@ ul.activity-list {
 }
 
 .dialog {
+    .middle();
     .hd {
         text-align: left;
         height: 30px;
@@ -1808,11 +1815,6 @@ ul.activity-list {
     }
 }
 
-/* whsihtml5 */
-.wysihtml5-command-active {
-    background: #f7f7f9;
-}
-
 /* Responsive Web Design */
 .header {
     .head-con {
@@ -1872,7 +1874,6 @@ ul.activity-list {
         }
     }
     .banner {
-        top: 67px;
         .banner-bg {
             width: auto;
         }
@@ -1889,7 +1890,13 @@ ul.activity-list {
             width: auto;
         }
     }
-    .dialog {
+    .company-ver, .company-nav {
+        float: initial !important;
+    }
+    .full {
+        width: auto;
+    }
+    .dialog, .full {
         left: 0;
         top: 0;
         bottom: 0;

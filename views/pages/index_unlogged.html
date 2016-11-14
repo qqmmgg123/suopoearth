@@ -12,28 +12,37 @@
     <link href="/css/compatible.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="/js/respond.min.js"></script>
     <![endif]-->
+    <script src="/lib/react.js"></script>
+    <script src="/lib/react-dom.js"></script>
 </head>
 <body>
     <% include ../partials/header.html %>
     <div class="container">
-        <div id="thanks-pop" class="dialog">
+        <div id="thanks-area">
             <div class="hd">
                 <span class="title">还愿</span>
-                <a href="javascript:;" class="close"></a>
+                <span class="title">许愿</span>
             </div>
             <div class="bd">
                 每天感恩，我们在一整天都会有好运。好人有好报，每天让我们做一次天使，帮助别人实现一个愿望。
+                <% if (data.current) { %>
+                <div>
+                    <h2><a href="/dream/<%= data.current._id %>"><%= data.current.title %></a></h2>
+                    <p><%= data.current.description %></p>
+                </div>
+                <% } %>
                 <form action="/experience/new" id="node_create_form" method="post">
-                    <% include ../partials/editor.html %>
+                    <div id="editor"></div>
+                    <div class="btn-group">
+                    <button class="btn">写完了></button>
+                    </div>
                 </form>
-                <a href="javascript:;" class="btn">再满足一个愿望</a>
             </div>
         </div>
     </div>
     <% include ../partials/footer.html %>
     <% include ../partials/create.html %>
     <% include ../partials/signinpop.html %>
-    <!--<script src="/js/dist/index_unlogged_common.js"></script>-->
-    <script src="/js/dist/index_unlogged.js"></script>
+    <script src="/js/index_unlogged.js"></script>
 </body>
 </html>

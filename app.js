@@ -64,8 +64,8 @@ var common = {
 };
 
 // browser refresh
-var reload = require('reload')
-  , http = require('http');
+//var reload = require('reload')
+  //, http = require('http');
 
 var app = express();
 
@@ -102,7 +102,6 @@ app.locals = {
 };
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, './')));
 app.set('port', process.env.PORT || 8080)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -183,7 +182,7 @@ app.use(function(err, req, res, next) {
     }, res));
 });
 
-var server = http.createServer(app);
+//var server = http.createServer(app);
 
 //reload(server, app)
 

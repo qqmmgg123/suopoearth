@@ -141,10 +141,7 @@ var common = {
         var pagesize = common.getPageSize();
         var $signin_pop = $('#signin-pop');
         $('.modal').show();
-        $signin_pop.css({
-            top: (pagesize[3] - $signin_pop.height()) * .2,
-            left: (pagesize[2] - $signin_pop.width()) / 2
-        }).show();
+        $signin_pop.show();
         $(document).off('keypress').on('keydown', function(event) {
             if (event.keyCode === 27) {
                 $('.modal').hide();
@@ -162,10 +159,7 @@ var common = {
         var pagesize = common.getPageSize();
         var $signup_pop = $('#signup-pop');
         $('.modal').show();
-        $signup_pop.css({
-            top: (pagesize[3] - $signup_pop.height()) * .2,
-            left: (pagesize[2] - $signup_pop.width()) / 2
-        }).show();
+        $signup_pop.show();
         $(document).off('keypress').on('keydown', function(event) {
             if (event.keyCode === 27) {
                 $('.modal').hide();
@@ -459,10 +453,7 @@ common.dreamPop = {
 
         $popup.find('span.title', 'div.hd').text(fields && fields.tips);
 
-        $popup.css({
-            top: (pagesize[3] - $popup.height()) * .2,
-            left: (pagesize[2] - $popup.width()) / 2
-        }).show().find('input[type="text"]').val(fields && fields.title);
+        $popup.show().find('input[type="text"]').val(fields && fields.title);
 
         $popup.find('textarea').val(fields && fields.description)
     },

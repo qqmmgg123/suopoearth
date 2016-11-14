@@ -20,7 +20,7 @@
     </div>
 </div>
 <textarea id="textarea" name="content" placeholder="发表你的<% if (data.category === "suggest") { %>建议<% } else if (data.category === "experience") { %>心得<% } %>"></textarea>
-<!--<input name="did" type="hidden" value="<%= data.current.id %>" />-->
+<input name="did" type="hidden" value="<%= data.current.id %>" />
 <div class="edit-ctrl">
     <div class="btn-group">
         <input class="btn" id="publish" type="submit" value="写完了">

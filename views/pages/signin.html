@@ -12,43 +12,6 @@
     <![endif]-->
 </head>
 <body>
-    <div class="header">
-    <div class="head-con">
-        <ul class="h-left">
-            <li><a href="http://www.suopoearth.com" class="logo"><span class="version">alpha</span></a></li>
-        </ul>
-        <ul class="h-right">
-            <li><a href="/">首页</a></li>
-            <li><a href="/found">看看</a></li>
-            <li><a href="/intro">关于我们</a></li>
-            <% if (user) { %>
-            <li id="message-nav">
-                <div class="message-opt">
-                    <a rel="msg-view" href="javascript:;">消息</a>
-                    <% if (data.messages && data.messages > 0) { %>
-                    <span class="message-new"><%= data.messages %></span>
-                    <% } %>
-                </div>
-                <ul class="dropDown message-list" style="display: none;">
-                </ul>
-            </li>
-            <li>
-                <div class="user-nav">
-                    <a class="user-pic" href="/user/<%= user.id %>"><img src="/images/user_mini.png" /></a>
-                    <a class="user-name" href="/user/<%= user.id %>"><%= user.nickname %></a>
-                    <a href="javascript:;" class="list-arrow">
-                        <i class="arrow-icon"></i>
-                    </a>
-                </div>
-                <ul class="dropDown config-list" style="display: none;">
-                    <li><a href="/settings">设置</a></li>
-                    <li><a href="/signout">退出</a></li>
-                </ul>
-            </li>
-            <% } %>
-        </ul>
-    </div>
-</div>
 <% if (user) { %>
         <% if (!user.isAuthenticated ) { %>
         <div class="notice-area">
@@ -64,29 +27,31 @@
     </div>
 <% } %>
     <div class="container">
-        <div class="signin-area dialog">
-            <form action="/signin" method="post">
-                <div class="validate-error"><%= error %></div>
-                <h2>用户登录</h2>
-                <div>
-                    <p class="label"><label for="username">邮箱</label></p>
-                    <p class="field"><input type="text" id="username" name="username" placeholder="输入邮箱" required></p>
-                </div>
-                <div>
-                    <p class="label"><label for="password">密码</label></p>
-                    <p class="field"><input type="password" id="password" name="password" placeholder="输入用密码" required autocomplete="off"></p>
-                </div>
-                <div class="other-ctrl">
-                    <a class="forget-pwd" href="/forgot">忘记密码 ?</a>
-                    <a class="sign-up" href="/signup" role="button">注册 ></a>
-                </div>
-                <div>
-                    <button class="btn btn-primary" type="submit">登录</button>
-                </div>
-            </form>
+        <div class="full">
+            <div class="signin-area">
+                <form action="/signin" method="post">
+                    <div class="validate-error"><%= error %></div>
+                    <h2>用户登录</h2>
+                    <div>
+                        <p class="label"><label for="username">邮箱</label></p>
+                        <p class="field"><input type="text" id="username" name="username" placeholder="输入邮箱" required></p>
+                    </div>
+                    <div>
+                        <p class="label"><label for="password">密码</label></p>
+                        <p class="field"><input type="password" id="password" name="password" placeholder="输入用密码" required autocomplete="off"></p>
+                    </div>
+                    <div class="other-ctrl">
+                        <a class="forget-pwd" href="/forgot">忘记密码 ?</a>
+                        <a class="sign-up" href="/signup" role="button">注册 ></a>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">登录</button>
+                    </div>
+                </form>
+            </div>
+            <% include ../partials/company.html %>
         </div>
     </div>
-    <% include ../partials/footer.html %>
     <% include ../partials/create.html %>
     <script data-main="/js/default.js" src="/js/require.js"></script>
 </body>

@@ -12,80 +12,44 @@
     <![endif]-->
 </head>
 <body>
-    <div class="header">
-    <div class="head-con">
-        <ul class="h-left">
-            <li><a href="http://www.suopoearth.com" class="logo"><span class="version">alpha</span></a></li>
-        </ul>
-        <ul class="h-right">
-            <li><a href="/">首页</a></li>
-            <li><a href="/found">看看</a></li>
-            <li><a href="/intro">关于我们</a></li>
-            <% if (user) { %>
-            <li id="message-nav">
-                <div class="message-opt">
-                    <a rel="msg-view" href="javascript:;">消息</a>
-                    <% if (data.messages && data.messages > 0) { %>
-                    <span class="message-new"><%= data.messages %></span>
-                    <% } %>
-                </div>
-                <ul class="dropDown message-list" style="display: none;">
-                </ul>
-            </li>
-            <li>
-                <div class="user-nav">
-                    <a class="user-pic" href="/user/<%= user.id %>"><img src="/images/user_mini.png" /></a>
-                    <a class="user-name" href="/user/<%= user.id %>"><%= user.nickname %></a>
-                    <a href="javascript:;" class="list-arrow">
-                        <i class="arrow-icon"></i>
-                    </a>
-                </div>
-                <ul class="dropDown config-list" style="display: none;">
-                    <li><a href="/settings">设置</a></li>
-                    <li><a href="/signout">退出</a></li>
-                </ul>
-            </li>
-            <% } %>
-        </ul>
-    </div>
-</div>
-
     <div class="container">
-        <div class="signup-area dialog">
-            <form id="signup-form" action="/signup" autocomplete="off" method="post" novalidate>
-                <h2>用户注册</h2>
-                <div class="validate-error"><%= info %></div>
-                <!--<div>-->
+        <div class="full">
+            <div class="signup-area">
+                <form id="signup-form" action="/signup" autocomplete="off" method="post" novalidate>
+                    <h2>用户注册</h2>
+                    <div class="validate-error"><%= info %></div>
+                    <!--<div>-->
                     <!--<p class="label"><label for="email">邮箱</label></p>-->
                     <!--<p class="field"><input type="email" name="email" id="email" placeholder="输入邮箱" required></p>-->
-                <!--</div>-->
-                <div>
-                    <p class="label"><label for="username">邮箱</label></p>
-                    <p class="field"><input type="email" name="username" id="username" placeholder="输入邮箱" required></p>
-                    <p class="validate-error"></p>
-                </div>
-                <div>
-                    <p class="label"><label for="nickname">昵称</label></p>
-                    <p class="field"><input type="text" name="nickname" id="nickname" placeholder="输入昵称" required></p>
-                    <p class="validate-error"></p>
-                </div>
-                <div>
-                    <p class="label"><label for="password">密码</label></p>
-                    <p class="field"><input type="password" name="password" id="password" placeholder="输入密码" required></p>
-                    <p class="validate-error"></p>
-                </div>
-                <!--<div>-->
+                    <!--</div>-->
+                    <div>
+                        <p class="label"><label for="username">邮箱</label></p>
+                        <p class="field"><input type="email" name="username" id="username" placeholder="输入邮箱" required></p>
+                        <p class="validate-error"></p>
+                    </div>
+                    <div>
+                        <p class="label"><label for="nickname">昵称</label></p>
+                        <p class="field"><input type="text" name="nickname" id="nickname" placeholder="输入昵称" required></p>
+                        <p class="validate-error"></p>
+                    </div>
+                    <div>
+                        <p class="label"><label for="password">密码</label></p>
+                        <p class="field"><input type="password" name="password" id="password" placeholder="输入密码" required></p>
+                        <p class="validate-error"></p>
+                    </div>
+                    <!--<div>-->
                     <!--<p class="label"><label for="password_report">密码确认</label></p>-->
                     <!--<p class="field"><input type="password" name="repassword" id="password_repeat" placeholder="再次输入密码" required></p>-->
-                <!--</div>-->
-                <div>
-                <button id="signup-btn" type="submit" class="btn btn-primary">注册</button>&nbsp;
-                <a class="btn btn-default" href="/signin" role="button">登录 ></a>
-                </div>
-            </form>
+                    <!--</div>-->
+                    <div>
+                        <button id="signup-btn" type="submit" class="btn btn-primary">注册</button>&nbsp;
+                        <a class="btn btn-default" href="/signin" role="button">登录 ></a>
+                    </div>
+                </form>
+            </div>
+            <% include ../partials/company.html %>
         </div>
     </div>
-    <% include ../partials/footer.html %>
     <% include ../partials/create.html %>
     <script data-main="/js/signup.js" src="/js/require.js"></script>
 </body>
