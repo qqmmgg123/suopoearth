@@ -64,19 +64,19 @@ var common = {
 };
 
 // browser refresh
-//var reload = require('reload')
-  //, http = require('http');
+var reload = require('reload')
+, http = require('http');
 
 var app = express();
 
-var compiler = webpack(webpackConfig);
+/*var compiler = webpack(webpackConfig);
 app.use(webpackDevMiddleware(compiler, {
     publicPath: webpackConfig.output.publicPath,
     stats: {colors: true}
 }));
 app.use(webpackHotMiddleware(compiler, {
     log: console.log
-}));
+}));*/
 
 app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
@@ -182,12 +182,12 @@ app.use(function(err, req, res, next) {
     }, res));
 });
 
-//var server = http.createServer(app);
+var server = http.createServer(app);
 
-//reload(server, app)
+reload(server, app)
 
-app.listen(app.get('port'));
+//app.listen(app.get('port'));
 
-//server.listen(app.get('port'), function(){
-    //log('express server running on ' + 8080);
-//});
+server.listen(app.get('port'), function(){
+    log('express server running on ' + 8080);
+});

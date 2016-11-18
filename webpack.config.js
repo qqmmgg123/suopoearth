@@ -5,8 +5,6 @@ var webpack = require('webpack');
 var args = process.argv,
     capp = args[2];
 
-console.log(capp);
-
 var config =  {
     plugins: [
         //new CommonsChunkPlugin({

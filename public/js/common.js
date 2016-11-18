@@ -310,13 +310,13 @@ var common = {
         };
     },
     statistics: function() {
-        var _hmt = _hmt || [];
+        /*var _hmt = _hmt || [];
         (function() {
             var hm = document.createElement("script");
             hm.src = "//hm.baidu.com/hm.js?9ef942b0d6b160b80ac87ad7fdbb7d5f";
             var s = document.getElementsByTagName("script")[0]; 
             s.parentNode.insertBefore(hm, s);
-        })();
+        })();*/
     }
 };
 
@@ -541,6 +541,34 @@ common.dreamPop = {
 };
 
 $(function() {
+    var appListExpand  = false,
+        navListExpand  = false;
+
+    // header
+    $('#app-list-arrow').click(function() {
+        if (!appListExpand) {
+            $('#navbar-collapse').removeClass('visible');
+            $('#app-list').addClass('visible');
+            navListExpand = false;
+            appListExpand = true;
+        }else{
+            $('#app-list').removeClass('visible');
+            appListExpand = false;
+        }
+    });
+
+    $('#navbar-toggle').click(function() {
+        if (!navListExpand) {
+            $('#app-list').hide();
+            $('#navbar-collapse').show();
+            appListExpand = false;
+            navListExpand = true;
+        }else{
+            $('#navbar-collapse').removeClass('visible');
+            navListExpand = false;
+        }
+    });
+
     common.checkBrowser();
     common.placeholder();
 
@@ -563,12 +591,32 @@ $(function() {
         }
     });
 
-    $('.search-in').on('input', function() {
-        console.log($(this).val());
+    /*$('.search-in').on('input', function() {
         $.getJSON('/query', {query: $(this).val()}, function(data) {
             console.log(data);
         });
-    });
+    });*/
+
+    // Pad, mobile 下的搜索按钮
+    var inputBox    = document.getElementById('search-area'),
+        backBtn     = document.getElementById('search-back'),
+        resetBtn    = document.getElementById('search-reset'),
+        searchInput = document.getElementById('search-input'),
+        searchBtn   = document.getElementById('search_dream_btn');
+    
+    searchBtn.addEventListener('click', function() {
+        if (inputBox.className.indexOf(' visible') === -1) {
+            inputBox.className += ' visible';
+        }
+    }, false);
+
+    backBtn.addEventListener('click', function() {
+        inputBox.className = inputBox.className.replace(' visible', '');
+    }, false);
+
+    resetBtn.addEventListener('click', function() {
+        searchInput.value = '';
+    }, false)
 
     // 查看消息列表
     var $msgNav = $('#message-nav');

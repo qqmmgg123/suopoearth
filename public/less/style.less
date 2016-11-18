@@ -2,6 +2,17 @@
 @top: 67px;
 @warning-color: #ff335e;
 
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+}
+
 .middle() {
     margin: auto;
     top: 0; 
@@ -50,6 +61,7 @@ li {
 
 button {
     outline: none;
+    cursor: pointer;
 }
 
 input, textarea {
@@ -85,7 +97,7 @@ a {
 }
 
 .none {
-    display: none;
+    display: none !important;
 }
 
 .color-warning {
@@ -243,13 +255,23 @@ a {
     color: #999 !important;
 }
 
-i.approval-icon, i.favrioute-icon, i.opposition-icon, i.comment-icon, i.support-icon, i.config-icon, i.arrow-icon, i.remove-icon, i.search-icon {
+i.approval-icon,
+i.favrioute-icon,
+i.opposition-icon,
+i.comment-icon,
+i.support-icon,
+i.config-icon,
+i.arrow-icon,
+i.remove-icon,
+i.search-icon,
+i.icon-add-small,
+i.back-icon,
+i.close-icon {
     display: inline-block;
     background: url(/images/sprite_icon_2.png) no-repeat;
     width: 16px;
     height: 16px;
     vertical-align: sub;
-    margin-right: 3px;
 }
 i.approval-icon {
     background-position: -98px -70px;
@@ -271,18 +293,51 @@ i.config-icon {
 }
 i.arrow-icon {
     background-position: -82px -86px;
-    margin-top: 5px;
-    margin-left: 5px;
 }
 i.remove-icon {
     background-position: -98px -86px;
-    margin-top: 5px;
-    margin-left: 5px;
 }
 i.search-icon {
     background-position: -114px -86px;
-    margin-top: 5px;
-    margin-left: 5px;
+}
+i.icon-add-small {
+    background-position: -50px -70px;
+}
+i.icon-add {
+    margin: 0 auto;
+    background: url(/images/sprite_icon.png) no-repeat;
+    background-size: auto;
+    width: 27px;
+    outline: none;
+    height: 25px;
+    display: block;
+}
+i.back-icon, i.close-icon {
+    width: 24px;
+    height: 24px;
+}
+i.back-icon {
+    background-position: -136px 0;
+}
+i.close-icon {
+    background-position: -160px 0;
+}
+
+.ctrl-list {
+    i.approval-icon, 
+    i.favrioute-icon, 
+    i.opposition-icon, 
+    i.comment-icon, 
+    i.support-icon, 
+    i.config-icon, 
+    i.arrow-icon, 
+    i.remove-icon, 
+    i.search-icon, 
+    i.icon-add-small {
+       margin-right: 3px;
+       margin-top: 5px;
+       margin-left: 5px;
+    }
 }
 
 .full {
@@ -324,33 +379,35 @@ i.search-icon {
 }
 
 .header {
-    ul {
-        padding: 10px;
+    &:after {
+        content: '';
+        position: absolute;
+        height: 100%;
+        box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
+        z-index: -1;
+        left: 0;
+        right: 0;
+        transition: .2s;
     }
+    box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
     .head-con {
+        .search-area {
+            display: block;
+        }
         width: 1024px;
         overflow: hidden;
         margin: 0 auto;
     }
-    .create-area {
-        overflow: hidden;
-        #search_dream_btn {
-            float: left;
-            height: 36px;
-            width: 66px;
-            margin-left: 5px;
-        }
-        #create_dream_btn {
-            float: left;
-            height: 36px;
-            padding: 8px 20px;
-            margin-left: 5px;
-            display: block;
-            box-sizing: border-box;
-        }
+    .h-left {
+        float: left;
     }
-    ul.h-left {
-        .logo {
+    .suopo {
+        float: left;
+        overflow: hidden;
+        a {
+            float: left;
+        }
+        a.logo {
             background: url(/images/logo.png) no-repeat;
             background-size: auto;
             width: 144px;
@@ -360,32 +417,27 @@ i.search-icon {
             margin-right: 10px;
             position: relative;
         }
-        .version {
-            position: absolute;
-            top: -8px;
-            left: 130px;
-            font-size: 0.5em;
-            background-color: #ff4d73;
-            padding: 0 5px;
-            border-radius: 3px;
-            color: #fff;
+        a.app-list-arrow {
+            margin: 9px 0;
+            display: none;
         }
-        float: left;
     }
-    ul.h-right {
-        float: right;
+    .app-list {
+        float: left;
+        li {
+            padding: 5px 20px;
+            display: inline-block;
+        }
+    }
+    .navbar-toggle {
+        display: none;
+    }
+    .navbar-nav {
+        overflow: hidden;
+        background-color: #fff;
         > li {
-            padding: 8px 10px;
-            height: 36px;
-            margin-left: 10px;
-            box-sizing: border-box;
-            height: 36px;
-            > a, > a:hover {
-                color: #333;
-            }
-            > a:hover {
-                text-decoration: underline;
-            }
+            padding: 5px 20px;
+            float: left;
             .user-nav {
                 overflow: hidden;
                 a {
@@ -393,6 +445,9 @@ i.search-icon {
                     &.user-name {
                         margin-left: 10px;
                     }
+                }
+                a.list-arrow {
+                    padding: 5px;
                 }
             }
             .message-opt {
@@ -439,11 +494,83 @@ i.search-icon {
             }
         }
     }
-    ul.h-lef, ul.h-right {
-        padding: 10px;
+    .nav {
+        > li {
+            > a {
+                height: 36px;
+                margin-left: 10px;
+                box-sizing: border-box;
+                height: 36px;
+            }
+            > a, > a:hover {
+                color: #333;
+            }
+            > a:hover {
+                text-decoration: underline;
+            }
+        }
     }
-    ul.h-left > li, ul.h-right > li {
+    a.btn-back, a.btn-close {
+        top: 5px;
+        display: none;
+        position: absolute;
+    }
+    a.btn-back {
+        left: 5px;
+    }
+    a.btn-close {
+        right: 5px;
+    }
+    .btn-search {
         float: left;
+        height: 36px;
+        padding: 9px 10px;
+        margin-left: 5px;
+        &[type="submit"] {
+            display: block;
+        }
+        &[type="button"] {
+            display: none;
+        }
+    }
+    #create_dream_btn {
+        height: 36px;
+        padding: 9px 10px;
+        margin-left: 5px;
+        display: block;
+        box-sizing: border-box;
+    }
+    ul.nav-list {
+        overflow: hidden;
+        float: right;
+    }
+    ul.nav-list > li {
+        float: left;
+        &.user-out, &.user-in {
+            margin-left: 20px;
+        }
+        &.user-out {
+            a {
+                padding: 5px 10px;
+                display: inline-block;
+            }
+        }
+    }
+    .navbar-toggle {
+        position: relative;
+        padding: 9px 10px;
+        background-color: transparent;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        line-height: 2px;
+        .icon-bar {
+            background-color: #563d7c;
+            display: block;
+            width: 18px;
+            height: 2px;
+            border-radius: 1px;
+        }
     }
     /*overflow: hidden;*/
     z-index: 1;
@@ -451,20 +578,11 @@ i.search-icon {
     width: 100%;
     border-bottom: 1px solid #eaeaea;
     background-color: white;
-    @media screen and (max-width: 1024px) {
-        ul.h-lef, ul.h-right {
-            width: 100%;
-        }
-        ul.h-right {
-            border-top: 1px solid #eaeaea;
-        }
-    }
 }
 
 .banner {
     height: 300px;
     background-color: #fff;
-    position: relative;
     .banner-bg {
         width: 1024px;
         text-align: left;
@@ -494,7 +612,7 @@ i.search-icon {
     }
 }
 
-.signup-area, .signin-area, .dream-area, .settings-area {
+.signup-area, .signin-area, .settings-area {
     p.label {
         width: 100px;
         float: left
@@ -714,6 +832,7 @@ i.search-icon {
 
     .store-area, .team-area, .notice, .search-area, .settings-area, .msg-area
     , .following-area, .followers-area, #recommand-area, .dream-con {
+        width: 1024px;
         text-align: left;
         margin: 0 auto;
     }
@@ -1462,15 +1581,6 @@ a.next-btn {
         width: 48px;
         height: 48px;
         display: block;
-        i.icon-add {
-            margin: 0 auto;
-            background: url(/images/sprite_icon.png) no-repeat;
-            background-size: auto;
-            width: 27px;
-            outline: none;
-            height: 25px;
-            display: block;
-        }
         p {
             text-align: center;
         }
@@ -1715,10 +1825,10 @@ ul.activity-list {
             }
         }
         input {
-            width: 580px;
+            width: 100%;
         }
         textarea {
-            width: 580px;
+            width: 100%;
             height: 100px;
             overflow: auto;
         }
@@ -1815,36 +1925,40 @@ ul.activity-list {
     }
 }
 
-/* Responsive Web Design */
-.header {
-    .head-con {
-        width: 1026px;
-    }
-}
-.banner {
-    .banner-bg {
-        width: 1026px;
-        background-size: cover;
-    }
-}
-.container {
-    .store-area, .team-area, .notice, .search-area, .settings-area, .msg-area
-    , .following-area, .followers-area, #recommand-area, .dream-con {
-        width: 1026px;
-    }
-}
-.footer {
-    .company-area {
-        width: 1026px;
-    }
-}
-
-
 /* for 980px or less */
 @media screen and (max-width: 980px) {
     .header {
+        padding: 0 5px;;
         .head-con {
             width: 95%;
+            .search-area {
+                display: none;
+                &.visible {
+                    display: block;
+                }
+                position: absolute;
+                left: 0;
+                right: 0;
+                overflow: hidden;
+                input[type="text"].search-in {
+                    padding-left: 30px;
+                    width: 100%;
+                }
+                a.btn-back, a.btn-close {
+                    display: block;
+                }
+            }
+            #create_dream_btn, .btn-search {
+                border: none;
+            }
+            .btn-search {
+                &[type="submit"] {
+                    display: none;
+                }
+                &[type="button"] {
+                    display: block;
+                }
+            }
         }
     }
     .banner {
@@ -1871,6 +1985,73 @@ ul.activity-list {
     .header {
         .head-con {
             width: auto;
+        }
+        .navbar-toggle {
+            display: block;
+        }
+        .navbar-collapse {
+            display: none;
+            position: absolute;
+            top: 47px;
+            left: 0;
+            right: 0;
+            > .nav {
+                > li {
+                    width: 100%;
+                }
+            }
+        }
+        ul.nav-list {
+            padding: 0;
+            > li {
+                overflow: hidden;
+            }
+        }
+        .suopo {
+            a.logo {
+                margin-top: 5px;
+                background-image: url(/images/logo_mini.png);
+                width: 28px;
+                height: 25px;
+            }
+            a.app-list-arrow {
+                display: block;
+            }
+        }
+        .app-list {
+            top: 47px;
+            left: 0;
+            right: 0;
+            position: absolute; 
+            background-color: white;
+            border-style: solid;
+            border-color:  #eaeaea;
+            border-width: 0 0 1px;
+            display: none;
+            li {
+                width: 100%;
+            }
+        }
+        .navbar-nav > li {
+            padding: 0;
+            a {
+                display: block;
+                padding: 10px;
+            }
+            .user-nav {
+                display: none;
+            }
+            .config-list {
+                display: block!important;
+                width: auto;
+                border: none;
+                position: inherit;
+                padding: 0;
+                a {
+                    font-size: 14px;
+                    text-align: left;
+                }
+            }
         }
     }
     .banner {

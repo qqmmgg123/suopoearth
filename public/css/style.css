@@ -1,3 +1,13 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
 body {
   font: 14px/1.8 Microsoft YaHei, Helvetica, Arial, sans-serif;
 }
@@ -18,6 +28,7 @@ li {
 }
 button {
   outline: none;
+  cursor: pointer;
 }
 input,
 textarea {
@@ -48,7 +59,7 @@ a:hover {
   color: #ff4d73;
 }
 .none {
-  display: none;
+  display: none !important;
 }
 .color-warning {
   color: #ff335e;
@@ -228,13 +239,15 @@ i.support-icon,
 i.config-icon,
 i.arrow-icon,
 i.remove-icon,
-i.search-icon {
+i.search-icon,
+i.icon-add-small,
+i.back-icon,
+i.close-icon {
   display: inline-block;
   background: url(/images/sprite_icon_2.png) no-repeat;
   width: 16px;
   height: 16px;
   vertical-align: sub;
-  margin-right: 3px;
 }
 i.approval-icon {
   background-position: -98px -70px;
@@ -256,16 +269,47 @@ i.config-icon {
 }
 i.arrow-icon {
   background-position: -82px -86px;
-  margin-top: 5px;
-  margin-left: 5px;
 }
 i.remove-icon {
   background-position: -98px -86px;
-  margin-top: 5px;
-  margin-left: 5px;
 }
 i.search-icon {
   background-position: -114px -86px;
+}
+i.icon-add-small {
+  background-position: -50px -70px;
+}
+i.icon-add {
+  margin: 0 auto;
+  background: url(/images/sprite_icon.png) no-repeat;
+  background-size: auto;
+  width: 27px;
+  outline: none;
+  height: 25px;
+  display: block;
+}
+i.back-icon,
+i.close-icon {
+  width: 24px;
+  height: 24px;
+}
+i.back-icon {
+  background-position: -136px 0;
+}
+i.close-icon {
+  background-position: -160px 0;
+}
+.ctrl-list i.approval-icon,
+.ctrl-list i.favrioute-icon,
+.ctrl-list i.opposition-icon,
+.ctrl-list i.comment-icon,
+.ctrl-list i.support-icon,
+.ctrl-list i.config-icon,
+.ctrl-list i.arrow-icon,
+.ctrl-list i.remove-icon,
+.ctrl-list i.search-icon,
+.ctrl-list i.icon-add-small {
+  margin-right: 3px;
   margin-top: 5px;
   margin-left: 5px;
 }
@@ -307,6 +351,7 @@ i.search-icon {
   text-decoration: underline;
 }
 .header {
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
   /*overflow: hidden;*/
   z-index: 1;
   padding: 5px;
@@ -314,35 +359,35 @@ i.search-icon {
   border-bottom: 1px solid #eaeaea;
   background-color: white;
 }
-.header ul {
-  padding: 10px;
+.header:after {
+  content: '';
+  position: absolute;
+  height: 100%;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+  z-index: -1;
+  left: 0;
+  right: 0;
+  transition: .2s;
 }
 .header .head-con {
   width: 1024px;
   overflow: hidden;
   margin: 0 auto;
 }
-.header .create-area {
+.header .head-con .search-area {
+  display: block;
+}
+.header .h-left {
+  float: left;
+}
+.header .suopo {
+  float: left;
   overflow: hidden;
 }
-.header .create-area #search_dream_btn {
-  float: left;
-  height: 36px;
-  width: 66px;
-  margin-left: 5px;
-}
-.header .create-area #create_dream_btn {
-  float: left;
-  height: 36px;
-  padding: 8px 20px;
-  margin-left: 5px;
-  display: block;
-  box-sizing: border-box;
-}
-.header ul.h-left {
+.header .suopo a {
   float: left;
 }
-.header ul.h-left .logo {
+.header .suopo a.logo {
   background: url(/images/logo.png) no-repeat;
   background-size: auto;
   width: 144px;
@@ -352,45 +397,44 @@ i.search-icon {
   margin-right: 10px;
   position: relative;
 }
-.header ul.h-left .version {
-  position: absolute;
-  top: -8px;
-  left: 130px;
-  font-size: 0.5em;
-  background-color: #ff4d73;
-  padding: 0 5px;
-  border-radius: 3px;
-  color: #fff;
+.header .suopo a.app-list-arrow {
+  margin: 9px 0;
+  display: none;
 }
-.header ul.h-right {
-  float: right;
-}
-.header ul.h-right > li {
-  padding: 8px 10px;
-  margin-left: 10px;
-  box-sizing: border-box;
-  height: 36px;
-}
-.header ul.h-right > li > a,
-.header ul.h-right > li > a:hover {
-  color: #333;
-}
-.header ul.h-right > li > a:hover {
-  text-decoration: underline;
-}
-.header ul.h-right > li .user-nav {
-  overflow: hidden;
-}
-.header ul.h-right > li .user-nav a {
+.header .app-list {
   float: left;
 }
-.header ul.h-right > li .user-nav a.user-name {
+.header .app-list li {
+  padding: 5px 20px;
+  display: inline-block;
+}
+.header .navbar-toggle {
+  display: none;
+}
+.header .navbar-nav {
+  overflow: hidden;
+  background-color: #fff;
+}
+.header .navbar-nav > li {
+  padding: 5px 20px;
+  float: left;
+}
+.header .navbar-nav > li .user-nav {
+  overflow: hidden;
+}
+.header .navbar-nav > li .user-nav a {
+  float: left;
+}
+.header .navbar-nav > li .user-nav a.user-name {
   margin-left: 10px;
 }
-.header ul.h-right > li .message-opt {
+.header .navbar-nav > li .user-nav a.list-arrow {
+  padding: 5px;
+}
+.header .navbar-nav > li .message-opt {
   position: relative;
 }
-.header ul.h-right > li .message-new {
+.header .navbar-nav > li .message-new {
   position: absolute;
   bottom: 18px;
   left: 27px;
@@ -400,53 +444,109 @@ i.search-icon {
   font-size: 10px;
   background-color: #ff4d73;
 }
-.header ul.h-right > li .config-list a {
+.header .navbar-nav > li .config-list a {
   display: block;
   height: 26px;
   line-height: 26px;
   font-size: 12px;
   text-align: center;
 }
-.header ul.h-right > li .config-list a:hover {
+.header .navbar-nav > li .config-list a:hover {
   background-color: #eaeaea;
 }
-.header ul.h-right > li .message-list {
+.header .navbar-nav > li .message-list {
   padding: 0;
   width: 200px;
 }
-.header ul.h-right > li .message-list li {
+.header .navbar-nav > li .message-list li {
   font-size: 12px;
   text-align: left;
   padding: 10px;
 }
-.header ul.h-right > li .message-list li a.btn {
+.header .navbar-nav > li .message-list li a.btn {
   display: inline-block;
 }
-.header ul.h-right > li .message-list li.view-all {
+.header .navbar-nav > li .message-list li.view-all {
   border-top: 1px solid #ddd;
   text-align: center;
 }
-.header ul.h-lef,
-.header ul.h-right {
-  padding: 10px;
+.header .nav > li > a {
+  margin-left: 10px;
+  box-sizing: border-box;
+  height: 36px;
 }
-.header ul.h-left > li,
-.header ul.h-right > li {
+.header .nav > li > a,
+.header .nav > li > a:hover {
+  color: #333;
+}
+.header .nav > li > a:hover {
+  text-decoration: underline;
+}
+.header a.btn-back,
+.header a.btn-close {
+  top: 5px;
+  display: none;
+  position: absolute;
+}
+.header a.btn-back {
+  left: 5px;
+}
+.header a.btn-close {
+  right: 5px;
+}
+.header .btn-search {
+  float: left;
+  height: 36px;
+  padding: 9px 10px;
+  margin-left: 5px;
+}
+.header .btn-search[type="submit"] {
+  display: block;
+}
+.header .btn-search[type="button"] {
+  display: none;
+}
+.header #create_dream_btn {
+  height: 36px;
+  padding: 9px 10px;
+  margin-left: 5px;
+  display: block;
+  box-sizing: border-box;
+}
+.header ul.nav-list {
+  overflow: hidden;
+  float: right;
+}
+.header ul.nav-list > li {
   float: left;
 }
-@media screen and (max-width: 1024px) {
-  .header ul.h-lef,
-  .header ul.h-right {
-    width: 100%;
-  }
-  .header ul.h-right {
-    border-top: 1px solid #eaeaea;
-  }
+.header ul.nav-list > li.user-out,
+.header ul.nav-list > li.user-in {
+  margin-left: 20px;
+}
+.header ul.nav-list > li.user-out a {
+  padding: 5px 10px;
+  display: inline-block;
+}
+.header .navbar-toggle {
+  position: relative;
+  padding: 9px 10px;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  line-height: 2px;
+}
+.header .navbar-toggle .icon-bar {
+  background-color: #563d7c;
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 1px;
 }
 .banner {
   height: 300px;
   background-color: #fff;
-  position: relative;
 }
 .banner .banner-bg {
   width: 1024px;
@@ -484,14 +584,12 @@ i.search-icon {
 }
 .signup-area p.label,
 .signin-area p.label,
-.dream-area p.label,
 .settings-area p.label {
   width: 100px;
   float: left;
 }
 .signup-area p.field,
 .signin-area p.field,
-.dream-area p.field,
 .settings-area p.field {
   float: left;
 }
@@ -699,6 +797,7 @@ i.search-icon {
 .container .followers-area,
 .container #recommand-area,
 .container .dream-con {
+  width: 1024px;
   text-align: left;
   margin: 0 auto;
 }
@@ -1461,15 +1560,6 @@ a.next-btn {
   height: 48px;
   display: block;
 }
-.member a.member-add i.icon-add {
-  margin: 0 auto;
-  background: url(/images/sprite_icon.png) no-repeat;
-  background-size: auto;
-  width: 27px;
-  outline: none;
-  height: 25px;
-  display: block;
-}
 .member a.member-add p {
   text-align: center;
 }
@@ -1715,10 +1805,10 @@ ul.activity-list > li div.more a.btn {
   float: right;
 }
 .dialog#dream-pop input {
-  width: 580px;
+  width: 100%;
 }
 .dialog#dream-pop textarea {
-  width: 580px;
+  width: 100%;
   height: 100px;
   overflow: auto;
 }
@@ -1793,33 +1883,41 @@ ul.activity-list > li div.more a.btn {
   float: left;
   padding: 10px;
 }
-/* Responsive Web Design */
-.header .head-con {
-  width: 1026px;
-}
-.banner .banner-bg {
-  width: 1026px;
-  background-size: cover;
-}
-.container .store-area,
-.container .team-area,
-.container .notice,
-.container .search-area,
-.container .settings-area,
-.container .msg-area,
-.container .following-area,
-.container .followers-area,
-.container #recommand-area,
-.container .dream-con {
-  width: 1026px;
-}
-.footer .company-area {
-  width: 1026px;
-}
 /* for 980px or less */
 @media screen and (max-width: 980px) {
+  .header {
+    padding: 0 5px;
+  }
   .header .head-con {
     width: 95%;
+  }
+  .header .head-con .search-area {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+  }
+  .header .head-con .search-area.visible {
+    display: block;
+  }
+  .header .head-con .search-area input[type="text"].search-in {
+    padding-left: 30px;
+    width: 100%;
+  }
+  .header .head-con .search-area a.btn-back,
+  .header .head-con .search-area a.btn-close {
+    display: block;
+  }
+  .header .head-con #create_dream_btn,
+  .header .head-con .btn-search {
+    border: none;
+  }
+  .header .head-con .btn-search[type="submit"] {
+    display: none;
+  }
+  .header .head-con .btn-search[type="button"] {
+    display: block;
   }
   .banner .banner-bg {
     width: 95%;
@@ -1845,6 +1943,69 @@ ul.activity-list > li div.more a.btn {
 @media screen and (max-width: 700px) {
   .header .head-con {
     width: auto;
+  }
+  .header .navbar-toggle {
+    display: block;
+  }
+  .header .navbar-collapse {
+    display: none;
+    position: absolute;
+    top: 47px;
+    left: 0;
+    right: 0;
+  }
+  .header .navbar-collapse > .nav > li {
+    width: 100%;
+  }
+  .header ul.nav-list {
+    padding: 0;
+  }
+  .header ul.nav-list > li {
+    overflow: hidden;
+  }
+  .header .suopo a.logo {
+    margin-top: 5px;
+    background-image: url(/images/logo_mini.png);
+    width: 28px;
+    height: 25px;
+  }
+  .header .suopo a.app-list-arrow {
+    display: block;
+  }
+  .header .app-list {
+    top: 47px;
+    left: 0;
+    right: 0;
+    position: absolute;
+    background-color: white;
+    border-style: solid;
+    border-color: #eaeaea;
+    border-width: 0 0 1px;
+    display: none;
+  }
+  .header .app-list li {
+    width: 100%;
+  }
+  .header .navbar-nav > li {
+    padding: 0;
+  }
+  .header .navbar-nav > li a {
+    display: block;
+    padding: 10px;
+  }
+  .header .navbar-nav > li .user-nav {
+    display: none;
+  }
+  .header .navbar-nav > li .config-list {
+    display: block!important;
+    width: auto;
+    border: none;
+    position: inherit;
+    padding: 0;
+  }
+  .header .navbar-nav > li .config-list a {
+    font-size: 14px;
+    text-align: left;
   }
   .banner .banner-bg {
     width: auto;

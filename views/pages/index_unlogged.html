@@ -31,18 +31,22 @@
                     <p><%= data.current.description %></p>
                 </div>
                 <% } %>
-                <form action="/experience/new" id="node_create_form" method="post">
-                    <div id="editor"></div>
-                    <div class="btn-group">
-                    <button class="btn">写完了></button>
-                    </div>
-                </form>
+                <div id="suggest-create">
+                </div>
             </div>
         </div>
     </div>
     <% include ../partials/footer.html %>
     <% include ../partials/create.html %>
     <% include ../partials/signinpop.html %>
+    <script>
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position) {
+        position = position || 0;
+        return this.indexOf(searchString, position) === position;
+    };
+}
+    </script>
     <script src="/js/index_unlogged.js"></script>
 </body>
 </html>

@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Editor, EditorState, RichUtils} from 'draft-js';
+import 'babel-polyfill';
 
-class RichEditorExample extends React.Component {
+
+class RichEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {editorState: EditorState.createEmpty()};
@@ -87,6 +89,7 @@ class RichEditorExample extends React.Component {
             spellCheck={true}
                 />
                 </div>
+                <button onClick={this.finish}>你好吗</button>
                 </div>
         );
     }
@@ -188,7 +191,49 @@ const InlineStyleControls = (props) => {
     );
 };
 
+class FinishBtn extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick() {
+        this.props.onFinishClick();
+    }
+
+    render() {
+        return (
+            <button onClick={this.handleClick}>
+                写完了 >
+                </button>
+        );
+    }
+}
+
+class App extends React.Component {
+    finish() {
+        this.content = this.getEditorContent();
+        
+        this.doNextStep();
+    }
+
+    getEditorContent() {
+        return this._editor.state.editorState.getCurrentContent().getPlainText();
+    }
+
+    doNextStep() {
+        document.getElementById('thanks-area').innerHTML = '<div></div>';
+    }
+
+    render() {
+        return (<div>
+            <RichEditor ref={(editor) => {this._editor = editor}} />
+            <FinishBtn onFinishClick={this.finish.bind(this)} />
+            </div>)
+    }
+}
+
 ReactDOM.render(
-    <RichEditorExample />,
-    document.getElementById('editor')
+    <App />,
+    document.getElementById('suggest-create')
 );
