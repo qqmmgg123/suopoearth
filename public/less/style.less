@@ -1,5 +1,5 @@
 @arrow-left: 20%;
-@top: 67px;
+@top: 46px;
 @warning-color: #ff335e;
 
 .sr-only {
@@ -379,17 +379,18 @@ i.close-icon {
 }
 
 .header {
+    position: fixed;
     &:after {
         content: '';
         position: absolute;
         height: 100%;
         box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
         z-index: -1;
+        top: 0;
         left: 0;
         right: 0;
         transition: .2s;
     }
-    box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
     .head-con {
         .search-area {
             display: block;
@@ -784,6 +785,8 @@ i.close-icon {
 }
 
 .container {
+    top: @top;
+    position: relative;
     &.canvas-bg {
         background-color: #f2f3f4;
         .canvas {
@@ -1968,6 +1971,7 @@ ul.activity-list {
         }
     }
     .container {
+        top: 36px;
         .store-area, .team-area, .notice, .search-area, .settings-area, .msg-area
         , .following-area, .followers-area, #recommand-area, .dream-con {
             width: 95%;
@@ -2000,6 +2004,9 @@ ul.activity-list {
                     width: 100%;
                 }
             }
+            &.visible {
+                display: block;
+            }
         }
         ul.nav-list {
             padding: 0;
@@ -2030,6 +2037,9 @@ ul.activity-list {
             display: none;
             li {
                 width: 100%;
+            }
+            &.visible {
+                display: block;
             }
         }
         .navbar-nav > li {

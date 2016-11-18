@@ -559,8 +559,8 @@ $(function() {
 
     $('#navbar-toggle').click(function() {
         if (!navListExpand) {
-            $('#app-list').hide();
-            $('#navbar-collapse').show();
+            $('#app-list').removeClass('visible');
+            $('#navbar-collapse').addClass('visible');
             appListExpand = false;
             navListExpand = true;
         }else{

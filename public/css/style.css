@@ -351,7 +351,7 @@ i.close-icon {
   text-decoration: underline;
 }
 .header {
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+  position: fixed;
   /*overflow: hidden;*/
   z-index: 1;
   padding: 5px;
@@ -365,6 +365,7 @@ i.close-icon {
   height: 100%;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
   z-index: -1;
+  top: 0;
   left: 0;
   right: 0;
   transition: .2s;
@@ -741,6 +742,10 @@ i.close-icon {
   border-radius: 5px;
   width: 500px;
   text-align: center;
+}
+.container {
+  top: 46px;
+  position: relative;
 }
 .container.canvas-bg {
   background-color: #f2f3f4;
@@ -1587,7 +1592,7 @@ a.next-btn {
   margin-top: 10px;
   border-top: 1px solid #eaeaea;
   position: relative;
-  top: 67px;
+  top: 46px;
   font-size: 12px;
   color: #bbb;
 }
@@ -1923,6 +1928,9 @@ ul.activity-list > li div.more a.btn {
     width: 95%;
     background-size: cover;
   }
+  .container {
+    top: 36px;
+  }
   .container .store-area,
   .container .team-area,
   .container .notice,
@@ -1957,6 +1965,9 @@ ul.activity-list > li div.more a.btn {
   .header .navbar-collapse > .nav > li {
     width: 100%;
   }
+  .header .navbar-collapse.visible {
+    display: block;
+  }
   .header ul.nav-list {
     padding: 0;
   }
@@ -1985,6 +1996,9 @@ ul.activity-list > li div.more a.btn {
   }
   .header .app-list li {
     width: 100%;
+  }
+  .header .app-list.visible {
+    display: block;
   }
   .header .navbar-nav > li {
     padding: 0;
