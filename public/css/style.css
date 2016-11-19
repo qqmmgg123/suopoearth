@@ -240,6 +240,7 @@ i.config-icon,
 i.arrow-icon,
 i.remove-icon,
 i.search-icon,
+i.list-icon,
 i.icon-add-small,
 i.back-icon,
 i.close-icon {
@@ -275,6 +276,9 @@ i.remove-icon {
 }
 i.search-icon {
   background-position: -114px -86px;
+}
+i.list-icon {
+  background-position: -130px -70px;
 }
 i.icon-add-small {
   background-position: -50px -70px;
@@ -390,7 +394,7 @@ i.close-icon {
 }
 .header .suopo a.logo {
   background: url(/images/logo.png) no-repeat;
-  background-size: auto;
+  background-size: cover;
   width: 144px;
   outline: none;
   height: 36px;
@@ -1902,6 +1906,7 @@ ul.activity-list > li div.more a.btn {
     left: 0;
     right: 0;
     overflow: hidden;
+    z-index: 1;
   }
   .header .head-con .search-area.visible {
     display: block;
@@ -1973,6 +1978,9 @@ ul.activity-list > li div.more a.btn {
   }
   .header ul.nav-list > li {
     overflow: hidden;
+  }
+  .header ul.nav-list > li.user-in {
+    margin: 0;
   }
   .header .suopo a.logo {
     margin-top: 5px;

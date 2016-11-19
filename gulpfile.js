@@ -20,7 +20,7 @@ gulp.task('minify-css', function() {
 });
 
 gulp.task("compress", function() {
-    return gulp.src('./public/js/*.js')
+    return gulp.src('./public/js/common.js')
         .pipe(uglifyJs())
         .pipe(gulp.dest('./mini/js'));
 });
