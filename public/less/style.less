@@ -345,10 +345,9 @@ i.close-icon {
 }
 
 .full {
-    text-align: center;
     width: 800px;
-    height: 500px;
-    position: absolute;
+    height: 700px;
+    position: fixed;
     .middle();
 }
 
@@ -382,8 +381,28 @@ i.close-icon {
     }
 }
 
+.suopo, .user-head {
+    a.logo {
+        background: url(/images/logo.png) no-repeat;
+        background-size: cover;
+        width: 144px;
+        outline: none;
+        height: 32px;
+        display: block;
+        margin-right: 10px;
+        position: relative;
+    }
+}
+
+.user-head {
+    width: 144px;
+    margin: 50px auto;
+    text-align: center;
+}
+
 .header {
     position: fixed;
+    top: 0;
     &:after {
         content: '';
         position: absolute;
@@ -411,16 +430,6 @@ i.close-icon {
         overflow: hidden;
         a {
             float: left;
-        }
-        a.logo {
-            background: url(/images/logo.png) no-repeat;
-            background-size: cover;
-            width: 144px;
-            outline: none;
-            height: 36px;
-            display: block;
-            margin-right: 10px;
-            position: relative;
         }
         a.app-list-arrow {
             margin: 9px 0;
@@ -586,6 +595,7 @@ i.close-icon {
 }
 
 .banner {
+    margin-top: @top;
     height: 300px;
     background-color: #fff;
     .banner-bg {
@@ -597,7 +607,21 @@ i.close-icon {
     }
 }
 
-.signup-area, .signin-area, .dream-area, .settings-area, .forgot-area {
+.user-main {
+    width: 300px;
+    margin: auto;
+    .tab-nav {
+        ul li {
+            width: 50%;
+        }
+    }
+}
+
+.signup-area, 
+.signin-area, 
+.dream-area, 
+.settings-area, 
+.forgot-area {
     div {
         margin-bottom: 10px;
         overflow: hidden;
@@ -607,17 +631,25 @@ i.close-icon {
             font-size: 14px;
             height: 36px;
             padding-left: 5px;
-            width: 218px;
-        }
-        textarea {
-            overflow: auto;
-            padding: 10px 0 0 5px;
-            resize: none;
         }
     }
 }
 
-.signup-area, .signin-area, .settings-area {
+.settings-area, 
+.forgot-area {
+    width: 218px;
+}
+
+.dream-area, 
+.settings-area {
+    textarea {
+        overflow: auto;
+        padding: 10px 0 0 5px;
+        resize: none;
+    }
+}
+
+.settings-area {
     p.label {
         width: 100px;
         float: left
@@ -789,8 +821,7 @@ i.close-icon {
 }
 
 .container {
-    top: @top;
-    position: relative;
+    margin-top: @top;
     &.canvas-bg {
         background-color: #f2f3f4;
         .canvas {
@@ -915,21 +946,15 @@ i.close-icon {
         }
     }
     .signin-area, .signup-area {
-        padding: 10px 20px 20px;
-        width: 320px;
+        margin-top: 20px;
         height: 420px;
-        padding: 20px;
-        margin: auto;
         h2 {
             margin-top: 0;
             margin-bottom: 20px;
             font-size: 16px;
         }
         .btn {
-            width: auto;
-        }
-        p.field input {
-            width: 220px;
+            width: 100%;
         }
         .other-ctrl {
             overflow: hidden;
@@ -1619,8 +1644,6 @@ a.next-btn {
 .footer {
     margin-top: 10px;
     border-top: 1px solid #eaeaea;
-    position: relative;
-    top: @top;
     font-size: 12px;
     color: #bbb;
 }

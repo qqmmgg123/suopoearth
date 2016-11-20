@@ -580,6 +580,12 @@ $(function() {
     }
     face().create({ icon: '.desc-face', editor: '#dream-desc', tips: '.face-tips' });
 
+    var signinBtn = document.getElementById('signin-btn'),
+        signupBtn = document.getElementById('signup-btn');
+
+    signinBtn && common.bindSigninCtrl($(signinBtn));
+    signupBtn && common.bindSignupCtrl($(signupBtn));
+
     //setInterval($.proxy(common.autoScroll, common, "#reference"), 2000);
     
     // 错误提示
@@ -604,19 +610,19 @@ $(function() {
         searchInput = document.getElementById('search-input'),
         searchBtn   = document.getElementById('search_dream_btn');
     
-    searchBtn.addEventListener('click', function() {
+    searchBtn && searchBtn.addEventListener('click', function() {
         if (inputBox.className.indexOf(' visible') === -1) {
             inputBox.className += ' visible';
         }
     }, false);
 
-    backBtn.addEventListener('click', function() {
+    backBtn && backBtn.addEventListener('click', function() {
         inputBox.className = inputBox.className.replace(' visible', '');
     }, false);
 
-    resetBtn.addEventListener('click', function() {
+    resetBtn && resetBtn.addEventListener('click', function() {
         searchInput.value = '';
-    }, false)
+    }, false);
 
     // 查看消息列表
     var $msgNav = $('#message-nav');

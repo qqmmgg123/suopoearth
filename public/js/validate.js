@@ -15,11 +15,12 @@ define(['jquery', 'utilities'], function ($, util) {
             var formData = {};
             var validate = true;
             self.$form.find('input').each(function() {
-                var $this = $(this);
-                var val = $this.val();
-                var $field = $this.closest('.field');
-                var label = $field.prev('p.label').find('label').text();
-                var $tips = $field.next('.validate-error');
+                var $this = $(this),
+                    val    = $this.val(),
+                    $field = $this.closest('.field'),
+                    dlabel = $field.prev('p.label').find('label').text(),
+                    label  = $this.data('label') || dlabel,
+                    $tips  = $field.next('.validate-error');
 
                 // 判断是否为空
                 if ($.trim(val).length === 0) {

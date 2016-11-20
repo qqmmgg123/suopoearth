@@ -6,26 +6,8 @@
     </div>
     <div class="bd">
         <div class="signin-area">
-            <form action="/signin" method="post">
-                <!--<div class="slogan">-->
-                    <!--<p>地球很小，我们的内心很大，我们的内心地球已不够容纳，释放我们内心的想法，让我们的梦想从心起航!！！</p>-->
-                <!--</div>-->
-                <div>
-                    <p class="label"><label for="username">邮箱</label></p>
-                    <p class="field"><input type="text" id="username" name="username" placeholder="输入用邮箱" required></p>
-                </div>
-                <div>
-                    <p class="label"><label for="password">密码</label></p>
-                    <p class="field"><input type="password" id="password" name="password" placeholder="输入用密码" required></p>
-                </div>
-                <div class="other-ctrl">
-                    <a class="forget-pwd" href="/forgot">忘记密码 ?</a>
-                    <a class="sign-up" href="/signup" role="button">注册 ></a>
-                </div>
-                <div>
-                    <button class="btn btn-primary" type="submit">登录</button>
-                </div>
-            </form>
+            <% include ../partials/signinform.html %>
         </div>
     </div>
 </div>
+<% include ../partials/signuppop.html %>
